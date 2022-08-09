@@ -22,3 +22,6 @@ terragraph_planner.egg-info/
 
 # Pyre
 .pyre/
+
+# Coverage report
+.coverage

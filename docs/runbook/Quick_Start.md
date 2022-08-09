@@ -63,7 +63,7 @@ network without optimization.
 
 To run a LOS Analysis Plan with the config file:
 
-```Python
+```python
 from terragraph_plannner import generate_candidate_topology_with_config_file
 
 generate_candidate_topology_with_config_file(config_file_path)
@@ -76,7 +76,7 @@ An Optimization Plan runs optimization algorithms on the an input candidate netw
 while an End-to-End Plan has both the LOS part and the optimization part.
 
 To run a Optimization Plan or End-to-End Plan with the config file:
-```Python
+```python
 from terragraph_plannner import optimize_and_report_topology_with_config_file
 
 optimize_and_report_topology_with_config_file(config_file_path)
