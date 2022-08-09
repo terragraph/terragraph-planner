@@ -1,0 +1,13 @@
+gdal==3.0.4
+networkx
+numpy>=1.22.0
+pandas==1.0.4
+Pillow
+pyproj==3.3.0
+pyre-extensions
+pyyaml==5.3.1
+scipy==1.8.0
+setuptools
+shapely==1.6.4.post2
+sympy
+xpress==8.13.0

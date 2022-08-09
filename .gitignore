@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.ddl
+
+# Files generate by setup.py
+dist/
+build/
+terragraph_planner.egg-info/
+.eggs/
+
+# VS code
+.vscode/
+
+# pyre
+.pyre
+
+# Mac OS X
+**/.DS_Store
+
+# Pyre
+.pyre/

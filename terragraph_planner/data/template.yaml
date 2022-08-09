@@ -1,0 +1,438 @@
+# This file is a template for the config yaml file with the default values used
+# in the planner, except all the file paths and DEVICE_LIST.
+# Change the values to customize the config of your own plan.
+#
+# NOTE:
+# 1. The default value of each file path is an empty string rather than the string
+#    in this template.
+# 2. If any field is deleted, left blank or filled out with "null" or "~",
+#    the default value is used, except BOUNDARY_POLYGON_FILE_PATH and DEVICE_LIST.
+# 3. BOUNDARY_POLYGON_FILE_PATH must have valid values when los computation is ran.
+# 4. DEVICE_LIST must have valid values.
+# 5. The "[Optional]" tag for each field means it can be null and its default Python
+#    value is None. Other fields without that tag cannot be assigned as null.
+# 6. It's not recommended to leave a field blank.
+# 7. "None" is treated as a string "None" rather than None type in Python. Please
+#    refer to https://yaml.org/ for more information.
+
+SYSTEM:
+  # [String] The directory to dump all the output and debug files. The output
+  # files will get dumped under a subfolder "output" and the debug files will get
+  # dumped undr a subfolder "debug". If they do not exist, the planner will create
+  # them.
+  OUTPUT_DIR: ./
+
+  # [Bool] It debug mode is set to False, only the expected output files will
+  # be dumped. Otherwise, all the intermediate topologies and the ILP problem
+  # files will be dumped
+  DEBUG_MODE: False
+
+  # [String] The logger level that the planner will use, including NOTSET, DEBUG,
+  # INFO, WARNING, ERROR, CRITICAL. Please refer to the doc of Python logging for
+  # more details
+  LOGGER_LEVEL: INFO
+
+  # [Optional][String] The file path of the log file. If it is null, the planner
+  # will not give the log in the file.
+  LOG_FILE: null
+
+  # [Bool] Whether or not the planner prints log to the stderr.
+  LOG_TO_STDERR: True
+
+DATA:
+  # [String] The area that planning will be restricted to. The file
+  # can contain only one polygon. File type: KML or KMZ
+  BOUNDARY_POLYGON_FILE_PATH: boundary.kml
+
+  # [List of String] A list of GeoTIFF files containing
+  # the height of canopy (terrain elevation + height of any clutter above
+  # ground) (.tif).
+
+  DSM_FILE_PATHS:
+    - dsm.tif
+
+  # [String] DTM_FILE_PATH contains the digital terrain
+  # model, which represents the elevation of the earth's surface. File type: TIF
+  # DHM_FILE_PATH contains the digital height model, which represents the height
+  # of aboveground objects. File type: TIF
+
+  DTM_FILE_PATH: dtm.tif
+  DHM_FILE_PATH: dhm.tif
+
+  # [String] The files that contain the geometric locations and
+  # attributes of geographic features, such as polygons and heights of
+  # buildings. Get data from a zipped shape file or a KML/KMZ file.
+  # If a zipped shape file is given, They must be uploaded as a ZIP file containing
+  # SHP, SHX, PRJ and DBF shapefiles that are not in a nested directory. For
+  # example, the directory for the SHP file should follow "shapefile.zip/
+  # shp_file.shp" and not "shapefile.zip/some_folder/shp_file.shp."
+
+  BUILDING_OUTLINE_FILE_PATH: buildings.zip
+
+  # [String] Path of KML, KMZ or CSV file containing the potential POP/DN/CN
+  # sites. KML or KMZ file can also contain a list of exclusion zones.
+  SITE_FILE_PATH: sites.kml
+
+  # [String] Path of KML/KMZ file or zipped csv files containing a base topology with sites
+  # and links. A new LOS candidate graph is extended from this base topology by adding the
+  # sites from the supplied sites list. Note that the LOS is not computed between
+  # the sites of the base topology.
+  BASE_TOPOLOGY_FILE_PATH: base_topology.kmz
+
+LINE_OF_SIGHT:
+  # [Float] The height, in meters, above a rooftop at which equipment
+  # will be mounted. This value will be used for sites placed on buildings if
+  # no height was included in the site list file.
+
+  MOUNTING_HEIGHT_ABOVE_ROOFTOP: 1.5
+
+  # [Float] The default height, in meters, that nodes (POPs/DNs/CNs)
+  # will be mounted on poles. This value will only be used when no height is
+  # provided in the site list file.
+
+  DEFAULT_POP_HEIGHT_ON_POLE: 5
+  DEFAULT_DN_HEIGHT_ON_POLE: 5
+  DEFAULT_CN_HEIGHT_ON_POLE: 5
+
+  # [Int] Maximum line of sight, in meters, for
+  # viable communication between two sites
+
+  MAXIMUM_LOS_DISTANCE: 200
+
+  # [Int] Maximum line of sight, in meters, for
+  # viable communication between two sites
+  MINIMUM_LOS_DISTANCE: 50
+
+  # [Optional][Int] Minimum MCS used to determine the maximum line-of-sight
+  # distance for backhaul/access links in the LOS candidate graph. This
+  # distance is computed to be the point at which the link capacity goes to 0
+  # (ignoring interference) based on the provided radio equipment
+  # specifications. Increasing the minimum MCS shortens that distance.
+
+  MINIMUM_MCS_OF_BACKHAUL_LINKS: null
+  MINIMUM_MCS_OF_ACCESS_LINKS: null
+
+  # [Bool] Enable an ellipsoidal LOS model
+
+  USE_ELLIPSOIDAL_LOS_MODEL: False
+
+  # [Float] The radius of the Fresnel Zone at its
+  # widest point. The radio MUST be in [0, 1]. Not required if ellipsoidal
+  # LOS model is enabled.
+
+  FRESNEL_RADIUS: 1.0
+
+  # [Float] Minimum level of confidence required to declare a valid
+  # LOS. Lower values can provide more candidate links at greater risk that
+  # those links do not have actual LOS during field surveys. 0 for direct LOS,
+  # 1 for LOS with Fresnel zone clearance. Minimum level of confidence MUST be
+  # in [0, 1].
+
+  LOS_CONFIDENCE_THRESHOLD: 0.8
+
+  SITE_DETECTION:
+    # [Bool] Enable candidate DN site generation on each building. The DN will
+    # be deployed at the same location as the CN with the greatest potential
+    # line of sight.
+
+    DN_DEPLOYMENT: True
+
+    # [Bool] Enable candidate site generation at the highest/centers/corners of
+    # each building.
+
+    DETECT_HIGHEST: True
+    DETECT_CENTERS: False
+    DETECT_CORNERS: True
+
+    # [Optional][Float] The maximum angle, in degrees, that a building corner can
+    # be to qualify for site deployment.
+    MAX_CORNER_ANGLE: null
+
+  # [Optional] Number of the processors used for LOS computation. If null is given,
+  # the planner will use as many as possible.
+  NUM_PROCESSORS: null
+
+RADIO:
+  # [Float] Frequency (in MHz) at which these sectors operate.
+
+  CARRIER_FREQUENCY: 60000.0
+
+  # [Float] Noise figure (dB)
+
+  NOISE_FIGURE: 7.0
+
+  # [Float] Thermal noise power (dBm)
+
+  THERMAL_NOISE_POWER: -81.0
+
+  # [Optional][Float] Maximum Equivalent/Effective Isotropically Radiated
+  # Power in dBm.
+
+  MAXIMUM_EIRP: null
+
+  # [Float] Rain rate in mm/hr for the planning region.
+
+  RAIN_RATE: 30.0
+
+  # [Float] The percentage of time in one year that each line-of-sight (LOS)
+  # link will be live, such as 95, 99, 99.99, etc.
+  LINK_AVAILABILITY_PERCENTAGE: 99.9
+
+  # A list of device data that could be used in the plan.
+  # Add more devices after the '-' symbol.
+
+  DEVICE_LIST:
+    # [String] The device SKU or Name that used to identify
+    # the hardware.
+
+    - DEVICE_SKU: Sample DN
+
+      # [String] The type of the device, which should be either
+      # DN or CN.
+
+      DEVICE_TYPE: DN
+
+      # [Float] Hardware cost of DN or CN.
+
+      NODE_CAPEX: 250.0
+
+      # [Int] Maximum number of radio nodes allowed on each site.
+      # For CNs, this input will be ignored as it is always 1.
+
+      NUMBER_OF_NODES_PER_SITE: 4
+
+      # The set of radio specification parameters.
+
+      SECTOR_PARAMS:
+        # [Float] Per-sector horizontal beamforming scan range of
+        # the antenna in degrees.
+
+        HORIZONTAL_SCAN_RANGE: 70.0
+
+        # [Int] Number of sectors in each node.
+
+        NUMBER_SECTORS_PER_NODE: 1
+
+        # [Float] Antenna gain at boresight (dBi).
+
+        ANTENNA_BORESIGHT_GAIN: 30.0
+
+        # [Float] Maximum Transmission power in dBm.
+
+        MAXIMUM_TX_POWER: 16.0
+
+        # [Optional][Float] Minimum Transmission power in dBm.
+
+        MINIMUM_TX_POWER: null
+
+        # [Float] Transmitter diversity gain in dB
+        # (e.g., polarization diversity).
+
+        TX_DIVERSITY_GAIN: 0.0
+
+        # [Float] Receiver diversity gain in dB
+        # (e.g., polarization diversity).
+
+        RX_DIVERSITY_GAIN: 0.0
+
+        # [Float] Miscellaneous losses on the transmitter
+        # in dB (e.g., cable losses).
+
+        TX_MISCELLANEOUS_LOSS: 0.0
+
+        # [Float] Miscellaneous losses on the receiver in dB
+        # (e.g., cable losses).
+
+        RX_MISCELLANEOUS_LOSS: 0.0
+
+        # [Optional][Float] The minimum MCS level allowed.
+
+        MINIMUM_MCS_LEVEL: null
+
+        # [String] Antenna pattern file defining the signal loss
+        # of the antenna in different angles in Planet's format (txt).
+
+        ANTENNA_PATTERN_FILE_PATH: antenna_pattern.txt
+
+        # [String] Scan pattern file defining the signal gain of
+        # the antenna boresight in different scan angles (csv).
+
+        SCAN_PATTERN_FILE_PATH: scan_patter.csv
+
+        # [String] Scan pattern file contains the mapping between MCS, SNR, Mbps
+        # and TX backoff (csv).
+
+        MCS_MAP_FILE_PATH: mcs_map.csv
+
+NETWORK_DESIGN:
+  # [String] The file path of the KML/KMZ file or zipped csv files that represents
+  # the candidate network topology from which to optimize. If provided, the LOS
+  # computation will be skipped. If the file is provided in zipped format, a
+  # "links.csv" and a "sites.csv" must be contained at the top level of the
+  # zipped file.
+  CANDIDATE_TOPOLOGY_FILE_PATH: topology.kml
+
+  FINANCIAL:
+    # [Float] One-time CAPEX cost of the POP/DN/CN site, including
+    # things like equipment, install, down payment, etc.
+
+    CN_SITE_CAPEX: 1500.0
+    DN_SITE_CAPEX: 1500.0
+    POP_SITE_CAPEX: 1500.0
+
+    # [Float] Maximum budget allowed for total site and radio costs.
+    # The unit must be the same as the cost parameters above.
+
+    BUDGET: 300000.0
+
+  DIMENSIONING:
+    # [Bool] Enable various methods of adding demand. By enabling CN demand,
+    # a demand site will be added to every CN in the network. By enabling
+    # uniform demand, a grid of demand sites is added within the region of
+    # interest. If enabling manual demand, add demand sites, and place them under
+    # a folder named "Demand Sites" in the input candidate topology file
+    # (KML/KMZ input only).
+    ENABLE_CN_DEMAND: True
+    ENABLE_UNIFORM_DEMAND: False
+    ENABLE_MANUAL_DEMAND: False
+
+    # [Float] When uniform demand is enabled, this is the spacing between
+    # demand sites in meters.
+    DEMAND_SPACING: 0
+
+    # [Float] When uniform or manual demand is enabled, this is the radius
+    # of coverage from a site to a demand site (i.e., for each site, all demand
+    # sites within this radius will be connnected to it).
+    DEMAND_CONNECTION_RADIUS: 0
+
+    # [Float] Expected bandwidth at each demand site. When a single
+    # demand site is placed on each CN, this is equivalent to the committed
+    # information rate (CIR).
+    DEMAND: 0.025
+
+  # [Float] Expected total bandwidth per POP location in Gbps.
+  POP_CAPACITY: 10.0
+
+  # [Int] Maximum number of additional POPs that the tool should propose
+  # (selected from the DNs in the candiate network). Must be greater than 0 if
+  # there are no POPs among the input sites.
+  NUMBER_OF_EXTRA_POPS: 0
+
+  # [Int] Maximum number of DN radios that can be served by a single DN radio when
+  # serving exclusively to DNs.
+  DN_DN_SECTOR_LIMIT: 2
+
+  # [Int] Maximum number of combined DN and CN radios that can be served by
+  # a single DN radio.
+  DN_TOTAL_SECTOR_LIMIT: 15
+
+  # [Int] Maximum number of hops (from POP to edge site of the network) considered in
+  # the network. This constraint is softly enforced, but not always guaranteed.
+  MAXIMUM_NUMBER_HOPS: 15
+
+  # [Float] Minimum angular limit in degrees between links on different radios
+  # on the same site connecting to other nodes.
+  DIFF_SECTOR_ANGLE_LIMIT: 25.0
+
+  # [Float] Minimum length ratio of two links that are leaving different radios
+  # on the same site which could cause near-far effect.
+  NEAR_FAR_LENGTH_RATIO: 3.0
+
+  # [Float] Minimum angle between two links that are leaving different radios
+  # if the ratio of their lengths is large.
+  NEAR_FAR_ANGLE_LIMIT: 45.0
+
+  # [Float] The oversubscription factor (1x, 1.5x, 1.75x, 2x, 3x, etc.).
+  OVERSUBSCRIPTION: 1.0
+
+  # [Int] The number of channels to use in the network design. If only one channel is allowed,
+  # then all links operate on the same channel. Multiple channels can be used to reduce
+  # interference. A key assumption is that there is no interference between links
+  # operating on different channels, so overlapping channels is not supported.
+  NUMBER_OF_CHANNELS: 1
+
+  # [Bool] Maximize the minimum guaranteed bandwidth among all connectable demans rather than
+  # total network bandwidth.
+  MAXIMIZE_COMMON_BANDWIDTH: False
+
+  # [Bool] If True, we assume that POP sites provided in the user input file already exist and
+  # can be used
+  ALWAYS_ACTIVE_POPS: True
+
+  # [Bool] If True, the legacy redundancy method will be enabled. The new method should
+  # provide better guarantees of resiliency to link and/or site failures. However,
+  # because P2MP constraints are not incorporated into the initial minimum cost
+  # network planning phase, the legacy approach currently may provide better overall
+  # connectivity in some cases. Addressing the P2MP constraints during the minimum
+  # cost phase could obviate the need for the legacy method entirely.
+  # When the legacy method is enabled, the budget and backhaul link redundancy ratio
+  # fields are used. If it is not enabled, then the redundancy level field is used.
+  ENABLE_LEGACY_REDUNDANCY_METHOD: True
+
+  # [String] The level of redundancy (None/Low/Medium/High) to be applied. The network
+  # design will attempt to achieve at least the selected level of redundancy
+  # (greater redundancy is possible). None is not redundant to any link or site.
+  REDUNDANCY_LEVEL: MEDIUM
+
+  # [Float] The ratio, between 0 and 1, of backhaul links for which alternative paths
+  # will try to be created, prioritizing the links that would be most
+  # disruptive to service if they were to go down. This redundancy can ensure
+  # that customer demand sites are reached in case a backhaul link is down.
+  BACKHAUL_LINK_REDUNDANCY_RATIO: 0.2
+
+  # [Optional][Int] Number of threads to be used during the ILP optimization. If not provided,
+  # it will be determined automatically based on hardware configuration
+  NUM_THREADS: null
+
+  # [Float] Tolerance on the relative deviation from the optimal value. For
+  # example, to guarantee the solution found by the ILP optimization solver is
+  # within 5% of the optimal solution, set the value to 0.05. Set to <= 0 in
+  # order to use the solver default. These parameters apply to different phases
+  # of the network planning optimization. Some will only be applicable for
+  # certain configurations. For example, POP_PROPOSAL_REL_STOP only applies if
+  # NUMBER_OF_EXTRA_POPS > 0. REDUNDANCY_REL_STOP only applies if
+  # ENABLE_LEGACY_REDUNDANDY_METHOD is False. Otherwise, MAX_COVERAGE_REL_STOP
+  # applies.
+  POP_PROPOSAL_REL_STOP: -1
+  MIN_COST_REL_STOP: 0.05
+  REDUNDANCY_REL_STOP: 0.05
+  MAX_COVERAGE_REL_STOP: -1
+  INTERFERENCE_REL_STOP: -1
+
+  # [Int] Maximum time in minutes that the ILP optimization solver will run
+  # before it terminates (regardless of whether a solution has been found).
+  # These parameters apply to different phases of the network planning
+  # optimization. Some will only be applicable for certain configurations. For
+  # example, POP_PROPOSAL_MAX_TIME only applies if NUMBER_OF_EXTRA_POPS > 0.
+  # REDUNDANCY_MAX_TIME only applies if ENABLE_LEGACY_REDUNDANDY_METHOD is
+  # False. Otherwise, MAX_COVERAGE_MAX_TIME applies. DEMAND_SITE_MAX_TIME only
+  # applies if MAXIMIZE_COMMON_BANDWIDTH is True.
+  POP_PROPOSAL_MAX_TIME: 60
+  MIN_COST_MAX_TIME: 60
+  REDUNDANCY_MAX_TIME: 60
+  MAX_COVERAGE_MAX_TIME: 60
+  INTERFERENCE_MAX_TIME: 60
+  DEMAND_SITE_MAX_TIME: 15
+
+  # [String] During flow analysis, specify the routing method. If not provided,
+  # no routing will be used. Options are SHORTEST_PATH, MCS_COST_PATH, and
+  # DPA_PATH.
+  TOPOLOGY_ROUTING: null
+
+  # [Float] Simulation time (unitless) for estimating network availability from
+  # RADIO/LINK_AVAILABILITY_PERCENTAGE input. Running the simulation longer
+  # provides more accurate results but takes longer to compute.
+  AVAILABILITY_SIM_TIME: 100.0
+
+  # [Int] Random number generator seed for availability simulation. Using a
+  # seed ensures reproducibility of the availability results. Set to negative
+  # value to disable the seed.
+  AVAILABILITY_SEED: 0
+
+  # [Int] Maximum time in minutes that the computation of availability will run
+  # before it terminates (not to be confused with AVAILABILITY_SIM_TIME which
+  # is the length of time that the availability simulation models). Because
+  # availability computations can be expensive for large networks, this helps
+  # ensure it eventually terminates even if the results are not as accurate as
+  # desired.
+  AVAILABILITY_MAX_TIME: 60

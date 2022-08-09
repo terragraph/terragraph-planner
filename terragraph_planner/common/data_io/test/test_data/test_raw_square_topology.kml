@@ -1,0 +1,1598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>raw_square_topology</name>
+	<open>1</open>
+	<Schema name="site_metadata" id="site_metadata">
+		<SimpleField type="string" name="description"></SimpleField>
+		<SimpleField type="string" name="site_hash"></SimpleField>
+		<SimpleField type="string" name="site_type"></SimpleField>
+		<SimpleField type="string" name="status"></SimpleField>
+	</Schema>
+	<Style id="POP_CANDIDATE">
+		<IconStyle>
+			<color>ffe1b9f7</color>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>
+				<scale>1.0</scale>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="DN_CANDIDATE">
+		<IconStyle>
+			<color>ff76e600</color>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href>
+				<scale>1.0</scale>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="demand_site_0">
+		<IconStyle>
+			<color>ffb4fab2</color>
+			<scale>0.6</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0</scale>
+		</LabelStyle>
+	</Style>
+	<Style id="backhaul_link_CANDIDATE">
+		<LineStyle>
+			<color>fff900d5</color>
+			<width>3</width>
+		</LineStyle>
+	</Style>
+	<ScreenOverlay>
+		<name>Legend</name>
+		<Icon>
+			<href>https://i.ibb.co/d0THmwL/kml-legend.png</href>
+		</Icon>
+		<overlayXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+		<screenXY x="20" y="50" xunits="pixels" yunits="pixels"/>
+		<rotationXY x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+		<size x="195" y="330" xunits="pixels" yunits="pixels"/>
+	</ScreenOverlay>
+	<Folder id="CANDIDATE">
+		<name>CANDIDATE</name>
+		<Folder id="CANDIDATE_POP_sites">
+			<name>POP Sites</name>
+			<Placemark>
+				<name>POP5</name>
+				<styleUrl>#POP_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Site Type">
+						<value>POP</value>
+					</Data>
+					<Data name="Site Geohash">
+						<value>dakak1gh3b</value>
+					</Data>
+					<Data name="Altitude">
+						<value>0</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Polarity">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Nodes">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Sectors">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Links">
+						<value>N/A</value>
+					</Data>
+					<Data name="Location Type">
+						<value>UNKNOWN</value>
+					</Data>
+					<Data name="Device SKU">
+						<value>SAMPLE_DN_DEVICE</value>
+					</Data>
+					<Data name="Number of Subscriber">
+						<value>0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>-1.488564732337151,0.00640375840708523,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>POP6</name>
+				<styleUrl>#POP_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Site Type">
+						<value>POP</value>
+					</Data>
+					<Data name="Site Geohash">
+						<value>dakak05aha</value>
+					</Data>
+					<Data name="Altitude">
+						<value>0</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Polarity">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Nodes">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Sectors">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Links">
+						<value>N/A</value>
+					</Data>
+					<Data name="Location Type">
+						<value>UNKNOWN</value>
+					</Data>
+					<Data name="Device SKU">
+						<value>SAMPLE_DN_DEVICE</value>
+					</Data>
+					<Data name="Number of Subscriber">
+						<value>0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>-1.488743884387208,0,0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+		<Folder id="CANDIDATE_DN_sites">
+			<name>DN Sites</name>
+			<Placemark>
+				<name>DN1</name>
+				<styleUrl>#DN_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Site Type">
+						<value>DN</value>
+					</Data>
+					<Data name="Site Geohash">
+						<value>dakak0qev1</value>
+					</Data>
+					<Data name="Altitude">
+						<value>0</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Polarity">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Nodes">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Sectors">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Links">
+						<value>N/A</value>
+					</Data>
+					<Data name="Location Type">
+						<value>UNKNOWN</value>
+					</Data>
+					<Data name="Device SKU">
+						<value>SAMPLE_DN_DEVICE</value>
+					</Data>
+					<Data name="Number of Subscriber">
+						<value>0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>-1.487310457895766,0.004599890756795223,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>DN2</name>
+				<styleUrl>#DN_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Site Type">
+						<value>DN</value>
+					</Data>
+					<Data name="Site Geohash">
+						<value>dakak0ifs1</value>
+					</Data>
+					<Data name="Altitude">
+						<value>0</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Polarity">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Nodes">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Sectors">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Links">
+						<value>N/A</value>
+					</Data>
+					<Data name="Location Type">
+						<value>UNKNOWN</value>
+					</Data>
+					<Data name="Device SKU">
+						<value>SAMPLE_DN_DEVICE</value>
+					</Data>
+					<Data name="Number of Subscriber">
+						<value>0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>-1.487355241250446,0.001984266478442058,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>DN3</name>
+				<styleUrl>#DN_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Site Type">
+						<value>DN</value>
+					</Data>
+					<Data name="Site Geohash">
+						<value>dakak069ul</value>
+					</Data>
+					<Data name="Altitude">
+						<value>0</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Polarity">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Nodes">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Sectors">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Links">
+						<value>N/A</value>
+					</Data>
+					<Data name="Location Type">
+						<value>UNKNOWN</value>
+					</Data>
+					<Data name="Device SKU">
+						<value>SAMPLE_DN_DEVICE</value>
+					</Data>
+					<Data name="Number of Subscriber">
+						<value>0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>-1.490446093756991,0.001713677379113303,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>DN4</name>
+				<styleUrl>#DN_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Site Type">
+						<value>DN</value>
+					</Data>
+					<Data name="Site Geohash">
+						<value>dakak0e9pl</value>
+					</Data>
+					<Data name="Altitude">
+						<value>0</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Polarity">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Nodes">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Sectors">
+						<value>N/A</value>
+					</Data>
+					<Data name="Active Links">
+						<value>N/A</value>
+					</Data>
+					<Data name="Location Type">
+						<value>UNKNOWN</value>
+					</Data>
+					<Data name="Device SKU">
+						<value>SAMPLE_DN_DEVICE</value>
+					</Data>
+					<Data name="Number of Subscriber">
+						<value>0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>-1.490490899931553,0.004419483493894981,0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+		<Folder id="LinkType.WIRELESS_BACKHAUL_links">
+			<name>LinkType.WIRELESS_BACKHAUL Links</name>
+			<Placemark>
+				<name>dakak05aha-POP_dakak069ul-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>POP6</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN3</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>268.6</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>315.2</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>135.2</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>0.2</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>45.2</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.488743884387208,0,0 -1.490446093756991,0.001713677379113303,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak05aha-POP_dakak069ul-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN3</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>POP6</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>268.6</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>135.2</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>315.2</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>45.2</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>0.2</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.490446093756991,0.001713677379113303,0 -1.488743884387208,0,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak05aha-POP_dakak0ifs1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>POP6</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN2</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>269.3</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>35.0</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>215.0</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>10.0</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>55.0</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.488743884387208,0,0 -1.487355241250446,0.001984266478442058,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak05aha-POP_dakak0ifs1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN2</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>POP6</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>269.3</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>215.0</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>35.0</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>55.0</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>10.0</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.487355241250446,0.001984266478442058,0 -1.488743884387208,0,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak069ul-DN_dakak0e9pl-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN3</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN4</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>300.9</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>359.1</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>179.1</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>0.1</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>0.1</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.490446093756991,0.001713677379113303,0 -1.490490899931553,0.004419483493894981,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak069ul-DN_dakak0e9pl-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN4</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN3</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>300.9</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>179.1</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>359.1</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>0.1</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>0.1</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.490490899931553,0.004419483493894981,0 -1.490446093756991,0.001713677379113303,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak069ul-DN_dakak0ifs1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN2</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN3</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>345.0</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>265.0</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>85.0</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>5.0</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>5.0</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.487355241250446,0.001984266478442058,0 -1.490446093756991,0.001713677379113303,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak069ul-DN_dakak0ifs1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN3</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN2</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>345.0</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>85.0</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>265.0</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>5.0</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>5.0</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.490446093756991,0.001713677379113303,0 -1.487355241250446,0.001984266478442058,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0e9pl-DN_dakak0qev1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN1</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN4</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>354.2</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>266.8</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>86.8</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>29.2</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>3.2</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.487310457895766,0.004599890756795223,0 -1.490490899931553,0.004419483493894981,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0e9pl-DN_dakak0qev1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN4</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN1</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>354.2</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>86.8</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>266.8</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>3.2</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>29.2</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.490490899931553,0.004419483493894981,0 -1.487310457895766,0.004599890756795223,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0e9pl-DN_dakak1gh3b-POP</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>POP5</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN4</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>307.5</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>224.1</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>44.1</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>44.1</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>45.9</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.488564732337151,0.00640375840708523,0 -1.490490899931553,0.004419483493894981,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0e9pl-DN_dakak1gh3b-POP</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN4</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>POP5</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>307.5</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>44.1</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>224.1</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>45.9</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>44.1</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.490490899931553,0.004419483493894981,0 -1.488564732337151,0.00640375840708523,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0ifs1-DN_dakak0qev1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN1</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN2</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>290.9</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>181.0</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>1.0</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.487310457895766,0.004599890756795223,0 -1.487355241250446,0.001984266478442058,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0ifs1-DN_dakak0qev1-DN</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN2</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN1</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>290.9</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>1.0</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>181.0</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.487355241250446,0.001984266478442058,0 -1.487310457895766,0.004599890756795223,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0qev1-DN_dakak1gh3b-POP</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>POP5</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>DN1</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>244.3</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>145.2</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>325.2</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>34.8</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>29.2</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.488564732337151,0.00640375840708523,0 -1.487310457895766,0.004599890756795223,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+			<Placemark>
+				<name>dakak0qev1-DN_dakak1gh3b-POP</name>
+				<styleUrl>#backhaul_link_CANDIDATE</styleUrl>
+				<ExtendedData>
+					<Data name="Link Type">
+						<value>WIRELESS_BACKHAUL</value>
+					</Data>
+					<Data name="Tx Site Name">
+						<value>DN1</value>
+					</Data>
+					<Data name="Rx Site Name">
+						<value>POP5</value>
+					</Data>
+					<Data name="Status">
+						<value>CANDIDATE</value>
+					</Data>
+					<Data name="Distance">
+						<value>244.3</value>
+					</Data>
+					<Data name="Data flow (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Throughput (Gbps)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Utilization">
+						<value>0</value>
+					</Data>
+					<Data name="Tx Beam Azimuth">
+						<value>325.2</value>
+					</Data>
+					<Data name="Rx Beam Azimuth">
+						<value>145.2</value>
+					</Data>
+					<Data name="Deviation from Tx Boresight">
+						<value>29.2</value>
+					</Data>
+					<Data name="Deviation from Rx Boresight">
+						<value>34.8</value>
+					</Data>
+					<Data name="Deviation from El Boresight">
+						<value>0.0</value>
+					</Data>
+					<Data name="Tx Power (dBm)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated MCS">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SNR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated SINR (dB)">
+						<value>N/A</value>
+					</Data>
+					<Data name="Estimated RSL">
+						<value>N/A</value>
+					</Data>
+					<Data name="Confidence Level">
+						<value>N/A</value>
+					</Data>
+					<Data name="Channel">
+						<value>UNASSIGNED</value>
+					</Data>
+				</ExtendedData>
+				<LineString>
+					<altitudeMode>absolute</altitudeMode>
+					<coordinates>
+						-1.487310457895766,0.004599890756795223,0 -1.488564732337151,0.00640375840708523,0
+					</coordinates>
+				</LineString>
+			</Placemark>
+		</Folder>
+	</Folder>
+	<Folder id="demand">
+		<name>Demand</name>
+		<Folder id="sites_demand">
+			<name>Demand Sites</name>
+			<Placemark>
+				<name>dakak0qev1</name>
+				<styleUrl>#demand_site_0</styleUrl>
+				<ExtendedData>
+					<SchemaData schemaUrl="#site_metadata">
+						<SimpleData name="site_demand">0.01</SimpleData>
+						<SimpleData name="site_type">DEMAND</SimpleData>
+						<SimpleData name="status">PROPOSED</SimpleData>
+					</SchemaData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.487310457895766,0.004599890756795223,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>dakak0e9tl</name>
+				<styleUrl>#demand_site_0</styleUrl>
+				<ExtendedData>
+					<SchemaData schemaUrl="#site_metadata">
+						<SimpleData name="site_demand">0.01</SimpleData>
+						<SimpleData name="site_type">DEMAND</SimpleData>
+						<SimpleData name="status">PROPOSED</SimpleData>
+					</SchemaData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.490401310174892,0.004419484040281322,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>dakak0c9ud</name>
+				<styleUrl>#demand_site_0</styleUrl>
+				<ExtendedData>
+					<SchemaData schemaUrl="#site_metadata">
+						<SimpleData name="site_demand">0.01</SimpleData>
+						<SimpleData name="site_type">DEMAND</SimpleData>
+						<SimpleData name="status">PROPOSED</SimpleData>
+					</SchemaData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.490423700720261,0.003066580667904843,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>dakak069ul</name>
+				<styleUrl>#demand_site_0</styleUrl>
+				<ExtendedData>
+					<SchemaData schemaUrl="#site_metadata">
+						<SimpleData name="site_demand">0.01</SimpleData>
+						<SimpleData name="site_type">DEMAND</SimpleData>
+						<SimpleData name="status">PROPOSED</SimpleData>
+					</SchemaData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.490446093756991,0.001713677379113303,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>dakak0ifs1</name>
+				<styleUrl>#demand_site_0</styleUrl>
+				<ExtendedData>
+					<SchemaData schemaUrl="#site_metadata">
+						<SimpleData name="site_demand">0.01</SimpleData>
+						<SimpleData name="site_type">DEMAND</SimpleData>
+						<SimpleData name="status">PROPOSED</SimpleData>
+					</SchemaData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.487355241250446,0.001984266478442058,0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>dakak0dec8</name>
+				<styleUrl>#demand_site_0</styleUrl>
+				<ExtendedData>
+					<SchemaData schemaUrl="#site_metadata">
+						<SimpleData name="site_demand">0.01</SimpleData>
+						<SimpleData name="site_type">DEMAND</SimpleData>
+						<SimpleData name="status">PROPOSED</SimpleData>
+					</SchemaData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.488878276203944,0.003179329383379015,0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+		<Folder id="conns_demand">
+			<name>Demand Connections</name>
+		</Folder>
+	</Folder>
+	<Folder id="editpolygons">
+		<name>EditPolygons</name>
+		<Folder id="editpolygons_OSMSitesAndPaths">
+			<name>OSMSitesAndPaths</name>
+		</Folder>
+		<Folder id="editpolygons_OSMPathsAmongSites">
+			<name>OSMPathsAmongSites</name>
+		</Folder>
+		<Folder id="editpolygons_RemoveLineOfSight">
+			<name>RemoveLineOfSight</name>
+		</Folder>
+		<Folder id="editpolygons_RemoveSites">
+			<name>RemoveSites</name>
+		</Folder>
+		<Folder id="editpolygons_SubsetSites">
+			<name>SubsetSites</name>
+		</Folder>
+	</Folder>
+</Document>
+</kml>

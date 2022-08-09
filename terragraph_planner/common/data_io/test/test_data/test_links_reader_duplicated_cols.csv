@@ -1,0 +1,6 @@
+tx_site, rx_site, from_site
+POP, DN1, 1
+DN1, DN2, 2
+DN1, CN1, 3
+DN2, CN1, 4
+DN2, CN2, 5

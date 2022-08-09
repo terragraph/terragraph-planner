@@ -1,0 +1,52 @@
+{
+  "exclude": [
+    ".*/build/.*",
+    ".*/docusaurus/.*"
+  ],
+  "search_path": [
+    {
+      "site-package": "libcst"
+    },
+    {
+      "site-package": "networkx"
+    },
+    {
+      "site-package": "numpy"
+    },
+    {
+      "site-package": "osgeo"
+    },
+    {
+      "site-package": "psutil"
+    },
+    {
+      "site-package": "pandas"
+    },
+    {
+      "site-package": "pyre_extensions"
+    },
+    {
+      "site-package": "pyproj"
+    },
+    {
+      "site-package": "pyre_extensions"
+    },
+    {
+      "site-package": "Pillow"
+    },
+    {
+      "site-package": "scipy"
+    },
+    {
+      "site-package": "shapely"
+    },
+    {
+      "site-package": "xpress"
+    }
+  ],
+  "source_directories": [
+    "."
+  ],
+  "strict": true,
+  "version": "0.0.101645531904"
+}

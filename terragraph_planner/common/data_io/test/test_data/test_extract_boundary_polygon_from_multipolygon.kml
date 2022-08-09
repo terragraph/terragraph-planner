@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="School_Neighborhood_03" id="School_Neighborhood_03">
+	<SimpleField name="id" type="float"></SimpleField>
+</Schema>
+<Folder><name>School_Neighborhood_03</name>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>-1,2 -3,4 -5,6 -7,8 -1,2</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+</Folder>
+</Document></kml>

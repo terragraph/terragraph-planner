@@ -1,0 +1,28 @@
+name: Unittest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches:
+     - '*'
+
+jobs:
+  Unittest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Packages
+        run: |
+          sudo apt update
+          sudo apt install -y gdal-bin
+          sudo apt install -y libgdal-dev
+          export CPLUS_INCLUDE_PATH=/usr/include/gdal
+          export C_INCLUDE_PATH=/usr/include/gdal
+          pip install .
+
+      - name: Run All Unittest
+        run: python -m unittest discover terragraph_planner -b

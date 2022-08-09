@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>single_layer.kml</name>
+	<Style id="buildings-style-id">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="buildings-style-id0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id15</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id6</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="buildings-style-id1">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="buildings-style-id2">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id17</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id13</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="buildings-style-id3">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id7</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id8</styleUrl>
+		</Pair>
+	</StyleMap>
+	<StyleMap id="buildings-style-id4">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id16</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id19</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="buildings-style-id5">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id6">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id7">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id8">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="buildings-style-id9">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id10</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="buildings-style-id10">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="buildings-style-id11">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id12</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id1</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="buildings-style-id12">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id13">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id14">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id15">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id16">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Style id="buildings-style-id17">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="buildings-style-id18">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#buildings-style-id14</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#buildings-style-id5</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="buildings-style-id19">
+		<LineStyle>
+			<color>ff000bff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>ff1700ff</color>
+		</PolyStyle>
+	</Style>
+	<Folder>
+		<name>Temporary Places</name>
+		<open>1</open>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id11</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.6460643416037,37.34328097326483,0 -122.6455556549147,37.3392159111465,0 -122.6442594245885,37.33693469003477,0 -122.6431133981515,37.33580611185685,0 -122.6404041402779,37.33412955042862,0 -122.639339467242,37.33357462373944,0 -122.6357781233131,37.33303100295325,0 -122.6327264716869,37.33248706584681,0 -122.6301342724202,37.33139044916049,0 -122.6286409973748,37.33139625951026,0 -122.626321623633,37.33362515415953,0 -122.624014329842,37.33644583486675,0 -122.6221438040562,37.3387325467175,0 -122.6207262459294,37.34046549356334,0 -122.6187839842098,37.3422160350946,0 -122.6189137992569,37.34456397221827,0 -122.6209739502264,37.34455590788637,0 -122.6225190665519,37.34454986823292,0 -122.6251363191544,37.34513120027845,0 -122.6272903552148,37.3463112765759,0 -122.6293599139529,37.34630323038456,0 -122.6319468784912,37.3462931918357,0 -122.6331448689159,37.34808482148273,0 -122.6341843968865,37.34808079894981,0 -122.6367832338384,37.34807075817017,0 -122.6390533052392,37.34987476518498,0 -122.6408868689786,37.35231076184928,0 -122.6420756758804,37.35353903620094,0 -122.6460643416037,37.34328097326483,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id0</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.6342144323458,37.35984943157808,0 -122.6326086191152,37.35985563413916,0 -122.6299322817994,37.35986599462144,0 -122.6256501814491,37.35988263091042,0 -122.6202255831257,37.35863208207778,0 -122.6143295532061,37.35802234809572,0 -122.6089838404329,37.35741253672663,0 -122.6057791130021,37.3567962848734,0 -122.6015172469098,37.35556117570214,0 -122.599941237792,37.35744848845716,0 -122.599953673891,37.35934713818518,0 -122.5999704392772,37.36190659384032,0 -122.5994599392315,37.3671257457902,0 -122.6005754912718,37.3704501861604,0 -122.6027717451952,37.37044139544851,0 -122.6033208069904,37.37043920126616,0 -122.6055170483181,37.37043043851546,0 -122.6088113960149,37.3704173363123,0 -122.6132038428951,37.37039994492356,0 -122.6170472291472,37.37038480074182,0 -122.6203415647776,37.3703718744219,0 -122.6247783242218,37.37102675918384,0 -122.6260173221218,37.37305164413676,0 -122.6342144323458,37.35984943157808,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id9</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.6075212154805,37.34226034477511,0 -122.6038104795315,37.3348332358932,0 -122.6012704741412,37.33205621351176,0 -122.5992707646911,37.33096064826795,0 -122.5977824928577,37.33317996933403,0 -122.5957760029626,37.33486508232225,0 -122.5942605780458,37.33599744788135,0 -122.5932473046711,37.33656714666434,0 -122.5917093334949,37.33828034190853,0 -122.5901469125692,37.34058644124759,0 -122.5880390192434,37.34350860779267,0 -122.5853271982833,37.3482737145682,0 -122.5847500224911,37.35008886027155,0 -122.6075212154805,37.34226034477511,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id2</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.6142062068788,37.33145269073758,0 -122.6137735391507,37.3217768599409,0 -122.6135883103171,37.31763332408019,0 -122.6125434966333,37.31559996399533,0 -122.61063597326,37.31560744603452,0 -122.6072978005854,37.31562055155779,0 -122.6054015921289,37.31613523585496,0 -122.6030298763583,37.31716329440456,0 -122.6011250444702,37.31819524924212,0 -122.5992040677577,37.31820282026002,0 -122.5972830447816,37.31924062829621,0 -122.5958320339174,37.32080263506018,0 -122.6142062068788,37.33145269073758,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id4</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.6256584495282,37.31253473407406,0 -122.6256977972425,37.31303342369941,0 -122.6263730809152,37.31554586730543,0 -122.6265776415387,37.31809546217023,0 -122.6281486090002,37.31963683556908,0 -122.6306542935836,37.32066603615385,0 -122.6330725492822,37.32065662508309,0 -122.6350071677353,37.3206491031982,0 -122.6379091216136,37.32063783197888,0 -122.6428102972533,37.32114052226236,0 -122.6256584495282,37.31253473407406,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id3</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.587866243947,37.32990885268989,0 -122.5864110306586,37.3288238903319,0 -122.5835058562149,37.3272110968523,0 -122.580111046964,37.32614948746611,0 -122.576735633783,37.32509395929203,0 -122.5747786324039,37.32510178118025,0 -122.5718430787866,37.32511352800498,0 -122.5693164996268,37.3261926859735,0 -122.5691952730323,37.3278082808426,0 -122.568990860789,37.33053221740974,0 -122.5698237553612,37.33273598771274,0 -122.5706664391354,37.33496565275246,0 -122.571480850832,37.33779087591618,0 -122.5728900878533,37.33950247144475,0 -122.5737662496036,37.34181262605581,0 -122.574138629027,37.34415267890746,0 -122.5746187579514,37.34474053511573,0 -122.587866243947,37.32990885268989,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+		<Placemark>
+			<name>building</name>
+			<styleUrl>#buildings-style-id18</styleUrl>
+			<Polygon>
+				<tessellate>1</tessellate>
+				<outerBoundaryIs>
+					<LinearRing>
+						<coordinates>
+							-122.5869815703164,37.36520410743833,0 -122.5853552534484,37.36521071503455,0 -122.5826446940635,37.36522175317307,0 -122.5788498392566,37.36523726009792,0 -122.5761391726326,37.3652483747311,0 -122.5739706029621,37.36525728940511,0 -122.570175522378,37.36527293923667,0 -122.5674646807697,37.36528415600942,0 -122.5657377083212,37.36660396496178,0 -122.5644927655433,37.36859388740253,0 -122.5625746139462,37.37195256743748,0 -122.5617360439497,37.37536132205729,0 -122.5626775790039,37.37742725059586,0 -122.5649103026407,37.37741786912557,0 -122.5699337711166,37.37739685326815,0 -122.5727244979351,37.37738523307221,0 -122.5761080195648,37.37667900786539,0 -122.5783368532337,37.37666979762498,0 -122.5805656545014,37.37666061232909,0 -122.5844659847258,37.37664459805649,0 -122.5866947071263,37.37663548131087,0 -122.5889507176827,37.37524871246789,0 -122.5911920371424,37.37387097940695,0 -122.5911920371424,37.37387097940695,0 -122.5869815703164,37.36520410743833,0
+						</coordinates>
+					</LinearRing>
+				</outerBoundaryIs>
+			</Polygon>
+		</Placemark>
+	</Folder>
+</Document>
+</kml>

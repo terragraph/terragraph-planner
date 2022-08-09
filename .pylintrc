@@ -1,0 +1,13 @@
+[MESSAGES CONTROL]
+# Disable the message, report, category or checker with the given id(s).
+# In order not to break the development, disable all the messages for now.
+disable=all
+# Enable the message, report, category or checker with the given id(s).
+# At this time we only enable W0102: dangerous-default-value
+enable=W0102
+
+[REPORTS]
+# Tells whether to display a full report or only the messages
+reports=no
+# Activate the evaluation score.
+score=no

@@ -1,0 +1,33 @@
+# Internal use for the private repository owned by Meta only.
+# Delete tests except Sample right before release
+name: Integration Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches:
+     - '*'
+
+jobs:
+  Integration_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Packages
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+          sudo apt install -y gdal-bin
+          sudo apt install -y libgdal-dev
+          export CPLUS_INCLUDE_PATH=/usr/include/gdal
+          export C_INCLUDE_PATH=/usr/include/gdal
+          pip3 install .
+
+      - name: Run Sample
+        run: |
+          python3 -c "import terragraph_planner; \
+          terragraph_planner.optimize_and_report_topology_with_config_file('terragraph_planner/data/sample_plan/config.yaml')"

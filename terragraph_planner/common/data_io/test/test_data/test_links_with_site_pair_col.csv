@@ -1,0 +1,7 @@
+sites
+POP --> DN1
+POP --> DN2
+DN1 --> CN1
+DN1 --> CN2
+DN2 --> CN2
+DN2 --> CN3

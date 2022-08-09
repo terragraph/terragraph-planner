@@ -1,0 +1,42 @@
+name: Pyre
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  Linters:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y gdal-bin
+          sudo apt install -y libgdal-dev
+          export CPLUS_INCLUDE_PATH=/usr/include/gdal
+          export C_INCLUDE_PATH=/usr/include/gdal
+          pip install -r requirements.txt
+          pip install -r requirements_dev.txt
+          pip install cython flask flask_cors graphql-core typing_inspect
+          VERSION=$(grep "version" .pyre_configuration | sed -n -e 's/.*\(0\.0\.[0-9]*\).*/\1/p')
+          pip install pyre-check-nightly==$VERSION
+
+      - name: Run Pyre
+        run: pyre
