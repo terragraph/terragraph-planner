@@ -38,6 +38,7 @@ class Elevation(GISData):
         spatial_reference: osr.SpatialReference,
         collection_time: Optional[str],
     ) -> None:
+        print("Try coverage")
         super().__init__(spatial_reference)
         self.data_matrix = data_matrix
         self.utm_bounding_box = utm_bounding_box
