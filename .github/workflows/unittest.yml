@@ -23,6 +23,10 @@ jobs:
           export CPLUS_INCLUDE_PATH=/usr/include/gdal
           export C_INCLUDE_PATH=/usr/include/gdal
           pip install .
+          pip install coverage
 
       - name: Run All Unittest
-        run: python -m unittest discover terragraph_planner -b
+        run: coverage run -m unittest
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v2
