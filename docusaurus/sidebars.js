@@ -34,7 +34,6 @@ const sidebars = {
         'runbook/Input_Files',
         'runbook/Output_Files',
         'runbook/Features',
-        'runbook/Glossary',
       ],
       link: {
         type: 'doc',

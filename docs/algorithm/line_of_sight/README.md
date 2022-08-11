@@ -13,7 +13,7 @@ the confidence level used for LOS links.
    1. [Problem Modeling](Cylindrical_Model.md#problem-modeling)
    2. [Math Equations](Cylindrical_Model.md#math-equations)
    3. [Steps to Decide LOS](Cylindrical_Model.md#steps-to-decide-los)
-4. [Ellipsoidal MoDEL](Ellipsoidal_Model.md)
+4. [Ellipsoidal Model](Ellipsoidal_Model.md)
    1. [Problem Modeling](Ellipsoidal_Model.md#problem-modeling)
    2. [Math Equations](Ellipsoidal_Model.md#math-equations)
    3. [Steps to Decide LOS](Ellipsoidal_Model.md#steps-to-decide-los)
