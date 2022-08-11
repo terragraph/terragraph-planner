@@ -69,6 +69,8 @@ const config = {
         docs: {
           path: '../docs',
           exclude: ['build/**'],
+          editUrl: ({ versionDocsDirPath, docPath }) =>
+            `${TGPLANNER_REPO_URL}/edit/main/docs/${versionDocsDirPath}/${docPath}`,
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           remarkPlugins: [math],
@@ -88,6 +90,11 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+      },
+      algolia: {
+        appId: 'SZDKMHI44K',
+        apiKey: 'f1942a94b52f299c140bc5fcb0a91eee',
+        indexName: 'terragraph-planner',
       },
       docs: {
         sidebar: {
