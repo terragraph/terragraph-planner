@@ -9,14 +9,13 @@ This module interfaces with the antenna subsystem and the Baseband. The key
 functionality of this module is to up/down-convert the signals to/from higher
 frequencies (mixing).
 
-- **Maximum Tx Power**: Maximum Transmission Power in dBm. Different
-  manufacturers have different limits on the maximum allowed transmit power.
-  The transmit power control (TPC) algorithm programmed in the tool will use
-  this as the upper limit while trying to identify the best transmit power for
-  each unit.
-- **Minimum Tx Power**: Minimum Transmission Power in dBm. Similar to the Max
-  Tx power, there is a minimum Tx power for each manufacturer’s equipment and
-  is also used as a lower limit in the TPC algorithm
+- **Maximum Tx Power**: Maximum Transmit Power in dBm. Different manufacturers
+  have different limits on the maximum allowed transmit power. The transmit
+  power control (TPC) algorithm programmed in the tool will use this as the
+  upper limit while trying to identify the best transmit power for each unit.
+- **Minimum Tx Power**: Minimum Transmit Power in dBm. Similar to the Max Tx
+  power, there is a minimum Tx power for each manufacturer’s equipment and is
+  also used as a lower limit in the TPC algorithm
 - **Maximum EIRP**: Maximum Equivalent/Effective Isotropically Radiated Power
   in dBm. This is typically set by the regulatory bodies in the deployment area.
   The TPC takes this into account and caps the max power such that the sum of

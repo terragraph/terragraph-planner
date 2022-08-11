@@ -59,8 +59,8 @@ python3 -m unittest discover terragraph_planner -b
 
 ### Configuration File
 
-To customize and run a plan, you will need an input configuration yaml file.
-Refer to [template.yaml](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/data/template.yaml)
+One way customize and run a plan uses an input configuration yaml file. Refer to
+[template.yaml](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/data/template.yaml)
 for available parameters. In general, any parameter not provided in the input
 configuration file will use the default value instead. With the exception of
 the file paths and list of devices, default values can be found in that

@@ -26,8 +26,8 @@ The set of radio specification parameters are:
 | HORIZONTAL_SCAN_RANGE     | float | Per-sector horizontal beamforming scan range of the antenna in degrees                                    |
 | NUMBER_SECTORS_PER_NODE   | float | Number of sectors in each node                                                                            |
 | ANTENNA_BORESIGHT_GAIN    | float | Antenna gain at boresight (dBi)                                                                           |
-| MAXIMUM_TX_POWER          | float | Maximum transmission power in dBm                                                                         |
-| MINIMUM_TX_POWER          | float | Minimum transmission power in dBm                                                                         |
+| MAXIMUM_TX_POWER          | float | Maximum transmit power in dBm                                                                             |
+| MINIMUM_TX_POWER          | float | Minimum transmit power in dBm                                                                             |
 | TX_DIVERSITY_GAIN         | float | Transmitter diversity gain in dB (e.g., polarization diversity)                                           |
 | RX_DIVERSITY_GAIN         | float | Receiver diversity gain in dB (e.g., polarization diversity)                                              |
 | TX_MISCELLANEOUS_LOSS     | float | Miscellaneous losses on the transmitter in dB (e.g., cable losses)                                        |

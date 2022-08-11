@@ -112,7 +112,7 @@ Contains site level information.
 7. **Polarity**: Polarity of the site, which can be `ODD`, `EVEN` or `UNASSIGNED`.
 8. **Outages Caused**: Number of demand sites that would lose their connection to
    any of the active POPs if the site were to go down.
-9.  **Site Capex**: The cost of the site.
+9.  **Site Capex**: The capex of the site.
 10. **Active Nodes**: Number of active nodes on the site.
 11. **Active Sectors**: Number of active sectors on the site.
 12. **Active Links**: Number of active wireless links connected to the site.
