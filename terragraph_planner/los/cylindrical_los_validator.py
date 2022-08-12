@@ -66,15 +66,13 @@ class CylindricalLOSValidator(BaseLOSValidator):
     def _compute_confidence_by_radius(
         self, site1: LOSSite, site2: LOSSite
     ) -> float:
-        utm_x1, utm_y1 = site1.utm_x, site1.utm_y
-        utm_x2, utm_y2 = site2.utm_x, site2.utm_y
-        altitude1, altitude2 = none_throws(site1.altitude), none_throws(
-            site2.altitude
-        )
-
         # Get the four corners of the 2D projection of the cylinder
         p, q, r, s = self._get_four_corners_of_rectangle(
-            utm_x1, utm_y1, utm_x2, utm_y2, self._fresnel_radius
+            site1.utm_x,
+            site1.utm_y,
+            site2.utm_x,
+            site2.utm_y,
+            self._fresnel_radius,
         )
 
         # Vectors pq, pr used to check if a point is within the 2D projection
@@ -110,7 +108,7 @@ class CylindricalLOSValidator(BaseLOSValidator):
         b_len_2d = math.sqrt(b_len_2d_sq)
         b_len_3d_sq = b_len_2d_sq + bz * bz
 
-        highest_site_altitude = max(altitude1, altitude2)
+        highest_site_altitude = max(az, none_throws(site2.altitude))
         for grid in obstructions:
             if (
                 self._los_confidence_threshold == 1.0
