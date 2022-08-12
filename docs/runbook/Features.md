@@ -42,8 +42,8 @@ The set of radio specification parameters are:
 If you choose to use an optional [Sites File](Input_Files.md#user-input-site-file)
 in your plan, you may populate the Device SKU column in the CSV or field in the
 KML file. If you wish to identify the device type for a particular site, the
-SKU will need to correspond to one of the `DEVICE_SKU` entries you provide in
-the `DEVICE_LIST` section. If it does not, an error will be returned.
+SKU must correspond to one of the `DEVICE_SKU` entries you provide in the
+`DEVICE_LIST` section. If it does not, an error will be returned.
 
 **Note:** All SKUs are case-insensitive.
 
@@ -98,21 +98,6 @@ on the rooftop is selected, which can be difficult to do manually.
         the DN location. A candidate CN is still placed at that same location
         in case the planner decides that the DN is not needed.
 
-## POP Placement
-
-POP Placement allows you to specify additional POPs you would like to add to a
-candidate topology. The POPs are selected from the candidate DNs.
-
-This can be useful to meet CIR requirements when the number of provided
-POPs is insufficient. It can also help connect disconnected portions of the
-network. It is particularlly useful in early-stage planning where not all
-possible POP locations are already known.
-
-**How to use it**
-
-1. Specify the number of additional POPs you would like in `NUMBER_OF_EXTRA_POPS`
-   under the `NETWORK_DESIGN` section.
-
 ## Demand Models
 
 Demand sites are imaginary sites in the network that are added to represent
@@ -129,9 +114,9 @@ network. They are distinct from CNs because, in part,
 - Each DN and CN can connect to a different number of demand sites resulting
   in different overall demand requirements for each one
 
-Each demand site is equipped with an amount of desired demand, i.e., the amount
-of desired throughput. The flexibility afforded by using demand sites enables several different
-approaches to demand modeling.
+Each demand site is associated with an amount of desired demand, i.e.,
+throughput. The flexibility afforded by using demand sites enables several
+different approaches to demand modeling.
 
 There are three demand models that can be enabled:
 
@@ -169,12 +154,13 @@ subsection of `NETWORK_DESIGN`.
    `ENABLE_CN_DEMAND` to True. To enable the Uniform Demand model, set
    `ENABLE_UNIFORM_DEMAND` to True. To enable the Manual Demand model, set
    `ENABLE_MANUAL_DEMAND` to True. At least one must be set to True but
-   multiple can be enabled simultaneously.
+   multiple can be enabled simultaneously, in which case demand sites will be
+   added according to each enabled model.
 2. If `ENABLE_UNIFORM_DEMAND` is True, specify the grid spacing under
    `DEMAND_SPACING`.
 3. If `ENABLE_MANUAL_DEMAND` is True, specify the demand sites in the
    [Candidate Topology File](Input_Files.md#candidate-topology-file).
-4. If `ENABLE_UNIFORM_DEMAND` or `ENABLE_MANUAL_DEMAND` are True, specify the
+4. If `ENABLE_UNIFORM_DEMAND` or `ENABLE_MANUAL_DEMAND` is True, specify the
    connection distance between the DNs/CNs and the demand sites under
    `DEMAND_CONNECTION_RADIUS`.
 5. Specify the amount of demand under `DEMAND`.
@@ -192,7 +178,7 @@ CNs when the CN Demand model is enabled. Example use-cases are:
     is then further subdivided among the various customers so each one receives
     exactly the desired amount of service.
 2.  Networks shared by businesses and residential homes where businesses require
-    a higher amount of bandwidth.
+    more bandwidth.
 
 The feature works by creating multiple demand sites at specified CN locations.
 For the example in #1 above, this means placing 5 demand sites on the CN on the
@@ -200,8 +186,8 @@ building with 5 units and 3 demand sites on the building with 3 units.
 
 **How to use it**
 
-1. Set `ENABLE_CN_DEMAND` to True
-2. Modify the [User Input Site File](Input_Files.md#user-input-site-file)
+1. Set `ENABLE_CN_DEMAND` to True.
+2. Modify the [User Input Site File](Input_Files.md#user-input-site-file).
    1. For KML/KMZ input, for each relevant site, add a `number of subscribers`
       data field and set to the desired value.
    2. For CSV input, add a `number of subscribers` column and set it to the
@@ -209,6 +195,21 @@ building with 5 units and 3 demand sites on the building with 3 units.
 
 The `number of subscribers` field is only applied to CNs and ignored for DNs
 and POPs. If left blank for a CN, it is assumed to be 1.
+
+## POP Placement
+
+POP Placement allows you to specify additional POPs you would like to add to a
+candidate topology. The POPs are selected from the candidate DNs.
+
+This can be useful to meet demand requirements when the number of provided POPs
+is insufficient. It can also help connect disconnected portions of the network.
+It is particularlly useful in early-stage planning where not all possible POP
+locations are already known.
+
+**How to use it**
+
+Specify the number of additional POPs you would like in `NUMBER_OF_EXTRA_POPS`
+under the `NETWORK_DESIGN` section.
 
 ## Maximize Common Bandwidth
 
@@ -219,7 +220,7 @@ but there are no guarantees of how that shortage is distributed among clients.
 
 If the input demand is too high for the underlyling network, some clients can
 be disconnected in order to improve the bandwidth to other clients. Consider
-the following example. Say you have a single POP connected to 10 CNs.
+the following example. Suppose you have a single POP connected to 10 CNs.
 For simplicity, assume that this POP has one sector and each of the links from
 the POP to the CNs has a capacity of 1.8 Gbps. If you request that each CN
 receives 200 Mbps of service, it will not be possible to satisfy that amount of
@@ -242,24 +243,22 @@ POPs to the network or reducing the requested demand is a better alternative.
 
 **How to use it**
 
-1. To use the Maximize Common Bandwidth feature, set `MAXIMIZE_COMMON_BANDWIDTH` under
+To use the Maximize Common Bandwidth feature, set `MAXIMIZE_COMMON_BANDWIDTH` under
 the `NETWORK_DESIGN` section to True.
 
 ## Extend Existing Candidate Graph
 
-Extending an existing candidate graph makes it possible to plan a network that
-integrates into one that has already been deployed. The deployed network is
-referred to as the base network. This feature allows you to add additional
-sites to the base network. In this csae, LOS will be computed between the
-sites in the base network and the new sites and between each of the new sites.
-This generates a candidate graph which has the base network as a subgraph. The
-candidate graph is then optimized to generate a network plan.
+This feature enables extending an already deployed "base network" with new
+sites. LOS will be computed between the base network sites and the new sites
+and between each of the new sites. This new candidate graph includes the base
+network as a subgraph. The candidate graph is then optimized to generate a
+network plan.
 
 **How to use it**
 
 1. Get or generate the topology for the existing network. Store it as a
    KML/KMZ or CSV using the same rules as
-   [Candidate Topology File](Input_Files.md#candidate-topology-file)
-2. Specify the file path in `BASE_TOPOLOGY_FILE_PATH` under the `DATA` section
+   [Candidate Topology File](Input_Files.md#candidate-topology-file).
+2. Specify the file path in `BASE_TOPOLOGY_FILE_PATH` under the `DATA` section.
 3. Generate a [User Input Site File](Input_Files.md#user-input-site-file) to
-   specify the new sites
+   specify the new sites.
