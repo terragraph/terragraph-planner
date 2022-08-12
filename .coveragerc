@@ -1,0 +1,6 @@
+[run]
+omit =
+    # ignore all test cases in tests/
+    *test/*
+    /usr/*
+    */__init__.py
