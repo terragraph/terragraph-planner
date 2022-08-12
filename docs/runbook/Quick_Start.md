@@ -16,7 +16,7 @@ git clone https://github.com/terragraph/terragraph-planner.git
 ## Install
 
 1. Update the source, install pip3 and gdal lib. Use apt if you are using
-Ubuntu. Use other package tool instead if you're using other OS.
+Ubuntu. Use another package tool instead if you are using different OS.
    ```sh
    apt update && \
    apt install -y software-properties-common && \
@@ -34,7 +34,7 @@ Ubuntu. Use other package tool instead if you're using other OS.
    ```sh
    pip3 install .
    ```
-5. Install the extra recommended Python packages if you're a developer.
+5. Install the extra recommended Python packages if you are a developer.
    ```sh
    pip3 install -r requirements_dev.txt
    ```
@@ -43,7 +43,8 @@ Ubuntu. Use other package tool instead if you're using other OS.
 
 1. Go through steps in [Install](#install) to install xpress
 2. Set the environment variable `XPAUTH_PATH` to the full path of your commericial
-   license if you have one. Otherwise, the community license is used by default.
+   license if you have one. Otherwise, the community license is used by default
+   (which will only work for very small plans).
 
 Get more details at [FICO Xpress Optimization Help](https://www.fico.com/fico-xpress-optimization/docs/latest/solver/optimizer/python/HTML/chIntro.html?scroll=secInstall).
 
@@ -56,12 +57,22 @@ python3 -m unittest discover terragraph_planner -b
 
 ## Run a Plan
 
+### Configuration File
+
+One way to customize and run a plan is using an input configuration yaml file. Refer to
+[template.yaml](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/data/template.yaml)
+for available parameters. In general, any parameter not provided in the input
+configuration file will use the default value instead. With the exception of
+the file paths and list of devices, default values can be found in that
+yaml file.
+
+
 ### Line-of-Sight Analysis Plan
 
 A Line-of-Sight Analysis Plan only runs LOS checks and produces a candidate
 network without optimization.
 
-To run a LOS Analysis Plan with the config file:
+To run an LOS Analysis Plan with a configuration file:
 
 ```python
 from terragraph_plannner import generate_candidate_topology_with_config_file
@@ -72,20 +83,16 @@ generate_candidate_topology_with_config_file(config_file_path)
 
 ### Optimization Plan and End-to-End Plan
 
-An Optimization Plan runs optimization algorithms on the an input candidate network,
-while an End-to-End Plan has both the LOS part and the optimization part.
+An Optimization Plan optimizes the input candidate network. An End-to-End Plan
+runs both the LOS analysis and the network optimization.
 
-To run a Optimization Plan or End-to-End Plan with the config file:
+To run an Optimization Plan or End-to-End Plan with a configuration file:
 ```python
 from terragraph_plannner import optimize_and_report_topology_with_config_file
 
 optimize_and_report_topology_with_config_file(config_file_path)
 ```
 
-The function will run an Optimization Plan or an End-to-End plan based on the config.
-If the candidate topology file is provided, only the optimization step will be run.
-If the candidate topology file is missing and LOS config is provided, the End-to-End plan
-will run with the LOS step that generates the candidate topology.
-
-To customized your plan, please refer to [template.yaml](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/data/template.yaml)
-to set up your own parameters.
+The configuration file will control which plan type is run. If the candidate
+topology file is provided, only the Optimization Plan will be run. If the
+candidate topology file is not provided, the End-to-End Plan will run.

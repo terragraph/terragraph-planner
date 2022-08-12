@@ -1,145 +1,70 @@
 # Features
 
-The following table indicates how different features impact the result.
-
-| **Feature Name**                                                                | **CN Connectivity** | **Bandwidth Impact** | **Network Operations** |
-| ------------------------------------------------------------------------------- | ------------------- | -------------------- | ---------------------- |
-| [POP Placement](#pop-placement)                                                 |                     | **X**                |                        |
-| [Multi-SKU](#multi-sku)                                                         | **X**               |                      |                        |
-| [Automatic Site Detection](#automatic-site-detection)                           |                     |                      | **X**                  |
-| [Maximum Common Bandwidth (MCB)](#maximum-common-bandwidth-mcb)                 | **X**               | **X**                |                        |
-| [Tiered Service](#tiered-service)                                               |                     |                      | **X**                  |
-| [Extend existing Candidate Graph (EECG)](#extend-existing-candidate-graph-eecg) |                     |                      | **X**                  |
-
-
-The following table introduce each feature briefly.
-
-| **Feature Name**                                                                | **Feature Description**                                                                                                                                                                                                                                                                                                                                                                  | **Use Case Notes**                                                                                                            |
-| ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [POP Placement](#pop-placement)                                                 | The POP placement allows you to specify bandwidth and the number of POPs you would like to add to a plan. The planner will place POPs strategically, including additional DNs, to improve coverage and bandwidth.                                                                                                                                                                        | This feature is useful to meet bandwidth in rural areas and dense urban clusters.                                             |
-| [Multi-SKU](#multi-sku)                                                         | The Multi-SKU feature adds support for Terragraph Network Plans that can mix and match devices from a set in order to minimize cost and maximize coverage.                                                                                                                                                                                                                               | This feature is useful when planning a network with multiple types of hardware.                                               |
-| [Automatic Site Detection](#automatic-site-detection)                           | The planner can automatically determine candidate site locations on building rooftops. This can help accelerate the planning time by helping to skip the process of manual placement of sites.                                                                                                                                                                                           | It can help ensure that the highest point in the rooftop is selected, which can be difficult to do manually.                  |
-| [Maximum Common Bandwidth (MCB)](#maximum-common-bandwidth-mcb)                 | Maximum Common Bandwidth equally distributes bandwidth across all CNs, reducing the number of CNs that experience bandwidth starvation.                                                                                                                                                                                                                                                  | MCB was used in plans with different morphology (dense urban, suburban, and rural).                                           |
-| [Tiered Service](#tiered-service)                                               | With the Tiered Service Feature, you can now provide different levels of bandwidth to a selected number of CNs that cover multi-dwelling units, businesses and residential homes.                                                                                                                                                                                                        | The tiered feature properly addresses residential homes and multi-dwelling buildings requiring different levels of bandwidth. |
-| [Extend existing Candidate Graph (EECG)](#extend-existing-candidate-graph-eecg) | Previously the TG Planner only supported computing line-of-sight from scratch. Now the planner supports extending a base network with extra sites. Now the planner will reserve all the sites and links in the base topology, and then compute the links between new sites and existing sites and generate a candidate graph and a final optimized graph. This reduces the plan runtime. | The EECG feature addresses extending the existing network area adding more sites.                                             |
-
-## POP Placement
-
-POP Placement allows you to specify the number of POPs you would like to add to
-a plan. The planner will place POPs strategically, including positioning
-additional DNs, to improve coverage and bandwidth.
-
-This feature is useful to meet bandwidth and coverage requirements. POP
-Placement is helpful in rural areas which contain site clusters with
-significant distance between them and very few POP locations. It is also
-helpful in dense urban clusters that do not have enough POPs to meet bandwidth
-requirements.
-
-**How to use it?**
-
-To use the POP Placement feature:
-
-1.  Go to the Network Design section of the YAML file.
-
-2.  Populate the Extra POPs parameter with a value greater than zero. **Note:**
-    The Always Active POPs parameter is useful when adding POPs to an existing
-    plan. If you select Always Active POPs, the system assumes POP sites in the
-    human sites file already exist and should be used.
-
-3.  Run your plan.
-
-If you have already run your plan without adding extra POPs, you will probably
-find your new plan impacts the following metrics:
-
--   Number of active/candidate POP sites
-
--   Number of active CN/DN/POPs connected to demand sites
-
--   Number of active DN sectors on POP locations
-
--   Minimum guaranteed bandwidth for the full topology flow results
-
 ## Multi-SKU
 
-The Multi-SKU feature adds support for Terragraph Network Plans that can mix
-and match devices from a set in order to minimize cost and maximize coverage.
+The planner requires users to specify devices to be used in the network plan.
+If multiple DN or CN types are included in the list of devices, the planner
+can decide which type should be used to minimize cost and maximize coverage.
 
 **How to add a device**
 
-To add a new device, create a new section within the `DEVICE_LIST` section and
+To add a new device, create a new entry in the `DEVICE_LIST` section and
 populate the following fields.
 
 | Field name               | Type                                            | Meaning                                                                                                   |
 | ------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | DEVICE_SKU               | str                                             | The device SKU or Name that used to identify the hardware                                                 |
 | DEVICE_TYPE              | str                                             | The type of the device, which should be either DN or CN                                                   |
-| NODE_CAPEX               | float                                           | Hardware cost of DN or CN.                                                                                |
-| NUMBER_OF_NODES_PER_SITE | int                                             | Maximum number of radio nodes allowed on each site. For CNs, this input will be ignored as it is always 1 |
+| NODE_CAPEX               | float                                           | Hardware cost of DN or CN                                                                                 |
+| NUMBER_OF_NODES_PER_SITE | int                                             | Maximum number of radio nodes allowed on each site; for CNs, this input must be 1 |
 | SECTOR_PARAMS            | a struct with the fields in the following table | The set of radio specification parameters                                                                 |
+
+The set of radio specification parameters are:
 
 | Sector Params Fields      |       |                                                                                                           |
 | ------------------------- | ----- | --------------------------------------------------------------------------------------------------------- |
 | HORIZONTAL_SCAN_RANGE     | float | Per-sector horizontal beamforming scan range of the antenna in degrees                                    |
 | NUMBER_SECTORS_PER_NODE   | float | Number of sectors in each node                                                                            |
 | ANTENNA_BORESIGHT_GAIN    | float | Antenna gain at boresight (dBi)                                                                           |
-| MAXIMUM_TX_POWER          | float | Maximum Transmission power in dBm                                                                         |
-| MINIMUM_TX_POWER          | float | Minimum Transmission power in dBm                                                                         |
+| MAXIMUM_TX_POWER          | float | Maximum transmit power in dBm                                                                             |
+| MINIMUM_TX_POWER          | float | Minimum transmit power in dBm                                                                             |
 | TX_DIVERSITY_GAIN         | float | Transmitter diversity gain in dB (e.g., polarization diversity)                                           |
 | RX_DIVERSITY_GAIN         | float | Receiver diversity gain in dB (e.g., polarization diversity)                                              |
 | TX_MISCELLANEOUS_LOSS     | float | Miscellaneous losses on the transmitter in dB (e.g., cable losses)                                        |
 | RX_MISCELLANEOUS_LOSS     | float | Miscellaneous losses on the receiver in dB (e.g., cable losses)                                           |
-| MINIMUM_MCS_LEVEL         | float | The minimum MCS level allowed                                                                             |
+| MINIMUM_MCS_LEVEL         | int   | The minimum MCS level allowed                                                                             |
 | ANTENNA_PATTERN_FILE_PATH | str   | Antenna pattern file defining the signal loss of the antenna in different angles in Planet's format (txt) |
 | SCAN_PATTERN_FILE_PATH    | str   | Scan pattern file defining the signal gain of the antenna boresight in different scan angles (csv)        |
 | MCS_MAP_FILE_PATH         | str   | Scan pattern file contains the mapping between MCS, SNR, Mbps and Tx backoff (csv)                        |
 
-**How to delete a device**
+**Multi-SKU Site Files**
 
-You can delete a device from your plan's device list. To do this:
-
-1.  In the `DEVICE_LIST` of the `RADIO` section, select the parameters of the device you
-    would like to remove.
-2.  Delete them from the YAML file and re-save the YAML file.
-
-The device will no longer be included in your device list for your plan.
-
-**Multi-SKU in Site Files**
-
-If you choose to use an optional Sites File in your plan, you may populate
-the Device SKU column in the CSV or field in the KML file. If you wish to
-identify the device type for a particular site, the SKU will need to
-correspond to the SKU/Name you provide in the devices configuration step.
-
-**What happens if I include a non-existent SKU in my sites file?**
-
-Upon running the plan, the Network Planner will need to match the SKU in
-the Sites File with a defined SKU in your plan. If it cannot, it will return
-an error. The error will not be identified until run-time.
+If you choose to use an optional [Sites File](Input_Files.md#user-input-site-file)
+in your plan, you may populate the Device SKU column in the CSV or field in the
+KML file. If you wish to identify the device type for a particular site, the
+SKU must correspond to one of the `DEVICE_SKU` entries you provide in the
+`DEVICE_LIST` section. If it does not, an error will be returned.
 
 **Note:** All SKUs are case-insensitive.
 
-**What if I don't provide the SKU in the sites file?**
+**Specifying Multiple SKUs for a Single Site**
 
-This will allow the system to choose a SKU for you during the plan's run.
-The Planner will take all the devices that match the appropriate site type,
-place all SKUs at each site, and select among them.
+Leave the field blank. This will allow the system to choose a SKU for you
+during the plan's run. The Planner will take all the devices that match the
+appropriate site type, place all SKUs at each site, and select among them. This
+is equivalent to specifying multiple sites at the same location and explicitly
+setting each one to each of the devices.
 
-**How does multi-SKU work?**
+**How does Multi-SKU work?**
 
-The Terragraph Planner places each available device at a site and selects the
-most appropriate device to minimize cost and maximize coverage.
+The planner places each available device at a site and selects the best device
+to minimize cost and maximize coverage.
 
-You do not need to touch your sites file to switch between a single-SKU run
-and a multi-SKU run. Leave the Device SKU column/field in the sites file blank
-unless you have reason to predetermine a particular device type at a particular
-site. The Terragraph Planner will select the best device type to optimize
-coverage and budget.
-
-**What if I don't want a multi-SKU plan?**
-
-You are not required to use the multi-SKU capabilities of the Terragraph Planner.
-You are able to run a single-SKU plan by using the new Device field to define or
-configure one DN and one CN device.
+In general, you should not need to touch your sites file to switch between a
+single-SKU run and a multi-SKU run. Instead, you can leave the Device SKU
+column/field in the sites file blank and modify the device list. Of course, if
+you have reason to predetermine a particular device type at a particular
+site, specify the Device SKU explicitly.
 
 ## Automatic Site Detection
 
@@ -149,7 +74,7 @@ can help accelerate the planning time by helping skip the process of manual
 placement of sites. It can help ensure that, for example, the highest point
 on the rooftop is selected, which can be difficult to do manually.
 
-**How do I use it?**
+**How to use it**
 
 1.  Provide the building outline data in the .shp or .kml format. See more
     details in [Building Outline File](Input_Files.md#building-outline-file).
@@ -173,90 +98,167 @@ on the rooftop is selected, which can be difficult to do manually.
         the DN location. A candidate CN is still placed at that same location
         in case the planner decides that the DN is not needed.
 
-## Maximum Common Bandwidth (MCB)
+## Demand Models
 
-Maximum Common Bandwidth (MCB) equally distributes bandwidth across all connected
-clients. When MCB is disabled, the total shortage in the network is minimized
-but there are no guarantees of how that shortage is distributed among clients.
-In fact, when MCB is disabled, if the input demand is too high for the
-underlying network, some clients can be disconnected in order to improve
-the bandwidth to the connected clients. Instead, MCB ensures that all of
-the clients that can be connected are connected, although sometimes at
-a lower bandwidth. This is roughly equivalent to lowering the demand.
+Demand sites are imaginary sites in the network that are added to represent
+the final destination of downstream flow from the POPs. In graph theory
+terminology, they are the sinks nodes of the directed graph that represents the
+network. They are distinct from CNs because, in part,
 
-The minimum guaranteed bandwidth can be improved by relieving network congestion
-of highly utilized links either by moving POPs or placing extra POPs. See the
-[Pop Placement](#pop-placement) feature for information on how to quickly place
-extra POPs.
+- Not all networks will have a CN
+- Multiple CNs can connect to the same demand site allowing the network to
+  decide which CN is needed
+- A DN and a CN can connect to the same demand site allowing the network to
+  decide which one is needed (e.g., a DN can both serve the customer like a
+  CN while simultaneously pushing data to other customers downstream).
+- Each DN and CN can connect to a different number of demand sites resulting
+  in different overall demand requirements for each one
 
-**How to use it?**
+Each demand site is associated with an amount of desired demand, i.e.,
+throughput. The flexibility afforded by using demand sites enables several
+different approaches to demand modeling.
 
-1.  Go to the Network Design section.
-2.  Set the Maximize minimum guaranteed bandwidth parameter to "True".
-3.  Set the Link Capacity Filter value (Gbps) as required; Default = 0
+There are three demand models that can be enabled:
 
-**Note:** Some links might have 0 capacity. In that case, if such a link is
-necessary to reach the site, it\'s still unreachable. There is also a
-parameter to filter links below some capacity. That could be useful in some
-rare cases where low capacity links are connecting some sites causing the max
-common bandwidth to be low. In that case, it's better to disconnect those sites
-by filtering out the low capacity links (that is, prevent the optimizer from
-selecting them). Regardless, if you choose to filter links below 10Mbps for
-example, then all such links will be marked unreachable.
+1. CN Demand
+2. Uniform Demand
+3. Manual Demand
 
-**Key Metrics**
+**CN Demand**
 
-- Number of active CN/DN/POPs connected to demand sites
-- Number of active/connectable candidate/total candidate CN sites
-- Full topology flow results - Percent of demand sites, minimum guaranteed
-  bandwidth (Gbps)
+In this case, a demand site is added to every CN in the network. This is a
+very common deployment scenario. Consider a rooftop deployment - the demand
+sites in this case are effectively equivalent to subscribers.
+
+**Uniform Demand**
+
+A grid of demand sites is added within the area of interest. The spacing of the
+grid is configurable and for each demand site, the DNs and CNs within a
+specified distance of it are connected to it.
+
+This can be useful when wanting to ensure coverage throughout a geographic
+area to blanket it with service (e.g., for municipal Wi-Fi).
+
+**Manual Demand**
+
+The demand sites are added explicitly by the user. Like the Uniform Demand
+model, for each demand site, the DNs and CNs within a specified distance of it
+are connected to it.
+
+**How to use it**
+
+Parameters to control the demand site model are found under the `DIMENSIONING`
+subsection of `NETWORK_DESIGN`.
+
+1. To enable the CN Demand model, set
+   `ENABLE_CN_DEMAND` to True. To enable the Uniform Demand model, set
+   `ENABLE_UNIFORM_DEMAND` to True. To enable the Manual Demand model, set
+   `ENABLE_MANUAL_DEMAND` to True. At least one must be set to True but
+   multiple can be enabled simultaneously, in which case demand sites will be
+   added according to each enabled model.
+2. If `ENABLE_UNIFORM_DEMAND` is True, specify the grid spacing under
+   `DEMAND_SPACING`.
+3. If `ENABLE_MANUAL_DEMAND` is True, specify the demand sites in the
+   [Candidate Topology File](Input_Files.md#candidate-topology-file).
+4. If `ENABLE_UNIFORM_DEMAND` or `ENABLE_MANUAL_DEMAND` is True, specify the
+   connection distance between the DNs/CNs and the demand sites under
+   `DEMAND_CONNECTION_RADIUS`.
+5. Specify the amount of demand under `DEMAND`.
 
 ## Tiered Service
 
-Previously the TG Planner only provided identical bandwidth to each of the CNs
-it serves. With the Tiered Service feature, you can now provide different levels
-of bandwidth to a selected number of CNs. The Tiered Service feature properly
-addresses two use cases:
+Tiered Service allows you to provide different levels of bandwidth to chosen
+CNs when the CN Demand model is enabled. Example use-cases are:
 
-1.  Multi-dwelling buildings with units requiring different levels of bandwidth.
-2.  Network shared by businesses and residential homes where businesses require
-    a higher amount of bandwidth.
+1.  A region with single-family homes and multi-dwelling buildings with a
+    different number of units in each one. For example, assume you want each
+    customer to receive 100 Mbps of service and there is a building with 5
+    units and another with 3. This feature allows you to serve 500 Mbps of
+    service to the first building and 300 Mbps of service to the second which
+    is then further subdivided among the various customers so each one receives
+    exactly the desired amount of service.
+2.  Networks shared by businesses and residential homes where businesses require
+    more bandwidth.
 
-These use cases can increase with more businesses going to a work from home format.
+The feature works by creating multiple demand sites at specified CN locations.
+For the example in #1 above, this means placing 5 demand sites on the CN on the
+building with 5 units and 3 demand sites on the building with 3 units.
 
-**How to use it?**
+**How to use it**
 
-1.  Create a plan with a new modified Site List CSV, which includes a new
-    "demand_sites" column.
-2.  Optionally, a new modified KML/KMZ site file can be used instead of modified
-    Site List CSV. The KML/KMZ file is supposed to contain a demand_site data
-    field
+1. Set `ENABLE_CN_DEMAND` to True.
+2. Modify the [User Input Site File](Input_Files.md#user-input-site-file).
+   1. For KML/KMZ input, for each relevant site, add a `number of subscribers`
+      data field and set to the desired value.
+   2. For CSV input, add a `number of subscribers` column and set it to the
+      desired value for each relevant site.
 
-**Key Metrics:**
+The `number of subscribers` field is only applied to CNs and ignored for DNs
+and POPs. If left blank for a CN, it is assumed to be 1.
 
-Full topology flow "Percent of demand sites, minimum guaranteed bandwidth" Gbps
-metric should be compared to values in the "Incoming flow" column in the sites
-optimized csv file for matching.
+## POP Placement
 
-## Extend Existing Candidate Graph (EECG)
+POP Placement allows you to specify additional POPs you would like to add to a
+candidate topology. The POPs are selected from the candidate DNs.
 
-The EECG feature addresses the use case of extending existing network area by
-adding more sites. Previously the TG Planner only supported computing Line-of-Sight
-from scratch before. Now the Planner supports to extend a base network with
-extra sites. Now the planner will reserve all the sites and links in the base
-topology, and then compute the links between new sites and existing sites and
-generate a candidate graph and a final optimized graph. This reduces the plan
-runtime.
+This can be useful to meet demand requirements when the number of provided POPs
+is insufficient. It can also help connect disconnected portions of the network.
+It is particularlly useful in early-stage planning where not all possible POP
+locations are already known.
 
-**How to use it?**
+**How to use it**
 
-1.  Get all the files from an existing plan.
-2.  Keep the configs from the existing plan, but update the following fields
-    1.  `BASE_TOPOLOGY_FILE_PATH`: a file path of the output file from the existing
-        plan
-    2.  `SITE_FILE_PATH`: a path of the file with the added sites
-3.  Rerun the plan
+Specify the number of additional POPs you would like in `NUMBER_OF_EXTRA_POPS`
+under the `NETWORK_DESIGN` section.
 
-**Key Metrics**:
+## Maximize Common Bandwidth
 
-Number of active/connectable candidate/total candidate CN sites.
+Maximize Common Bandwidth (MCB) equally distributes bandwidth across all
+connected demand sites during the network optimization steps. When MCB is
+disabled, the total shortage (unsatisfied demand) in the network is minimized
+but there are no guarantees of how that shortage is distributed among clients.
+
+If the input demand is too high for the underlyling network, some clients can
+be disconnected in order to improve the bandwidth to other clients. Consider
+the following example. Suppose you have a single POP connected to 10 CNs.
+For simplicity, assume that this POP has one sector and each of the links from
+the POP to the CNs has a capacity of 1.8 Gbps. If you request that each CN
+receives 200 Mbps of service, it will not be possible to satisfy that amount of
+demand, so there will be (200 * 10 - 1800) = 200 Mbps shortage in the network.
+With MCB disabled, that shortage can be split among all the CNs in different
+ways (unfortunately, how it is distributed is unpredictable). It is possible
+that the planner could provide 200 Mbps of service to 9 of the 10 CNs and leave
+1 of the CNs disconnected. This is a common cause of disconnected sites when
+planning networks.
+
+One way to address this is to simply reduce the demand to 180 Mbps instead of
+200 Mbps. However, it can often be difficult to determine what this value
+should be in more complex networks. With MCB enabled, each of the 10 CNs will
+get 180 Mbps of service because the shortage will be distributed among the CNs
+evenly.
+
+Unfortunately, this feature requires solving a few extra optimization problems
+which might make the overall runtime worse. In many cases, simply adding more
+POPs to the network or reducing the requested demand is a better alternative.
+
+**How to use it**
+
+To use the Maximize Common Bandwidth feature, set `MAXIMIZE_COMMON_BANDWIDTH` under
+the `NETWORK_DESIGN` section to True.
+
+## Extend Existing Candidate Graph
+
+This feature enables extending an already deployed "base network" with new
+sites. LOS will be computed between the base network sites and the new sites
+and between each of the new sites. This new candidate graph includes the base
+network as a subgraph. The candidate graph is then optimized to generate a
+network plan.
+
+**How to use it**
+
+1. Get or generate the topology for the existing network. Store it as a
+   KML/KMZ or CSV using the same rules as
+   [Candidate Topology File](Input_Files.md#candidate-topology-file).
+2. Specify the file path in `BASE_TOPOLOGY_FILE_PATH` under the `DATA` section.
+3. Generate a [User Input Site File](Input_Files.md#user-input-site-file) to
+   specify the new sites.

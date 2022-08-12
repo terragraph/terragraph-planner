@@ -1,66 +1,71 @@
 # Input Files
+
 This page introduces the input files used in a Terragraph network plan, including
 required files and optional files.
 
 The table below describes all the input files, with its supported file formats and
-parameter name in the YAML file and class attribute. The detailed requirement of the
-format or structure will be introduced in each corresponding section.
+parameter name in the YAML file. Further details are provided in each
+corresponding section.
 
-| **File Type**                                       | **Required or Optional**                                                                                       | **Functionality**                             | **Supported Formats**      | **Parameter Field(s)**                      |
-| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | -------------------------- | ------------------------------------------- |
-| [Boundary Polygon File](#boundary-polygon-file)     | Required                                                                                                       | Provides a boundary of the AOI                | KML/KMZ                    | BOUNDARY_POLYGON_FILE_PATH                  |
-| [GeoTIFF Files](#geotiff-files)                     | Optional, but recommend for better accuracy                                                                    | Provides the elevation of the surface         | TIF                        | DSM_FILE_PATHS, DTM_FILE_PATH, DHM_FLE_PATH |
-| [User Input Site File](#user-input-site-file)       | Optional                                                                                                       | Provides the locations of sites               | KML/KMZ, CSV               | SITE_FILE_PATH                              |
-| [Building Outline File](#building-outline-file)     | Optional, used for [Automatic Site Detection](Features.md#automatic-site-detection) feature                    | Provides building outlines                    | KML/KMZ, zipped shape file | BUILDING_OUTLINE_FILE_PATH                  |
-| [Candidate Topology File](#candidate-topology-file) | Required for an optimization plan                                                                              | Describes the network topology to optimize    | KML/KMZ                    | CANDIDATE_TOPOLOGY_FILE_PATH                |
-| [Base Topology File](#base-topology-file)           | Optional, used for [Extend Existing Candidate Graph](Features.md#extend-existing-candidate-graph-eecg) feature | Describes the base network topology to extend | KML/KMZ                    | BASE_TOPOLOGY_FILE_PATH                     |
+| **File Type**                                       | **Required or Optional**                                                                               | **Functionality**                      | **Supported Formats**      | **Parameter Field(s)**                      |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------- | -------------------------- | ------------------------------------------- |
+| [Boundary Polygon File](#boundary-polygon-file)     | Required                                                                                               | Boundary of the AOI                    | KML/KMZ                    | BOUNDARY_POLYGON_FILE_PATH                  |
+| [GeoTIFF Files](#geotiff-files)                     | Optional, but recommend for better accuracy                                                            | Surface elevation data                 | TIF                        | DSM_FILE_PATHS, DTM_FILE_PATH, DHM_FLE_PATH                 |
+| [User Input Site File](#user-input-site-file)       | Optional                                                                                               | User-specified site locations          | KML/KMZ, CSV               | SITE_FILE_PATH                              |
+| [Building Outline File](#building-outline-file)     | Optional, used for [Automatic Site Detection](Features.md#automatic-site-detection)                    | Building outlines                      | KML/KMZ, zipped shape file | BUILDING_OUTLINE_FILE_PATH                  |
+| [Candidate Topology File](#candidate-topology-file) | Required for an optimization-only plan                                                                 | Candidate network topology to optimize | KML/KMZ                    | CANDIDATE_TOPOLOGY_FILE_PATH                |
+| [Base Topology File](#base-topology-file)           | Optional, used for [Extend Existing Candidate Graph](Features.md#extend-existing-candidate-graph-eecg) | Base network topology to extend        | KML/KMZ                    | BASE_TOPOLOGY_FILE_PATH                     |
 
-
-The input files can be generated by GIS tools, such as Google Earth and QGIS,
+The input files can be generated by a GIS tool, such as Google Earth and QGIS,
 and some of them can be obtained by the planner tool itself.
 
 ## Boundary Polygon File
-A boundary polygon file is a KML/KMZ file defining the boundary of the network
-plan and containing the area of interest as a polygon for a proposed network
-plan.
+
+A boundary polygon file is a KML/KMZ file defining the boundary or area of
+interest (AOI) of the network plan.
 
 ### Requirements
 1. There should be exactly one `Polygon` geometry in the KML/KMZ file
 
-
 ## GeoTIFF Files
-GeoTIFF Files are files defining the elevation of the surface where the plan is.
+
+GeoTIFF Files are files defining the elevation of the surface within the AOI.
 There are 3 kinds of GeoTIFF files used in the planner:
+
 1. DSM: provides the elevation of the surface directly.
 2. DTM: provides the elevation of the terrain.
 3. DHM: provides the elevation of the height of construction, buildings or trees
    on the surface.
 
-To get more accurate LOS result, please provide either DSM GeoTIFF File(s) with or
-without other GeoTiff Files or DTM and DHM Together. If the later combination is
-provided, the planner will get a DSM by plusing DHM over DTM.
+To get more accurate LOS results, please provide either DSM GeoTIFF File(s) or
+DTM and DHM together. If the latter combination is provided, the planner will
+form a DSM by adding the DHM to the DTM.
 
 ### Requirements
+
 1. The projection information and the coordinate reference system (CRS) should
    be correct.
 2. There should be exactly one single raster band.
-3. The data collection time should be no earlier than 20 years from the time
-   the plan is run.
+3. The data collection time should be within 20 years of the time the plan is
+   run.
 4. The linear units should be in meters.
-5. The pixel size should between 0.15 meter and 35 meters.
-6. The veritical projection system should be correct if provided.
+5. The pixel size should between 0.15 meters and 35 meters.
+6. The veritical projection system should be correct, if provided.
 
 ## User Input Site File
-The user input site file provides the location of user provided POP, DN and CN
+
+The user input site file provides the location of user-provided POP, DN and CN
 sites, and can be either in KML/KMZ format or CSV format. All the sites in the
-file are considered as candidate sites and will go through LOS checks.
+file are considered to be candidate sites and will go through LOS checks.
 
 ### Requirements
+
 **KML/KMZ**
-1. Put POP sites under a folder whose name contain a substring "POP". Do the same
-   for DNs and CNs. **Note:** Do not have a parent folder with those substrings.
-   Otherwise, all the sites under this parant folder are considered as that type
-   of sites.
+
+1. Put POP sites under a folder whose name contains the substring "POP". Do the
+   same for DNs and CNs. **Note:** Do not have a parent folder with those substrings.
+   Otherwise, all the sites under this parent folder are considered as that type
+   of site.
 2. Use a `Point` geometry for each site placemark.
 3. Provide the information of the site via the data field.
 4. The latitude and longitude are required, but the altitude is optional. When
@@ -68,22 +73,23 @@ file are considered as candidate sites and will go through LOS checks.
    `DEFAULT_POP_HEIGHT_ON_POLE`, `DEFAULT_DN_HEIGHT_ON_POLE`, or
    `DEFAULT_CN_HEIGHT_ON_POLE` to get the altitude based on the location type and
    site type.
-5. If the altitude of a placemark is provided and altitude mode is absolute,
+5. If the altitude of a placemark is provided and the altitude mode is absolute,
    the altitude is considered as the absolute altitude over mean sea level; if
-   the altitude of a placemark is provided and altitude mode is relativeToGround,
-   the altitude is considered as the relative height to the surface (DSM).
-   Otherwise, the planner will infer the altitude using the default.
+   the altitude of a placemark is provided and the altitude mode is
+   relativeToGround, the altitude is considered as the relative height to the
+   surface (DSM). Otherwise, the planner will infer the altitude using the
+   defaults.
 
 **CSV**
-1. Only latitude and longitutde columns are required. The same rule as that in
-   KML/KMZ to infer the altitude is used. If the `site_type` is not provided for
-   user input site file, the sites are considered as POP by default.
-2. Extra attributes of each site are welcomed, see the next subsection for more
-   details.
+
+1. Only latitude and longitude columns are required. The same rules as those in
+   KML/KMZ are used to infer the altitude. If the `site_type` is not provided
+   for the user input site file, the site is considered a POP by default.
 
 **Site Attributes**
 
-The following table describes all the different attributes used in User Input.
+Extra attributes can be specified via data fields for KML/KMZ input and columns
+for CSV input. The following table describes all the possible attributes.
 
 | Attribute             | Acceptable Names                                                                                                                                                                                                      |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -101,10 +107,10 @@ The following table describes all the different attributes used in User Input.
 2. For KML/KMZ, `device_sku`, `number_of_subscribers` and `location_type` come
    from data fields; location attributes are from the coordinates of the
    placemarks; `site_type` is inferred from the folder name.
-3. **NOTE**: If the name is provided, they must be unique.
-
+3. **NOTE**: If the name is provided, it must be unique.
 
 ## Building Outline File
+
 The building outline file describes the outline of the buildings in the AOI.
 The planner uses the outlines to detect the site locations automatically with
 the [Automatic Site Detection](Features.md#automatic-site-detection) feature.
@@ -113,31 +119,34 @@ The building outline file can be either in a zipped shapefile format or a
 KML/KMZ format.
 
 ### Requirements
+
 **General**
+
 1. The projection information and the coordinate reference system (CRS) should
    be correct.
-2. The veritical projection system should be correct if provided.
+2. The veritical projection system should be correct, if provided.
 3. All the building outlines are expected to be in the `Polygon` geometry type.
 
 **Shape file specific**
+
 In addition to the general rules, there are some extra rules if you are using
 zipped shape files.
 1. All the files should be put at the top level of the zip file.
 2. Only one `.shp` file, together with the corresponding `.shx`, `.prj` and `dbf`
-   files should be included in the zip file.
+   files, should be included in the zip file.
 
 ## Candidate Topology File
+
 The candidate topology file is only used in an optimization-only plan, and
-gives a network with all the sites and links. The candidate topology file
-should be in the KML/KMZ format.
+represents a network with all the sites and links.
 
 The input candidate topology file can be either in a KML/KMZ format or a zipped
 file of two csv files. The [Topology KML File](Output_Files.md#topology-kml-file)
-from the output of a LOS plan can be reused in the optimization plan directly.
+from the output of a LOS plan can be re-used in the optimization plan directly.
 
 ### Requirements
 
-All the input folder names or column names are case-insensitive.
+1. All the input folder names or column names are case-insensitive.
 
 **KML/KMZ**
 
@@ -145,61 +154,59 @@ A KML/KMZ file can contain site, link, and demand site information.
 
 1. Site
    1. All the rules in the KML/KMZ requirements in the
-      [User Input Site File](#user-input-site-file) section are also applied.
-   2. In addition, status of the site can also get parsed from the KML/KMZ input
+      [User Input Site File](#user-input-site-file) section still apply.
+   2. The status of the site can is parsed from the KML/KMZ input
       1. The status includes `CANDIDATE`, `PROPOSED`, `EXISTING`, `UNAVAILABLE`
          and `UNREACHABLE`. See more details at `StatusType` in [enums.py](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/common/configuration/enums.py)
-      2. To specify the status, please put your site folder under a parent folder
-         with the status type. For instance, if you give a site in the folder
-         structure as `EXISTING` -> `DN` -> site, the site is considered
-         as an existing DN in the network.
-      3. If the status type is not specified, `CANDIDATE` will be applied.
+      2. To specify the status, please put the site folder under a parent folder
+         with the status type. For instance, if you have a site in the folder
+         structured as `EXISTING` -> `DN` -> site, the site is considered
+         to be an existing DN in the network.
+      3. If the status type is not specified, `CANDIDATE` will be used.
 2. Link
    1. There are three different link types, which are `WIRELESS_BACKHAUL`,
-      `WIRELESS_ACCESS` and `ETHERNET`. To input the links, you are supposed
-      to put links under a folder with those link type as its name.
+      `WIRELESS_ACCESS` and `ETHERNET`. To input the links, place them under a
+      folder with the link type as its name.
    2. Use a `LineString` geometry for each link.
    3. Provide the information of the link via the data field. You can provide
       `TX_SITE_NAME` and `RX_SITE_NAME` for each link to specify two end sites.
       If they are not provided, the planner will pick all the sites within 10
-      meter distance to the end of link as end sites.
+      meters of the end of link as end sites.
    4. The rule 4 and 5 about altitude in the KML/KMZ requirements of
-      [User Input Site File](#user-input-site-file) section are also applied
-   5. All the three status rules of the sites are still applied to the links.
-3. Demand
-   1. Demand notion is used to provide flexibility to the user. CN locations are
-      treated as physical sites that have demand on them, whereas demand points
-      on their own can be used to represent imaginary locations that requires
-      connectivity.
+      [User Input Site File](#user-input-site-file) section apply.
+   5. All three status rules for sites are applied to links.
+3. Demand Sites
+   1. [Demand sites](Features.md#demand-models) allow the user to specify
+      locations requiring connectivity.
+   2. User-specified demand sites will only apply if `ENABLE_MANUAL_DEMAND` is
+      set to True.
    2. You can provide the demand site in the network by providing `Point`
-      placemarks under `demand site` folder in the KML/KMZ.
-   3. The altitude information of demand site is ignored.
-   4. All the demand points are considered as `CANDIDATE`.
+      placemarks under a `Demand Sites` folder in the KML/KMZ.
+   3. The altitude information of the demand site is ignored.
 
 **Zipped CSV**
 
 The zip file should contain a `sites.csv` file and a `links.csv` file to
-provide the information of sites and links correspondingly. Unlike KML/KMZ,
-the demand site is not supported.
+provide the information of sites and links, respectively. Unlike KML/KMZ,
+user-specified demand sites are not supported.
 
 1. Site
 
    All the site attributes from the table in the [User Input Site File](#user-input-site-file)
-   are still acceptable, but unlike a user input site file, there are 4 required
-   attributes, which are laitutde, longitude, site_type and name.
+   can be specified, but unlike a user input site file, there are 4 required
+   attributes, which are `latitude`, `longitude`, `site_type` and `name`.
 2. Link
 
-   You only need to specify the names of two end sites for each link, rather
+   You only need to specify the names of the two end sites for each link, rather
    than the locations. There are three ways to specify them:
 
-   1. A single `SITE_PAIR` column. The links are supposed to be given in
-      the `{tx_site_name}-->{rx_site_name}` format. Each column means a drected
-      link.
-   2. A `TX_SITE_NAME` column and a `RX_SITE_NAME` column. Each column means
-      a directed link.
-   3. A `SITE1_NAME` column and a `SITE2_NAME` column. Each column means two
-      directed links in two opposite direction for backhaul links, and one single
-      directed link for access links.
+   1. A single `SITE_PAIR` column. The links should be specified in the
+      `{tx_site_name}-->{rx_site_name}` format. These links are directed,
+      so the reverse link must be provided if it is a backhaul link.
+   2. A `TX_SITE_NAME` column and a `RX_SITE_NAME` column. These links are
+      directed, so the reverse link must be provided if it is a backhaul link.
+   3. A `SITE1_NAME` column and a `SITE2_NAME` column. In this case, the links
+      in both directions are automatically added if it is a backhaul link.
 
    The following table shows the acceptable column names for each column type.
 
@@ -212,8 +219,8 @@ the demand site is not supported.
    | SITE2_NAME   | site2, site2_id, site2_name                                                |
 
 
-
 ## Base Topology File
+
 The base topology file is similar to [candidate topology file](#candidate-topology-file),
-but is used in a los-only plan or an end-to-end plan. All the sites and links
-are regarded as candidate in the file.
+but is used in an LOS Analysis plan or an End-to-End plan. All the sites and
+links in the file are considered `EXISTING`.

@@ -6,6 +6,9 @@ to generate optimal network topologies for an area of interest.
 This directory contains all Terragraph Planner manuals and documentation that can be
 used as a reference for developers and operators.
 
+For more details about Terragraph, its use cases, and key terminology, see
+https://terragraph.com/docs/runbook/Overview.
+
 ## Table of Contents
 1. [Runbook](runbook/README.md)
 2. [Algorithm](algorithm/README.md)
