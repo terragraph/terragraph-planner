@@ -21,7 +21,7 @@ from terragraph_planner.los.elevation import Elevation
 from terragraph_planner.los.test.helper import build_los_site_for_los_test
 
 
-class TestEllipsoidalLOSValidator(TestCase):
+class TestCylindricalLOSValidator(TestCase):
     def setUp(self) -> None:
         self.spatial_reference = osr.SpatialReference()
         self.spatial_reference.ImportFromEPSG(32647)
