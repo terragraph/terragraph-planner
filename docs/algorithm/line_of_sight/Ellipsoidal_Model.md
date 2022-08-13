@@ -47,7 +47,7 @@ Ellipse and Ellipsoidal
 3. We also create a 3D ellipsoid with the two sites as the endpoints
    <img src="../../figures/los-ellipsoidal-3d.png" />
 
-## Math Equations
+## Mathematical Formulation
 
 Given two sites Site 1:$(x_1​,y_1​,z_1​)$, Site 2:$(x_2​,y_2​,z_2​)$
 
@@ -123,11 +123,11 @@ We need to find a rotated ellipsoid that is not at the origin.
     $x$-axis) will not have an impact since it is a sphere on the $yz$ plane.
     We can simplify the equation with $C = 0$
 * Final 3D ellipsoid equation is
+
 $$
-\frac{((x-h)\times\cos(B)\times\cos(A)+(y-k)\times\sin(A)\times\cos(B)+(z-l)\times\sin(B))^2 }{a^2} \\
-+ \frac{((h-x)\times\sin(A)+(y-k)\times\cos(A))^2}{b^2} \\
-+ \frac{((h-x)\times\sin(B)\times\cos(A)+(k-y)\times\sin(B)\times\sin(A)+(z-l)\times\cos(B))^2 }{c^2} \\
-- 1 = 0
+\begin{aligned}
+{}&\frac{((x-h)\times\cos(B)\times\cos(A)+(y-k)\times\sin(A)\times\cos(B)+(z-l)\times\sin(B))^2 }{a^2} \\ {}&+ \frac{((h-x)\times\sin(A)+(y-k)\times\cos(A))^2}{b^2} \\ {}& + \frac{((h-x)\times\sin(B)\times\cos(A)+(k-y)\times\sin(B)\times\sin(A)+(z-l)\times\cos(B))^2 }{c^2} - 1 = 0
+\end{aligned}
 $$
 
 * Where angle $A$ is the first rotation around the $z$-axis, calculated using

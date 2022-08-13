@@ -49,9 +49,9 @@ const sidebars = {
           label: 'Line-of-Sight',
           items: [
             'algorithm/line_of_sight/Easy_Negative_Cases',
-            'algorithm/line_of_sight/Confidence_Level',
             'algorithm/line_of_sight/Cylindrical_Model',
             'algorithm/line_of_sight/Ellipsoidal_Model',
+            'algorithm/line_of_sight/Confidence_Level',
           ],
           link: {
             type: 'doc',

@@ -1,11 +1,12 @@
 # Easy Negative Cases
 
-There are 4 easy negative cases for both 2 models, which is coded in
-[`BaseLOSValidator`](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/los/base_los_validator.py).
-If any of these cases happen, the planner regards
-the link as invalid, and would not move forward to check if it’s blocked.
+Regardless of the model, there are four situations which immediately return
+invalid LOS that has nothing to do with obstructions.
 
-1. With the same latitude and longitude
-2. On the same building
-3. Out of distance range
-4. Intersecting with the exclusion zones
+1. The elevation angle between the two sites is too large (i.e., it should be
+   much less than 90 degrees).
+2. Both sites are on the same building (generally, such sites can be connected
+   by wire).
+3. The distance between the sites exceeds the maximum distance (i.e., the
+   signal is not sufficiently strong to merit valid LOS).
+4. The LOS intersects with exclusion zones.
