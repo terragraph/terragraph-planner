@@ -137,14 +137,14 @@ class TestBaseLOSValidator(TestCase):
             0.5, 7, 3, 3, 1
         )
 
-        self.assertAlmostEqual(a[0], -0.347998304005)
-        self.assertAlmostEqual(a[1], 6.47000106)
-        self.assertAlmostEqual(b[0], 1.34799830401)
-        self.assertAlmostEqual(b[1], 7.52999894)
-        self.assertAlmostEqual(c[0], 2.15200169599)
-        self.assertAlmostEqual(c[1], 2.47000106)
-        self.assertAlmostEqual(d[0], 3.84799830401)
-        self.assertAlmostEqual(d[1], 3.52999894)
+        self.assertAlmostEqual(a[0], 1.34799830401)
+        self.assertAlmostEqual(a[1], 7.52999894)
+        self.assertAlmostEqual(b[0], -0.347998304005)
+        self.assertAlmostEqual(b[1], 6.47000106)
+        self.assertAlmostEqual(c[0], 3.84799830401)
+        self.assertAlmostEqual(c[1], 3.52999894)
+        self.assertAlmostEqual(d[0], 2.15200169599)
+        self.assertAlmostEqual(d[1], 2.47000106)
 
     def test_get_four_corners_of_rectangle_x_alinged(self) -> None:
         base_los_validator = MockBaseLOSValidator(self.elevation, 5, 1, [], 1)

@@ -127,18 +127,19 @@ class BaseLOSValidator(ABC):
         ac and ab are parallel to each other
         ab and dc are parallel to each other
         """
-        if utm_x1 == utm_x2:
-            a = utm_x1 + radius, utm_y1
-            b = utm_x1 - radius, utm_y1
-            c = utm_x2 + radius, utm_y2
-            d = utm_x2 - radius, utm_y2
-        else:
+        # Avoid divide by 0 precision errors by using larger value in denominator
+        if abs(utm_x2 - utm_x1) >= abs(utm_y2 - utm_y1):
             slope = (utm_y2 - utm_y1) / (utm_x2 - utm_x1)
             offset_y = radius / math.sqrt(1 + slope * slope)
             offset_x = offset_y * slope
+        else:
+            slope_inv = (utm_x2 - utm_x1) / (utm_y2 - utm_y1)
+            offset_x = radius / math.sqrt(1 + slope_inv * slope_inv)
+            offset_y = offset_x * slope_inv
 
-            a = utm_x1 + offset_x, utm_y1 - offset_y
-            b = utm_x1 - offset_x, utm_y1 + offset_y
-            c = utm_x2 + offset_x, utm_y2 - offset_y
-            d = utm_x2 - offset_x, utm_y2 + offset_y
+        a = utm_x1 + offset_x, utm_y1 - offset_y
+        b = utm_x1 - offset_x, utm_y1 + offset_y
+        c = utm_x2 + offset_x, utm_y2 - offset_y
+        d = utm_x2 - offset_x, utm_y2 + offset_y
+
         return a, b, c, d
