@@ -119,6 +119,8 @@ class CylindricalLOSValidator(BaseLOSValidator):
             distance = self._distance_between_grid_and_center_line(
                 grid, ax, ay, az, bx, by, bz, b_len_2d_sq, b_len_2d, b_len_3d_sq
             )
+            if distance is None:
+                continue
             if distance < minimal_radius:
                 return 0.0
             minimal_distance = min(minimal_distance, distance)
@@ -136,11 +138,11 @@ class CylindricalLOSValidator(BaseLOSValidator):
         b_len_2d_sq: float,
         b_len_2d: float,
         b_len_3d_sq: float,
-    ) -> float:
+    ) -> Optional[float]:
         """
         Use grid center as representative point. Compute the distance from the vertical
         line that goes through grid center to the 3d los center line to check if LOS
-        is blocked.
+        is blocked. If the grid is behind the either site, return None.
 
         The LOS center line is represented as r = a + p * b, and the vertical
         line is represented as r = c + q * d, where a, b, c, d are 3-D vectors,
@@ -176,7 +178,7 @@ class CylindricalLOSValidator(BaseLOSValidator):
                 return ((ax - cx) * by + (cy - ay) * bx) / b_len_2d
             else:
                 # The obstruction is behind the site
-                return self._fresnel_radius
+                return None
         else:
             # Compute distance between point c to line b
             delta_ca_x = cx - ax
@@ -187,7 +189,7 @@ class CylindricalLOSValidator(BaseLOSValidator):
             ) / b_len_3d_sq
             # The closest point is not between two sites
             if t < 0 or t > 1:
-                return self._fresnel_radius
+                return None
             # The following is the vector represents the distance between
             # grid top and the closest point
             dist_x = ax + t * bx - cx
