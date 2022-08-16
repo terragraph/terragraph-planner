@@ -64,7 +64,10 @@ class TestTopologyPreparation(TestCase):
         topology = raw_square_topology()
         prepare_topology_for_optimization(
             topology,
-            OptimizerParams(device_list=[DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE]),
+            OptimizerParams(
+                device_list=[DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE],
+                rain_rate=10.0,
+            ),
         )
         for link in topology.links.values():
             self.assertEqual(link.capacity, 1.8)

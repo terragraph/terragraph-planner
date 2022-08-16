@@ -38,7 +38,7 @@ class TestTopologyReport(TestCase):
         result_outgoing_flows = result.site_df[
             SiteKey.OUTGOING_FLOW.value.output_name
         ].to_list()
-        expected_outgoing_flows = [0, 0.6, 0, 0.6, 3.6, 3.6]
+        expected_outgoing_flows = [0.6, 0, 0, 0.6, 3.6, 3.6]
         for i in range(len(result_outgoing_flows)):
             self.assertAlmostEqual(
                 result_outgoing_flows[i], expected_outgoing_flows[i], 6
@@ -46,7 +46,7 @@ class TestTopologyReport(TestCase):
         result_incoming_flows = result.site_df[
             SiteKey.INCOMING_FLOW.value.output_name
         ].to_list()
-        expected_incoming_flows = [2.4, 1.8, 2.4, 1.8, 0.0, 0.0]
+        expected_incoming_flows = [1.8, 2.4, 2.4, 1.8, 0.0, 0.0]
         for i in range(len(result_incoming_flows)):
             self.assertAlmostEqual(
                 result_incoming_flows[i], expected_incoming_flows[i], 6
@@ -60,10 +60,10 @@ class TestTopologyReport(TestCase):
             LinkKey.PROPOSED_FLOW.value.output_name
         ].to_list()
         expected_proposed_flows = [
-            0.0,
-            0.0,
-            0.0,
             0.6,
+            0.0,
+            0.0,
+            0.0,
             0.0,
             0.0,
             0.0,

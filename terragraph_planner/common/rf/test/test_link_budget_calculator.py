@@ -342,7 +342,7 @@ class TestFSPLBasedRSLValue(unittest.TestCase):
             link_availability_percentage=self.tx_sector_params.link_availability_percentage,
             carrier_frequency=self.tx_sector_params.carrier_frequency,
         )
-        self.assertAlmostEqual(rain_loss, 2.0, places=1)
+        self.assertAlmostEqual(rain_loss, 5.8, places=1)
 
 
 class TestLinkMCS(unittest.TestCase):
@@ -459,12 +459,12 @@ class TestLinkTxPower(unittest.TestCase):
         Test various MCS values against their expected Tx power mappings
         """
         test_data = [
-            (3, -20.7),
-            (4, -19.2),
-            (5, -18.7),
-            (6, -18.2),
-            (12, -5.7),
-            (0, -23.7),
+            (3, -20.5),
+            (4, -19.0),
+            (5, -18.5),
+            (6, -18.0),
+            (12, -5.5),
+            (0, -23.5),
         ]
         dist_m = 100
         antenna_pattern_data = read_antenna_pattern_data(
@@ -554,7 +554,7 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                     rsl_dbm=-60,
                     snr_dbm=14,
                     capacity=1.030,
-                    tx_power=11.2,
+                    tx_power=11.1,
                 ),
             ),
             (
@@ -594,7 +594,7 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                     rsl_dbm=-65,
                     snr_dbm=9,
                     capacity=0.645,
-                    tx_power=13.0,
+                    tx_power=13.1,
                 ),
             ),
             (
@@ -604,7 +604,7 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                     rsl_dbm=-65,
                     snr_dbm=9,
                     capacity=0.645,
-                    tx_power=14.2,
+                    tx_power=14.4,
                 ),
             ),
             (
@@ -614,7 +614,7 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                     rsl_dbm=-65,
                     snr_dbm=9,
                     capacity=0.645,
-                    tx_power=15.3,
+                    tx_power=15.5,
                 ),
             ),
             (
@@ -624,27 +624,27 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                     rsl_dbm=-68.5,
                     snr_dbm=5.5,
                     capacity=0.260,
-                    tx_power=14.2,
+                    tx_power=14.6,
                 ),
             ),
             (
                 150,
                 LinkBudgetMeasurements(
-                    mcs_level=5,
-                    rsl_dbm=-69,
-                    snr_dbm=5,
-                    capacity=0.115,
-                    tx_power=15.7,
+                    mcs_level=4,
+                    rsl_dbm=-69.5,
+                    snr_dbm=4.5,
+                    capacity=0.0675,
+                    tx_power=15.8,
                 ),
             ),
             (
                 175,
                 LinkBudgetMeasurements(
-                    mcs_level=3,
-                    rsl_dbm=-71,
-                    snr_dbm=3,
+                    mcs_level=0,
+                    rsl_dbm=-math.inf,
+                    snr_dbm=-math.inf,
                     capacity=0,
-                    tx_power=15.5,
+                    tx_power=-math.inf,
                 ),
             ),
             (
