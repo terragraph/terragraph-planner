@@ -42,6 +42,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             self.elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -72,6 +73,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             self.elevation,
             2,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -85,11 +87,30 @@ class TestEllipsoidalLOSValidator(TestCase):
             0.0,
         )
 
+    def test_large_el_dev(self) -> None:
+        los_validator = EllipsoidalLOSValidator(
+            self.elevation,
+            50,
+            1,
+            25,
+            DEFAULT_CARRIER_FREQUENCY,
+            [],
+            DEFAULT_LOS_CONFIDENCE_THRESHOLD,
+        )
+        self.assertEqual(
+            los_validator.compute_confidence(
+                build_los_site_for_los_test(2.5, 2.5, 20),
+                build_los_site_for_los_test(6.5, 2.5, 10),
+            ),
+            0.0,
+        )
+
     def test_intersects_with_exclusion_zone(self) -> None:
         los_validator = EllipsoidalLOSValidator(
             self.elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [Polygon([(1, 1), (2, 1), (2, 2), (1, 2)])],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -107,6 +128,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             self.elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -125,6 +147,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             self.elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -150,6 +173,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             self.elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -185,6 +209,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -214,6 +239,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             elevation,
             5,
             1,
+            25,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -251,6 +277,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             elevation,
             5,
             1,
+            45,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -288,6 +315,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             elevation,
             5,
             1,
+            45,
             DEFAULT_CARRIER_FREQUENCY,
             [],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -321,7 +349,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             None,
         )
         los_validator = EllipsoidalLOSValidator(
-            elevation, 5, 1, DEFAULT_CARRIER_FREQUENCY, [], 0.6
+            elevation, 5, 1, 25, DEFAULT_CARRIER_FREQUENCY, [], 0.6
         )
 
         # point at (0.5, 0.1, 5) is the closest obstruction that creates the smallest fresnel zone
@@ -352,7 +380,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             None,
         )
         los_validator = EllipsoidalLOSValidator(
-            elevation, 5, 1, DEFAULT_CARRIER_FREQUENCY, [], 0.6
+            elevation, 5, 1, 75, DEFAULT_CARRIER_FREQUENCY, [], 0.6
         )
 
         # point at (0.1, 0.2, 9) is the closest obstruction that creates the smallest fresnel zone
@@ -383,7 +411,7 @@ class TestEllipsoidalLOSValidator(TestCase):
             None,
         )
         los_validator = EllipsoidalLOSValidator(
-            elevation, 5, 1, DEFAULT_CARRIER_FREQUENCY, [], 0.6
+            elevation, 5, 1, 75, DEFAULT_CARRIER_FREQUENCY, [], 0.6
         )
 
         # point at (0.9, 0.2, 2.3) is the closest obstruction that creates the smallest fresnel zone

@@ -42,7 +42,9 @@ class TestBaseLOSValidator(TestCase):
         )
 
     def test_same_x_y_coordinate(self) -> None:
-        base_los_validator = MockBaseLOSValidator(self.elevation, 5, 1, [], 1)
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 5, 1, 89, [], 1
+        )
         self.assertEqual(
             base_los_validator._passes_simple_checks(
                 build_los_site_for_los_test(
@@ -64,7 +66,9 @@ class TestBaseLOSValidator(TestCase):
         )
 
     def test_on_the_same_building(self) -> None:
-        base_los_validator = MockBaseLOSValidator(self.elevation, 5, 1, [], 1)
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 5, 1, 25, [], 1
+        )
         self.assertEqual(
             base_los_validator._on_the_same_building(
                 build_los_site_for_los_test(
@@ -86,30 +90,61 @@ class TestBaseLOSValidator(TestCase):
         )
 
     def test_out_of_distance_range(self) -> None:
-        base_los_validator = MockBaseLOSValidator(self.elevation, 2, 1, [], 1)
-        self.assertEqual(
-            base_los_validator._los_out_of_distance_range(
-                build_los_site_for_los_test(
-                    0.5,
-                    0.5,
-                    10,
-                    location_type=LocationType.ROOFTOP,
-                    building_id=1,
-                ),
-                build_los_site_for_los_test(
-                    2.5,
-                    2.5,
-                    9,
-                    location_type=LocationType.ROOFTOP,
-                    building_id=2,
-                ),
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 2, 1, 25, [], 1
+        )
+        distance = base_los_validator._comp_los_distance(
+            build_los_site_for_los_test(
+                0.5,
+                0.5,
+                10,
+                location_type=LocationType.ROOFTOP,
+                building_id=1,
             ),
-            True,
+            build_los_site_for_los_test(
+                2.5,
+                2.5,
+                9,
+                location_type=LocationType.ROOFTOP,
+                building_id=2,
+            ),
+        )
+        self.assertEqual(
+            base_los_validator._los_out_of_distance_range(distance), True
+        )
+
+    def test_large_el_dev(self) -> None:
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 50, 1, 25, [], 1
+        )
+        distance = base_los_validator._comp_los_distance(
+            build_los_site_for_los_test(
+                2.5,
+                2.5,
+                20,
+                location_type=LocationType.ROOFTOP,
+                building_id=3,
+            ),
+            build_los_site_for_los_test(
+                6.5,
+                2.5,
+                10,
+                location_type=LocationType.ROOFTOP,
+                building_id=1,
+            ),
+        )
+        self.assertEqual(
+            base_los_validator._los_exceed_max_el_dev(distance, 20, 10), True
         )
 
     def test_intersects_with_exclusion_zone(self) -> None:
         base_los_validator = MockBaseLOSValidator(
-            self.elevation, 5, 1, [Polygon([(1, 1), (2, 1), (2, 2), (1, 2)])], 1
+            self.elevation,
+            5,
+            1,
+            25,
+            [Polygon([(1, 1), (2, 1), (2, 2), (1, 2)])],
+            1,
         )
         self.assertEqual(
             base_los_validator._los_intersects_with_exclusion_zones(
@@ -121,7 +156,12 @@ class TestBaseLOSValidator(TestCase):
 
     def test_passes_simple_checks(self) -> None:
         base_los_validator = MockBaseLOSValidator(
-            self.elevation, 5, 1, [Polygon([(4, 1), (5, 1), (5, 2), (4, 2)])], 1
+            self.elevation,
+            5,
+            1,
+            25,
+            [Polygon([(4, 1), (5, 1), (5, 2), (4, 2)])],
+            1,
         )
         self.assertEqual(
             base_los_validator._passes_simple_checks(
@@ -132,7 +172,9 @@ class TestBaseLOSValidator(TestCase):
         )
 
     def test_get_four_corners_of_rectangle(self) -> None:
-        base_los_validator = MockBaseLOSValidator(self.elevation, 5, 1, [], 1)
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 5, 1, 25, [], 1
+        )
         a, b, c, d = base_los_validator._get_four_corners_of_rectangle(
             0.5, 7, 3, 3, 1
         )
@@ -147,7 +189,9 @@ class TestBaseLOSValidator(TestCase):
         self.assertAlmostEqual(d[1], 2.47000106)
 
     def test_get_four_corners_of_rectangle_x_alinged(self) -> None:
-        base_los_validator = MockBaseLOSValidator(self.elevation, 5, 1, [], 1)
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 5, 1, 25, [], 1
+        )
         a, b, c, d = base_los_validator._get_four_corners_of_rectangle(
             3, 7, 3, 3, 1
         )
@@ -162,7 +206,9 @@ class TestBaseLOSValidator(TestCase):
         self.assertEqual(d[1], 3)
 
     def test_get_four_corners_of_rectangle_y_alinged(self) -> None:
-        base_los_validator = MockBaseLOSValidator(self.elevation, 5, 1, [], 1)
+        base_los_validator = MockBaseLOSValidator(
+            self.elevation, 5, 1, 25, [], 1
+        )
         a, b, c, d = base_los_validator._get_four_corners_of_rectangle(
             0.5, 3, 3, 3, 1
         )

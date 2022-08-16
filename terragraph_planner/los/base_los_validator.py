@@ -28,9 +28,20 @@ class BaseLOSValidator(ABC):
         surface_elevation: Optional[Elevation],
         max_los_distance: float,
         min_los_distance: float,
+        max_el_dev: float,
         exclusion_zones: List[Polygon],
         los_confidence_threshold: float,
     ) -> None:
+        planner_assert(
+            min_los_distance > 0 and max_los_distance > min_los_distance,
+            "Invalid max/min LOS distance",
+            LOSException,
+        )
+        planner_assert(
+            0 < max_el_dev < 90,
+            "Invalid max elevation deviation",
+            LOSException,
+        )
         planner_assert(
             0 <= los_confidence_threshold <= 1.0,
             "Invalid LOS confidence threshold",
@@ -38,8 +49,9 @@ class BaseLOSValidator(ABC):
         )
 
         self._surface_elevation = surface_elevation
-        self._max_los_distance_sq: float = max_los_distance * max_los_distance
-        self._min_los_distance_sq: float = min_los_distance * min_los_distance
+        self._max_los_distance: float = max_los_distance
+        self._min_los_distance: float = min_los_distance
+        self._max_el_dev: float = max_el_dev
         self._exclusion_zones: List[PreparedGeometry] = [
             prep(exclusion_polygon) for exclusion_polygon in exclusion_zones
         ]
@@ -49,6 +61,16 @@ class BaseLOSValidator(ABC):
     def compute_confidence(self, site1: LOSSite, site2: LOSSite) -> float:
         raise NotImplementedError
 
+    @staticmethod
+    def _comp_los_distance(site1: LOSSite, site2: LOSSite) -> float:
+        x_diff = site1.utm_x - site2.utm_x
+        y_diff = site1.utm_y - site2.utm_y
+        if site1.altitude is not None and site2.altitude is not None:
+            z_diff = site1.altitude - site2.altitude
+        else:
+            z_diff = 0
+        return math.sqrt(x_diff * x_diff + y_diff * y_diff + z_diff * z_diff)
+
     def _passes_simple_checks(self, site1: LOSSite, site2: LOSSite) -> bool:
         """
         Performs these simple checks
@@ -57,13 +79,16 @@ class BaseLOSValidator(ABC):
         Check 3: out of distance range
         Check 4: intersects with the exclusion zones
         """
-        if site1.utm_x == site2.utm_x and site1.utm_y == site2.utm_y:
-            return False
-
         if self._on_the_same_building(site1, site2):
             return False
 
-        if self._los_out_of_distance_range(site1, site2):
+        distance = self._comp_los_distance(site1, site2)
+        if self._los_out_of_distance_range(distance):
+            return False
+
+        if self._los_exceed_max_el_dev(
+            distance, site1.altitude, site2.altitude
+        ):
             return False
 
         if self._los_intersects_with_exclusion_zones(site1, site2):
@@ -79,20 +104,20 @@ class BaseLOSValidator(ABC):
             and site1.building_id == site2.building_id
         )
 
-    def _los_out_of_distance_range(
-        self, site1: LOSSite, site2: LOSSite
+    def _los_out_of_distance_range(self, distance: float) -> bool:
+        return not self._min_los_distance <= distance <= self._max_los_distance
+
+    def _los_exceed_max_el_dev(
+        self,
+        distance: float,
+        altitude1: Optional[float],
+        altitude2: Optional[float],
     ) -> bool:
-        x_diff = site1.utm_x - site2.utm_x
-        y_diff = site1.utm_y - site2.utm_y
-        if site1.altitude is not None and site2.altitude is not None:
-            z_diff = site1.altitude - site2.altitude
-        else:
-            z_diff = 0
-        dist_sq = x_diff * x_diff + y_diff * y_diff + z_diff * z_diff
         return (
-            not self._min_los_distance_sq
-            <= dist_sq
-            <= self._max_los_distance_sq
+            altitude1 is not None
+            and altitude2 is not None
+            and math.degrees(math.asin(abs(altitude1 - altitude2) / distance))
+            > self._max_el_dev
         )
 
     def _los_intersects_with_exclusion_zones(
