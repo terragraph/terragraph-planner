@@ -158,33 +158,32 @@ class CylindricalLOSValidator(BaseLOSValidator):
         ((a + p⋅b) - (c + q⋅d))⋅d = 0.
 
         Based on q value, we have two different cases:
-        1. q >= 0, which means the intersection point is not higher than the top of grid.
-           a. If p <= 0 pr p >= 1, which means the block is behind the LOS, this function
-              will return fresnel radius
-           b. otherwise return the distance between two lines.
+        1. q > 0, which means the intersection point is not higher than the top of grid.
+           a. If p <= 0 pr p >= 1, this function assume the obstruction is behind the site,
+              and returns fresnel radius
+           b. otherwise returns the distance between two lines.
 
-        2. p < 0, which means the intersection point is higher on the grid. In this
+        2. q <= 0, which means the intersection point is higher on the grid. In this
            case, the function returns the distance from grid top to the LOS center line
-           by first determining where the cloest point is and then computing the distance
+           by first determining where the closest point is and then computing the distance
            between two points. If the closest point, which is the intersection of the
            LOS line and its orthogonal line going through grid top, is not between two
            sites, return fresnel radius.
         """
         cx, cy, cz = grid
-        p = ((cx - ax) * bx + (cy - ay) * by) / b_len_2d_sq
-        q = cz - az - p * bz
-        if q >= 0:
+        delta_ca_x = cx - ax
+        delta_ca_y = cy - ay
+        delta_ca_z = cz - az
+        p = (delta_ca_x * bx + delta_ca_y * by) / b_len_2d_sq
+        q = delta_ca_z - p * bz
+        if q > 0:
             # Compute distance beween line b and line d
             if 0 <= p <= 1:
-                return ((ax - cx) * by + (cy - ay) * bx) / b_len_2d
+                return (-delta_ca_x * by + delta_ca_y * bx) / b_len_2d
             else:
-                # The obstruction is behind the site
                 return None
         else:
             # Compute distance between point c to line b
-            delta_ca_x = cx - ax
-            delta_ca_y = cy - ay
-            delta_ca_z = cz - az
             t = (
                 delta_ca_x * bx + delta_ca_y * by + delta_ca_z * bz
             ) / b_len_3d_sq
