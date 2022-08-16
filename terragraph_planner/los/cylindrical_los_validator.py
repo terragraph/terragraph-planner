@@ -144,17 +144,18 @@ class CylindricalLOSValidator(BaseLOSValidator):
         line that goes through grid center to the 3d los center line to check if LOS
         is blocked. If the grid is behind the either site, return None.
 
-        The LOS center line is represented as r = a + p * b, and the vertical
-        line is represented as r = c + q * d, where a, b, c, d are 3-D vectors,
-        and p, q are numbers between (0, 1). Since d is vertical, we use d = (0, 0, -1)
-        here, then b * d = (-by, bx, 0)
+        The LOS center line is represented as r = a + p⋅b, and the vertical line is
+        represented as r = c + q⋅d, where a, b, c, d are 3-D vectors, p is a number
+        between (0, 1) and q is non-negative number. Since d is vertical, we use
+        d = (0, 0, -1) here, then b x d = (-by, bx, 0)
 
-        The shortest distance is computed by d = (c - a) b * d / (b * d),
-        where * is cross production between vectors.
+        The shortest distance is computed by d = (c - a)⋅b x d / |b x d|,
+        where x is cross production between vectors, ⋅ is dot production, and |b x d|
+        means the length of b x d.
 
         However, we also need to check if the intersection point is on the line segement
-        by computing p and q in the simultaneous equation ((a + p * b) - (c + q * d))b = 0,
-        ((a + p * b) - (c + q * d))d = 0.
+        by computing p and q in the simultaneous equation ((a + p⋅b) - (c + q⋅d))⋅b = 0,
+        ((a + p⋅b) - (c + q⋅d))⋅d = 0.
 
         Based on q value, we have two different cases:
         1. q >= 0, which means the intersection point is not higher than the top of grid.
@@ -192,9 +193,9 @@ class CylindricalLOSValidator(BaseLOSValidator):
                 return None
             # The following is the vector represents the distance between
             # grid top and the closest point
-            dist_x = ax + t * bx - cx
-            dist_y = ay + t * by - cy
-            dist_z = az + t * bz - cz
+            dist_x = t * bx - delta_ca_x
+            dist_y = t * by - delta_ca_y
+            dist_z = t * bz - delta_ca_z
 
             return math.sqrt(
                 dist_x * dist_x + dist_y * dist_y + dist_z * dist_z
