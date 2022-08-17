@@ -74,9 +74,9 @@ class BaseLOSValidator(ABC):
     def _passes_simple_checks(self, site1: LOSSite, site2: LOSSite) -> bool:
         """
         Performs these simple checks
-        Check 1: on the same xy coordinate
-        Check 2: on the same building
-        Check 3: out of distance range
+        Check 1: on the same building
+        Check 2: out of distance range
+        Check 3: exceeds max elevation deviation
         Check 4: intersects with the exclusion zones
         """
         if self._on_the_same_building(site1, site2):

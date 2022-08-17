@@ -847,6 +847,8 @@ def construct_topology_from_los_result(
     A list of device data.
     @param device_pair_to_max_los_dist
     A dict mapping a pair of device SKUs to the max los distance.
+    @param min_los_dist
+    An int for the min los distance.
     @return
     A Topology representing the candidate graph.
     """
