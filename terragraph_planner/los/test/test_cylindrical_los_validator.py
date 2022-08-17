@@ -360,7 +360,9 @@ class TestCylindricalLOSValidator(TestCase):
                 grid, ax, ay, az, bx, by, bz, b_len_2d_sq, b_len_2d, b_len_3d_sq
             )
 
-        los_validator = CylindricalLOSValidator(None, 200.0, 0.0, 1.0, [], 1.0)
+        los_validator = CylindricalLOSValidator(
+            None, 200.0, 1.0, 25, 1.0, [], 1.0
+        )
         ax, ay, az = 1, 1, 1
         bx, by, bz = 2, 2, 2
         b_len_2d_sq = bx * bx + by * by
