@@ -48,7 +48,7 @@ the Terragraph Planner in the following method:
 - Calculate rain attenuation in dB/km using the following constant values:
 
 $$
-k = 0.8515, \alpha = 0.7486, \gamma_{R} = kR_{0.01}\alpha
+k = 0.8515, \alpha = 0.7486, \gamma_{R} = kR_{0.01}^\alpha
 $$
 
 where,
@@ -64,7 +64,7 @@ where,
 99.9 - 99.999), then $A_{0.01}$ is adjusted to $A_{p}$ using the following set
 of equations:
 $$
-r = \frac{1}{0.477d^{0.633}R^{0.073\alpha}_{0.01}f^{0.123}-10.579(1-\exp{(0.024d)})} \\
+r = \min(\frac{1}{0.477d^{0.633}R^{0.073\alpha}_{0.01}f^{0.123}-10.579(1-\exp{(0.024d)})}, 2.5) \\
 $$
 $$
 A_{0.01} = \gamma_{R}dr \\
