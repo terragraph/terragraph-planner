@@ -149,26 +149,26 @@ class CylindricalLOSValidator(BaseLOSValidator):
         between (0, 1) and q is non-negative number. Since d is vertical, we use
         d = (0, 0, -1) here, then b x d = (-by, bx, 0)
 
-        The shortest distance is computed by d = (c - a)⋅b x d / |b x d|,
-        where x is cross production between vectors, ⋅ is dot production, and |b x d|
+        The shortest distance is computed by d = (c - a)⋅(b x d) / |b x d|,
+        where x is cross product between vectors, ⋅ is dot product, and |b x d|
         means the length of b x d.
 
-        However, we also need to check if the intersection point is on the line segement
+        However, we also need to check if the intersection point is on the line segment
         by computing p and q in the simultaneous equation ((a + p⋅b) - (c + q⋅d))⋅b = 0,
         ((a + p⋅b) - (c + q⋅d))⋅d = 0.
 
         Based on q value, we have two different cases:
         1. q > 0, which means the intersection point is not higher than the top of grid.
-           a. If p <= 0 pr p >= 1, this function assume the obstruction is behind the site,
-              and returns fresnel radius
+           a. If p <= 0 pr p >= 1, this function assumes the obstruction is behind the site,
+              and returns None
            b. otherwise returns the distance between two lines.
 
-        2. q <= 0, which means the intersection point is higher on the grid. In this
+        2. q <= 0, which means the intersection point is higher than the dsm value. In this
            case, the function returns the distance from grid top to the LOS center line
            by first determining where the closest point is and then computing the distance
            between two points. If the closest point, which is the intersection of the
            LOS line and its orthogonal line going through grid top, is not between two
-           sites, return fresnel radius.
+           sites, return None.
         """
         cx, cy, cz = grid
         delta_ca_x = cx - ax
@@ -179,7 +179,7 @@ class CylindricalLOSValidator(BaseLOSValidator):
         if q > 0:
             # Compute distance beween line b and line d
             if 0 <= p <= 1:
-                return (-delta_ca_x * by + delta_ca_y * bx) / b_len_2d
+                return abs(-delta_ca_x * by + delta_ca_y * bx) / b_len_2d
             else:
                 return None
         else:
