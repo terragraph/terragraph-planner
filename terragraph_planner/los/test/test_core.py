@@ -160,7 +160,7 @@ class TestCore(TestCase):
             None,
             [],
             100,
-            0,
+            1,
             1,
             True,
             1,

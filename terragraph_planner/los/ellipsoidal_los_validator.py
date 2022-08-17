@@ -26,6 +26,7 @@ class EllipsoidalLOSValidator(BaseLOSValidator):
         surface_elevation: Optional[Elevation],
         max_los_distance: float,
         min_los_distance: float,
+        max_el_dev: float,
         frequency_mhz: float,
         exclusion_zones: List[Polygon],
         los_confidence_threshold: float,
@@ -34,6 +35,7 @@ class EllipsoidalLOSValidator(BaseLOSValidator):
             surface_elevation,
             max_los_distance,
             min_los_distance,
+            max_el_dev,
             exclusion_zones,
             los_confidence_threshold,
         )

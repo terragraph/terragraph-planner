@@ -743,6 +743,7 @@ class TestConstructTopologyFromLOSResult(TestCase):
             (self.device1.device_sku, self.device0.device_sku): 3,
             (self.device1.device_sku, self.device1.device_sku): 4,
         }
+        self.min_los_distance = 0
 
     def validate_topology(
         self,
@@ -776,6 +777,7 @@ class TestConstructTopologyFromLOSResult(TestCase):
             confidence_dict=self.confidence_dict,
             device_list=[self.device0, self.device1],
             device_pair_to_max_los_dist=self.device_pair_to_max_los_dist,
+            min_los_dist=self.min_los_distance,
         )
         expected_links = {
             "0_device1-4_device1",
@@ -814,6 +816,7 @@ class TestConstructTopologyFromLOSResult(TestCase):
             confidence_dict=self.confidence_dict,
             device_list=[self.device0, self.device1],
             device_pair_to_max_los_dist=self.device_pair_to_max_los_dist,
+            min_los_dist=self.min_los_distance,
         )
         expected_links = {
             "0_device1-4_device1",
@@ -842,6 +845,7 @@ class TestConstructTopologyFromLOSResult(TestCase):
             confidence_dict=self.confidence_dict,
             device_list=[self.device0, self.device1],
             device_pair_to_max_los_dist=self.device_pair_to_max_los_dist,
+            min_los_dist=self.min_los_distance,
         )
         expected_links = {
             "0_device1-4_device1",
@@ -881,6 +885,7 @@ class TestConstructTopologyFromLOSResult(TestCase):
             confidence_dict=self.confidence_dict,
             device_list=[self.device0, self.device1],
             device_pair_to_max_los_dist=self.device_pair_to_max_los_dist,
+            min_los_dist=self.min_los_distance,
         )
         # The first two sites will be connected. The third site exceeds max
         # distance and the fourth site exceeds elevation deviation

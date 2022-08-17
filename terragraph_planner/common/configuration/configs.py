@@ -455,9 +455,12 @@ class LOSParams(ConfigParser):
             ConfigException,
         )
         planner_assert(
-            maximum_los_distance is None
-            or (0 <= maximum_los_distance <= maximum_los_distance),
-            "Maximum/maximum LOS distance cannot be negative "
+            minimum_los_distance >= 5
+            and (
+                maximum_los_distance is None
+                or minimum_los_distance < maximum_los_distance
+            ),
+            "Minimum LOS distance cannot be less than 5m "
             "and maximum LOS distance must be larger than minimum LOS distance",
             ConfigException,
         )

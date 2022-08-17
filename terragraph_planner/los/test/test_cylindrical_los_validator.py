@@ -41,7 +41,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_on_the_same_building(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 5, 1, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 5, 1, 0.4, 25, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         self.assertEqual(
             los_validator.compute_confidence(
@@ -65,7 +65,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_out_of_distance_range(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 2, 1, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 2, 1, 25, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         self.assertEqual(
             los_validator.compute_confidence(
@@ -75,11 +75,24 @@ class TestCylindricalLOSValidator(TestCase):
             0.0,
         )
 
+    def test_large_el_dev(self) -> None:
+        los_validator = CylindricalLOSValidator(
+            self.elevation, 50, 1, 25, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+        )
+        self.assertEqual(
+            los_validator.compute_confidence(
+                build_los_site_for_los_test(2.5, 2.5, 20),
+                build_los_site_for_los_test(6.5, 2.5, 10),
+            ),
+            0.0,
+        )
+
     def test_intersects_with_exclusion_zone(self) -> None:
         los_validator = CylindricalLOSValidator(
             self.elevation,
             5,
             1,
+            25,
             0.4,
             [Polygon([(1, 1), (2, 1), (2, 2), (1, 2)])],
             DEFAULT_LOS_CONFIDENCE_THRESHOLD,
@@ -94,7 +107,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_grid_higher_than_sites(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 5, 1, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 5, 1, 25, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         self.assertEqual(
             los_validator.compute_confidence(
@@ -106,7 +119,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_a_clear_los(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 5, 1, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 5, 1, 25, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         self.assertEqual(
             los_validator.compute_confidence(
@@ -118,7 +131,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_grid_higher_than_max_top_view_plane(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 5, 1, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 5, 1, 25, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         self.assertEqual(
             los_validator.compute_confidence(
@@ -130,7 +143,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_grid_center_within_utm_zone(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 5, 1, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 5, 1, 25, 0.4, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         self.assertEqual(
             los_validator.compute_confidence(
@@ -161,7 +174,7 @@ class TestCylindricalLOSValidator(TestCase):
             None,
         )
         los_validator = CylindricalLOSValidator(
-            elevation, 5, 1, 1, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            elevation, 5, 1, 25, 1, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         # The LOS line is below the max_top_view_plane, so the minimal distance
         # is from point (x.5, 3.5, z) to the LOS center, where x = 1,2,3,4, and z < 5
@@ -195,7 +208,7 @@ class TestCylindricalLOSValidator(TestCase):
 
     def test_point_within_rectangle(self) -> None:
         los_validator = CylindricalLOSValidator(
-            self.elevation, 5, 1, 1, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
+            self.elevation, 5, 1, 25, 1, [], DEFAULT_LOS_CONFIDENCE_THRESHOLD
         )
         utm_x1, utm_y1 = (1, 1)
         utm_x2, utm_y2 = (3, 0.5)
@@ -237,7 +250,7 @@ class TestCylindricalLOSValidator(TestCase):
             spatial_reference=self.spatial_reference,
             collection_time=None,
         )
-        los_validator = CylindricalLOSValidator(elevation, 5, 1, 2, [], 1.0)
+        los_validator = CylindricalLOSValidator(elevation, 5, 1, 25, 2, [], 1.0)
 
         # Obstructions with height 3 will cause confidence level to be 0 but they
         # are not within the 2D projection and are filtered out
@@ -268,7 +281,7 @@ class TestCylindricalLOSValidator(TestCase):
             spatial_reference=self.spatial_reference,
             collection_time=None,
         )
-        los_validator = CylindricalLOSValidator(elevation, 5, 1, 2, [], 1.0)
+        los_validator = CylindricalLOSValidator(elevation, 5, 1, 25, 2, [], 1.0)
 
         # Obstructions with height 3 will cause confidence level to be 0 but they
         # are not within the 2D spatial_reference and are filtered out
@@ -300,7 +313,7 @@ class TestCylindricalLOSValidator(TestCase):
             spatial_reference=self.spatial_reference,
             collection_time=None,
         )
-        los_validator = CylindricalLOSValidator(elevation, 5, 1, 1, [], 1.0)
+        los_validator = CylindricalLOSValidator(elevation, 5, 1, 25, 1, [], 1.0)
 
         self.assertEqual(
             los_validator.compute_confidence(
@@ -331,7 +344,7 @@ class TestCylindricalLOSValidator(TestCase):
             spatial_reference=self.spatial_reference,
             collection_time=None,
         )
-        los_validator = CylindricalLOSValidator(elevation, 5, 1, 2, [], 1.0)
+        los_validator = CylindricalLOSValidator(elevation, 5, 1, 25, 2, [], 1.0)
 
         self.assertEqual(
             los_validator.compute_confidence(
@@ -347,7 +360,9 @@ class TestCylindricalLOSValidator(TestCase):
                 grid, ax, ay, az, bx, by, bz, b_len_2d_sq, b_len_2d, b_len_3d_sq
             )
 
-        los_validator = CylindricalLOSValidator(None, 200.0, 0.0, 1.0, [], 1.0)
+        los_validator = CylindricalLOSValidator(
+            None, 200.0, 1.0, 25, 1.0, [], 1.0
+        )
         ax, ay, az = 1, 1, 1
         bx, by, bz = 2, 2, 2
         b_len_2d_sq = bx * bx + by * by

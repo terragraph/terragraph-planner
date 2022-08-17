@@ -414,6 +414,7 @@ def build_candidate_topology(
         confidence_dict,
         los_params.device_list,
         device_pair_to_max_los_dist,
+        los_params.minimum_los_distance,
     )
     logger.info("Completed constructing the topology.")
     return topology

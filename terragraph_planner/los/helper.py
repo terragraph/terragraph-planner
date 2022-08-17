@@ -31,7 +31,6 @@ from terragraph_planner.common.configuration.enums import (
 )
 from terragraph_planner.common.constants import (
     ELE_SCAN_ANGLE_LIMIT,
-    ELE_SCAN_ANGLE_TOLERANCE,
     LOWER_BOUND_FOR_LOS_DISTANCE,
     UPPER_BOUND_FOR_LOS_DISTANCE,
 )
@@ -67,6 +66,8 @@ from terragraph_planner.los.constants import (
     BI_DIRECTIONAL_LINKS,
     BUILDING_HEIGHT_THRESHOLD,
     DIRECTED_LINKS,
+    DISTANCE_TOLERANCE_PERCENT,
+    ELE_SCAN_ANGLE_TOLERANCE,
 )
 from terragraph_planner.los.cylindrical_los_validator import (
     CylindricalLOSValidator,
@@ -546,8 +547,9 @@ def compute_los_batch(
     if use_ellipsoidal_los_model:
         los_validator = EllipsoidalLOSValidator(
             surface_elevation,
-            max_los_distance,
-            min_los_distance,
+            max_los_distance * (1 + DISTANCE_TOLERANCE_PERCENT),
+            min_los_distance * (1 - DISTANCE_TOLERANCE_PERCENT),
+            ELE_SCAN_ANGLE_LIMIT + ELE_SCAN_ANGLE_TOLERANCE,
             carrier_frequency,
             exclusion_zones,
             los_confidence_threshold,
@@ -555,8 +557,9 @@ def compute_los_batch(
     else:
         los_validator = CylindricalLOSValidator(
             surface_elevation,
-            max_los_distance,
-            min_los_distance,
+            max_los_distance * (1 + DISTANCE_TOLERANCE_PERCENT),
+            min_los_distance * (1 - DISTANCE_TOLERANCE_PERCENT),
+            ELE_SCAN_ANGLE_LIMIT + ELE_SCAN_ANGLE_TOLERANCE,
             fresnel_radius,
             exclusion_zones,
             los_confidence_threshold,
@@ -827,6 +830,7 @@ def construct_topology_from_los_result(
     confidence_dict: Dict[Tuple[int, int], float],
     device_list: List[DeviceData],
     device_pair_to_max_los_dist: Dict[Tuple[str, str], int],
+    min_los_dist: int,
 ) -> Topology:
     """
     Construct a Topology instance for candidate graph from LOS result.
@@ -843,6 +847,8 @@ def construct_topology_from_los_result(
     A list of device data.
     @param device_pair_to_max_los_dist
     A dict mapping a pair of device SKUs to the max los distance.
+    @param min_los_dist
+    An int for the min los distance.
     @return
     A Topology representing the candidate graph.
     """
@@ -861,6 +867,7 @@ def construct_topology_from_los_result(
         site_map,
         confidence_dict,
         device_pair_to_max_los_dist,
+        min_los_dist,
     )
 
 
@@ -920,6 +927,7 @@ def add_links_to_topology(
     site_map: Dict[int, List[Site]],
     confidence_dict: Dict[Tuple[int, int], float],
     device_pair_to_max_los_dist: Dict[Tuple[str, str], int],
+    min_los_dist: int,
 ) -> Topology:
     """
     Called by construct_topology_from_los_result, this function is to add links to
@@ -945,16 +953,15 @@ def add_links_to_topology(
                         ],
                     )
                     if (
-                        link.distance
-                        < device_pair_to_max_los_dist[
+                        min_los_dist
+                        <= link.distance
+                        <= device_pair_to_max_los_dist[
                             (
                                 tx_site.device.device_sku,
                                 rx_site.device.device_sku,
                             )
                         ]
-                        and link.el_dev
-                        < ELE_SCAN_ANGLE_LIMIT
-                        + ELE_SCAN_ANGLE_TOLERANCE  # additional tolerance
+                        and link.el_dev <= ELE_SCAN_ANGLE_LIMIT
                     ):
                         topology.add_link(link)
     return topology

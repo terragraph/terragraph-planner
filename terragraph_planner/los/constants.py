@@ -35,6 +35,16 @@ DIRECTED_LINKS: Tuple[Tuple[SiteType, SiteType], Tuple[SiteType, SiteType]] = (
     (SiteType.DN, SiteType.CN),
 )
 
+# LOS is computed in utm coordinates; distance computation has small error
+# compared with haversine distance. Due to this, for LOS computations, increase
+# the valid distance range slightly and then filter out invalid links using
+# distance computed with haversine later.
+DISTANCE_TOLERANCE_PERCENT = 0.02
+
+# Due to the distance tolerance,additional tolerance for the elevation angle
+# limit
+ELE_SCAN_ANGLE_TOLERANCE = 2
+
 # When getting altitude of corners, we need a square bound with the corner as its center
 # to search its neighbors and find a neighbor that is much higher than the neighbor's
 # neighbor. HALF_SIDE_LENGTH_FOR_ALTITUDE_SEARCH (in metres) is the half of the side length
