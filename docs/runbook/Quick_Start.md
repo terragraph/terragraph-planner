@@ -45,6 +45,12 @@ Ubuntu. Use another package tool instead if you are using different OS.
 2. Set the environment variable `XPAUTH_PATH` to the full path of your commericial
    license if you have one. Otherwise, the community license is used by default
    (which will only work for very small plans).
+3. If you are using a commercial license for xpress, please specify the
+   version of xpress and install it separately after step 4 in the last section.
+   ```
+   pip3 install xpress==x.y.z
+   ```
+   where x.y.z is the version compatible with your license.
 
 Get more details at [FICO Xpress Optimization Help](https://www.fico.com/fico-xpress-optimization/docs/latest/solver/optimizer/python/HTML/chIntro.html?scroll=secInstall).
 

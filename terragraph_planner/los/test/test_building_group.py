@@ -45,10 +45,10 @@ class TestBuildingGroup(unittest.TestCase):
             )
         )
         coords2 = [
-            (0.001, 0.0009),
             (0.0009, 0.0009),
             (0.0009, 0.001),
             (0.001, 0.001),
+            (0.001, 0.0009),
         ]
         buildings = BuildingGroup(
             [building1, building2, building3],
