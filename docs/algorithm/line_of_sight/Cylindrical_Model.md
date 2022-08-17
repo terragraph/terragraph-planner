@@ -127,9 +127,7 @@ to using an oblique cylinder). If $q < 0$ then the shortest distance is from
 the point $M(0) = {\bf c}$ to the line $L(p)$. This can happen if, for example,
 the top of a building is below the direct path between the two sites; in this
 situation, the closest point is likely above the top of the building, but the
-top of the building might still be within the Fresnel radius. This should
-generally be rare given that the mounting height of the equipment should be
-larger than the Fresnel radius.
+top of the building might still be within the Fresnel radius.
 
 In this case, the problem becomes finding the distance between a point and a
 line. We know the shortest distance from ${\bf c}$ to $L(p)$ is perpendicular to $L(p)$.
@@ -165,6 +163,9 @@ Once again, if $p \notin [0, 1]$, then LOS is not blocked.
    these candidate obstruction points.
 2. For each candidate obstruction point, compute the shortest distance to the
    LOS direct path between the sites using the formulae above. If the distance
-   is less than the Fresnel radius, LOS is blocked. Otherwise, if the distance
-   is equal to or exceeds the Fresnel radius for all candidate obstruction
-   points, it is valid LOS.
+   is less than the Fresnel radius, LOS is blocked. For all such obstructions,
+   we keep track of the minimum shortest distance in order to compute the
+   [confidence level](Confidence_Level.md). If the distance is equal to or
+   exceeds the Fresnel radius (or Fresnel radius scaled by the user-supplied
+   confidence level threshold) for all candidate obstruction points, it is
+   valid LOS.
