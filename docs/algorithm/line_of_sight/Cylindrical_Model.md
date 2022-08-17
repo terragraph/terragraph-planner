@@ -1,113 +1,171 @@
 # Cylindrical Model
 
-The cylindrical model is a simplified model from the ellipsoidal model.
-Given the fact that the maximum radius of Fresnel zone of a 60 GHz radio
-is small, which is usually less than 1 meter, the cylindrical model is
-able to give a credible result when using most geographical data whose
-resolution is about 1 meter too. In the cylindrical model, the radius
-is uniform everywhere, called “Fresnel radius”, and is inputed by users.
+The cylindrical model is a simplified model of radio wave propagation that is
+fast to compute and reasonably accurate. It assumes that Fresnel zones are
+cylindrical in shape with axes along the direct path connecting the transmitter
+and receivier. In other words, the distance from that direct path to the
+boundary of the first Fresnel zone is uniform along the entire path. That
+distance is the radius of the first Fresnel zone, which we often refer to as
+the Fresnel radius. The radius of the cylindrical model is specified by the
+user.
 
+Keep in mind that the accuracy of determining LOS is heavily dependent on the
+accuracy and resolution of the underlying surface elevation data. Given that
+the radius of the first Fresnel zone is usually less than 1 meter for 60 GHz
+radio communication and that the geographical data typically has a resolution
+of around 1 meter as well, in many cases, the cylindrical model is sufficient.
 
 ## Problem Modeling
 
-The main problem of this model is to compute the distance in a 3D space.
-We compute the distance from DSM grid (or pixel) to the LOS center line
-(the line from one end site to the other end site, without width) to determine
-is this grid blocks the Fresnel zone. We use the center of the DSM grid as
-representative to compute the distance. Thus, this problem becomes computing
-distance from a 3-D line segment to another 3-D line segment.
+Determining LOS for the cylindrical model ultimately comes down to finding the
+shortest distance between a line segment (the line representing the direct path
+between the two sites) and a semi-infinite line (the vertical line from the
+height of the surface down as specified by the DSM located at the center of the
+DSM pixel). If the shortest distance is less than the Fresnel radius and
+between the two sites, then the LOS is blocked.
 
+> In this implementation of the cylindrical model, we use a tilted or oblique
+cylinder where the end caps are orthogonal to the xy-plane. The difference
+between an oblique cylinder and a rotated cylinder is relatively minor and only
+near the ends. Given that this is an approximate model, such differences are
+acceptable.
 
-## Math Equations
+## Mathematical Formulation
 
-Since computing the distance between two 3-D lines is difficult, let’s simplify
-the computation.
+Assume the two end sites have coordinates $(x_1​,y_1​,z_1​)$ and
+$(x_2​,y_2​,z_2​)$, and the DSM height at pixel $(x_0​,y_0​)$ is $z_0$.
 
-Say the two end sites have coordinates $(x_1​,y_1​,z_1​)$ and
-$(x_2​,y_2​,z_2​)$, and one DSM grid $(x_0​,y_0​)$ has the base at $i_0​$ and
-the top at h (then the building height is $∣h−i_0​∣$).
-
-Then the formula of the LOS center line is:
+The formula of the line representing the direct path between the sites is
 
 $$
-\begin{cases} x = x_1 + t \times p \\
-y = y_1 + t \times q \\
-z = z_1 + t \times r \\
+\begin{cases}
+x = x_1 + p (x_2 - x_1) \\
+y = y_1 + p (y_2 - y_1) \\
+z = z_1 + p (z_2 - z_1) \\
 \end{cases}
-\text{, where } \frac{x_2-x_1}{p} = \frac{y_2-y_1}{q} = \frac{z_2-z_1}{r}
+p \in [0,1]
 $$
 
-The line segment for the shortest distance between both lines (i.e., the
-line segment between $(x_1​,y_1​,z_1​)$ and $(x_2,y_2​,z_2​)$ and the line
-segment between $(x_0​,y_0​,i_0​)$ and $(x_0​,y_0​,h)$ must be orthogonal.
-Suppose the intersection on the DSM grid and the line segment is
-$(x_0​,y_0​,z_0​)$, and the intersection on the LOS center line and the line
-segment is $(x_1​+t_0​ \times p,y_1​+t_0​ \times q,z_1​+t_0​ \times r)$.
+Similarly, the formula for the vertical line at the DSM pixel is
 
-Then the shortest distance
-$d^2=(x_0​−x_1​−t_0 \times p)^2+(y_0​−y_1​−t_0​\times q)^2+(z_0​−z_1​−t_0​ \times r)^2$.
+$$
+\begin{cases}
+x = x_0 \\
+y = y_0 \\
+z = z_0 - q \\
+\end{cases}
+q \geq 0
+$$
 
-where $(x_0​−x_1​−t_0​\times p) \times p+(y_0​−y_1​−t_0​\times q) \times q+(z_0​−z_1​−t_0​\times r)\times r=0$,
-because of the orthogonality.
+In vector notation, we will write these two equations as
 
-Then to simplify them, we get
-$d^2=(x_0​−x_1​−t_0\times p)^2+(y_0​−y_1​−t_0​\times q)^2$, where
-$(x_0​−x_1​−t_0​\times p)\times p+(y_0​−y_1​−t_0​ \times q)\times q=0$.
-It becomes a problem of computing the distance from a 2-D point $(x_0, y_0)$
-to a 2-D line from $(x_1​,y_1​)$ to $(x_2​,y_2​)$. The shapely lib can compute
-it quickly.
+$$
+L(p) = {\bf a} + p {\bf b}
+$$
 
-But what if $z_0​>h$, which means the intersection point is actually higher
-than the DSM grid top? In this case, we need to compute the distance from
-the 3-D point $(x_0​,y_0​,h)$ to the 3-D line between $(x_1​,y_1​,z_1​)$ and
-$(x_2​,y_2​,z_2​)$. Then how to determine it? We can compute the formula of
-plane that goes through points $(x_1​,y_1​,z_1​)$, $(x_2​,y_2​,z_2​)$ and
-$(x_0​,y_0​,z_0​)$, and use the formula to get $z_0$​, and then compare it
-with $h$. We already know that line between $(x_0​,y_0​,z_0​)$ and
-$(x_1​+t_0​\times p,y_1​+t_0​\times q,z_1​+t_0​\times r)$ is orthogonal with
-the line between $(x_1​,y_1​,z_1​)$ and $(x_2​,y_2​,z_2​)$, then we find
-another line that is parallel to the line between $(x_0​,y_0​,z_0​)$
-and $(x_1​+t_0​\times p,y_1​+t_0​\times q,z_1​+t_0​\times r)$ but intersects
-with $(x_1​,y_1​,z_1​)$ and $(x_2​,y_2​,z_2​)$ to determine the plane that
-also contains $(x_0​,y_0​,z_0​)$. In that way, we can avoid computing
-the plane formula every time for each DSM pixel.
+$$
+M(q) = {\bf c} + q {\bf d}
+$$
 
-Finally, we get the process to compute the distance, which is implemented
-at [`los/cylindrical_los_validator.py`](https://github.com/terragraph/terragraph-planner/blob/main/terragraph_planner/los/cylindrical_los_validator.py).
+where ${\bf a} = (x_1, y_1, z_1)$, ${\bf b} = (x_2 - x_1, y_2 - y_1, z_2 - z_1)$, ${\bf c} = (x_0, y_0, z_0)$, and ${\bf d} = (0, 0, -1)$.
 
+The line segment for the shortest distance between the two lines must be
+perpendicular to both lines. The unit vector that is perpendicular to both
+lines is
 
-## Steps to Decide LOS
+$$
+\frac{{\bf b}  \times {\bf d}}{\left | {\bf b}  \times {\bf d} \right |}
+$$
 
-For each pair of site $(x_1​,y_1​,z_1​)$ and $(x_2​,y_2​,z_2​)$:
+Then the shortest distance, $d$, between the lines is the projection of the
+vector connecting the two lines on the unit vector perpendicular to both lines.
+That is, the shortest distance is
 
-1. (Step 1) In 2-D space, we find every DSM pixel $(x,y)$ whose distance
-    to the line between $(x_1​,y_1​)$ and $(x_2​,y_2​)$ is smaller than the Fresnel
-    radius. The distance from each of those DSM pixels to the 3-D LOS center
-    should be smaller than the Fresnel radius if we do not consider the height.
-    We call it `possible_obstructions` in the codebase.
-2. (Step 2) Use $(x_1​,y_1​,z_1​)$, $(x_2​,y_2​,z_2​)$ and the third point
-    $(x_3​,y_3​,z_3​)$, where the line between $(x_1​,y_1​,z_1​)$ and $(x_3​,y_3​,z_3​)$
-    should be parallel to the line between $(x_0​,y_0​,z_0​)$ and
-    $(x_1​+t_0​ \times p,y_1​+t_0​ \times q,z_1​+t_0​ \times r)$ to compute the
-    formula of the plane that contains the intersection point between DSM pixel
-    and the orthogonal line. We call that plane as `max_top_view_plane` in codebase.
-3. (Step 3) Use the plane formula to check if $z_0​ \leq h$.
-    1. If $z0​ \leq h$, use `shapely` lib to compute the distance from point
-    $(x_0​,y_0​)$ to the line between $(x_1​,y_1​)$ and $(x_2​,y_2​)$, which
-    is equal to the distance from DSM grid to the LOS center line.
-    2. If $z0​>h$, compute the distance from $(x_0​,y_0​,h)$ to the line
-    between $(x_1​,y_1​,z_1​)$ and $(x_2​,y_2​,z_2​)$ as the final distance.
-    Be aware of whether the intersection point is line within the LOS
-    center line here, since LOS center line is not an infinite line.
-4. Finally, we use the shortest distance to compute the confidence level.
-    If the confidence level is greater than the threshold, we propose that
-    LOS link, otherwise reject it.
+$$
+d = ({\bf c} - {\bf a}) \cdot \frac{{\bf b}  \times {\bf d}}{\left | {\bf b}  \times {\bf d} \right |}
+$$
 
-<p align="center">
-    <img src="../../figures/los-cylindrical-step-overview.png" width="45%" />
-    <img src="../../figures/los-cylindrical-step-1.png" width="45%" />
-    <img src="../../figures/los-cylindrical-step-2.png" width="45%" />
-    <img src="../../figures/los-cylindrical-step-3-1.png" width="45%" />
-    <img src="../../figures/los-cylindrical-step-3-2.png" width="45%" />
-    <img src="../../figures/los-cylindrical-step-4.png" width="45%" />
-</p>
+Expanding this equation in terms of our original variables, we get
+
+$$
+d = \frac{(x_1-x_0)(y_2-y_1) - (y_1-y_0)(x_2-x_1)}{\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}}
+$$
+
+> We know the lines will not be parallel because of
+[Easy Negative Case #1](Easy_Negative_Cases.md). In other words, we should
+never have the situation where $x_2 = x_1$ and $y_2 = y_1$.
+
+Any vector connecting the two lines can be expressed as
+
+$$
+{\bf a} + p {\bf b} - {\bf c} - q {\bf d}
+$$
+
+For some value of $t$ and $r$, this vector will be perpendicular to both lines.
+
+$$
+({\bf a} + p {\bf b} - {\bf c} - q {\bf d}) \cdot {\bf b} = 0
+$$
+
+$$
+({\bf a} + p {\bf b} - {\bf c} - q {\bf d}) \cdot {\bf d} = 0
+$$
+
+We have two equations with two unknowns, which we solve to get
+
+$$
+p = \frac{(x_0-x_1)(x_2-x_1)+(y_0-y_1)(y_2-y_1)}{(x_2-x_1)^2 + (y_2-y_1)^2}
+$$
+
+$$
+q = z_0 - z_1 -p(z_2-z_1)
+$$
+
+If both $p \in [0,1]$ and $q \geq 0$, then LOS is blocked if $d$ is less than
+the Fresnel radius. If $p \notin [0, 1]$, then LOS is not blocked (this is due
+to using an oblique cylinder). If $q < 0$ then the shortest distance is from
+the point $M(0) = {\bf c}$ to the line $L(p)$. This can happen if, for example,
+the top of a building is below the direct path between the two sites; in this
+situation, the closest point is likely above the top of the building, but the
+top of the building might still be within the Fresnel radius.
+
+In this case, the problem becomes finding the distance between a point and a
+line. We know the shortest distance from ${\bf c}$ to $L(p)$ is perpendicular to $L(p)$.
+
+$$
+({\bf a} + p {\bf b} - {\bf c}) \cdot {\bf b} = 0
+$$
+
+Therefore
+
+$$
+p = -\frac{({\bf a} - {\bf c}) \cdot {\bf b}}{\left | {\bf b} \right |^2}
+$$
+
+and the distance is
+
+$$
+d = \left | {\bf a} - {\bf c} - \frac{({\bf a} - {\bf c}) \cdot {\bf b}}{\left | {\bf b} \right |^2} {\bf b} \right |
+$$
+
+It turns out that this is equivalent to
+
+$$
+d = \frac{\left | {\bf b} \times ({\bf a} - {\bf c}) \right |}{\left | {\bf b} \right |}
+$$
+
+Once again, if $p \notin [0, 1]$, then LOS is not blocked.
+
+## Algorithm
+
+1. Find the rectangular projection of the oblique cylinder on xy-plane. Only
+   consider DSM grid points that are inside this rectangular projection. Call
+   these candidate obstruction points.
+2. For each candidate obstruction point, compute the shortest distance to the
+   LOS direct path between the sites using the formulae above. If the distance
+   is less than the Fresnel radius, LOS is blocked. For all such obstructions,
+   we keep track of the minimum shortest distance in order to compute the
+   [confidence level](Confidence_Level.md). If the distance is equal to or
+   exceeds the Fresnel radius (or Fresnel radius scaled by the user-supplied
+   confidence level threshold) for all candidate obstruction points, it is
+   valid LOS.

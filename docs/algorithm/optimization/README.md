@@ -1,6 +1,6 @@
 # Optimization
 
-This doc describes the TG Planner optimization workflow and algorithms. It
+This document describes the TG Planner optimization workflow and algorithms. It
 begins with a high-level overview of optimization approach and then dives into
 the specifics of the mathematical formulation.
 
