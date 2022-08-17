@@ -3,17 +3,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import math
+from typing import Optional
 from unittest import TestCase
 
 import numpy as np
 from osgeo import osr
+from pyre_extensions import none_throws
 from shapely.geometry import Polygon
 
 from terragraph_planner.common.configuration.constants import (
     DEFAULT_LOS_CONFIDENCE_THRESHOLD,
 )
 from terragraph_planner.common.configuration.enums import LocationType
-from terragraph_planner.common.structs import UTMBoundingBox
+from terragraph_planner.common.structs import Point3D, UTMBoundingBox
 from terragraph_planner.los.cylindrical_los_validator import (
     CylindricalLOSValidator,
 )
@@ -21,7 +24,7 @@ from terragraph_planner.los.elevation import Elevation
 from terragraph_planner.los.test.helper import build_los_site_for_los_test
 
 
-class TestEllipsoidalLOSValidator(TestCase):
+class TestCylindricalLOSValidator(TestCase):
     def setUp(self) -> None:
         self.spatial_reference = osr.SpatialReference()
         self.spatial_reference.ImportFromEPSG(32647)
@@ -337,3 +340,35 @@ class TestEllipsoidalLOSValidator(TestCase):
             ),
             1.0,
         )
+
+    def test_distance_between_grid_and_center_line(self) -> None:
+        def helper(grid: Point3D) -> Optional[float]:
+            return los_validator._distance_between_grid_and_center_line(
+                grid, ax, ay, az, bx, by, bz, b_len_2d_sq, b_len_2d, b_len_3d_sq
+            )
+
+        los_validator = CylindricalLOSValidator(None, 200.0, 0.0, 1.0, [], 1.0)
+        ax, ay, az = 1, 1, 1
+        bx, by, bz = 2, 2, 2
+        b_len_2d_sq = bx * bx + by * by
+        b_len_2d = math.sqrt(b_len_2d_sq)
+        b_len_3d_sq = b_len_2d_sq + bz * bz
+
+        # On the line
+        self.assertEqual(helper(Point3D(1.5, 1.5, 1.5)), 0.0)
+        # q >= 0 and 0 <= p <= 1
+        # The distance is zero, because (1.5, 1.5, 2) has the same
+        # x, y as (1.5, 1.5, 1.5) but higher
+        self.assertEqual(helper(Point3D(1.5, 1.5, 2)), 0.0)
+        # Another case of q >= 0 and 0 <= p <= 1
+        # The distance is same as distance from (1.5, 1.6) to vector (1, 1)
+        self.assertAlmostEqual(
+            none_throws(helper(Point3D(1.5, 1.6, 2))), math.sqrt(0.005), 6
+        )
+        # q >= 0 and not 0 <= p <= 1
+        self.assertIsNone(helper(Point3D(5, 5, 4)))
+        # q < 0 and 0 <= t <= 1
+        # The closest point is (4/3, 4/3, 4/3)
+        self.assertEqual(helper(Point3D(1.5, 1.5, 1)), math.sqrt(1.0 / 6))
+        # q < 0 and not 0 <= t <= 1
+        self.assertIsNone(helper(Point3D(0, 0, 0)))

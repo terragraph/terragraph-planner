@@ -7,7 +7,7 @@ import math
 from typing import Callable, List, Optional, Tuple
 
 from pyre_extensions import none_throws
-from shapely.geometry import LineString, Point, Polygon
+from shapely.geometry import Polygon
 
 from terragraph_planner.common.structs import Point3D
 from terragraph_planner.common.topology_models.site import LOSSite
@@ -66,15 +66,13 @@ class CylindricalLOSValidator(BaseLOSValidator):
     def _compute_confidence_by_radius(
         self, site1: LOSSite, site2: LOSSite
     ) -> float:
-        utm_x1, utm_y1 = site1.utm_x, site1.utm_y
-        utm_x2, utm_y2 = site2.utm_x, site2.utm_y
-        altitude1, altitude2 = none_throws(site1.altitude), none_throws(
-            site2.altitude
-        )
-
         # Get the four corners of the 2D projection of the cylinder
         p, q, r, s = self._get_four_corners_of_rectangle(
-            utm_x1, utm_y1, utm_x2, utm_y2, self._fresnel_radius
+            site1.utm_x,
+            site1.utm_y,
+            site2.utm_x,
+            site2.utm_y,
+            self._fresnel_radius,
         )
 
         # Vectors pq, pr used to check if a point is within the 2D projection
@@ -93,54 +91,6 @@ class CylindricalLOSValidator(BaseLOSValidator):
             self._surface_elevation
         ).get_all_obstructions(min_x, max_y, max_x, min_y, filter_func)
 
-        # Computes slopes
-        # Slopes are used to:
-        # 1. Compute the equation of the plane whose intersection with the los zone (a rectangle)
-        #    has the same top view as the top view of the los zone. Let's call it max_top_view_plane
-        #    here.
-        # 2. Compute the distance from a point to the line
-        yx_slope = None
-        zx_slope = None
-        xy_slope = None
-        zy_slope = None
-        sum_slope_sq = 0
-        # Use two sets of slopes, one of which is based on x and the other is based on y
-        # to avoid infinite slope value
-        if utm_x2 != utm_x1:
-            yx_slope = (utm_y2 - utm_y1) / (utm_x2 - utm_x1)
-            zx_slope = (altitude2 - altitude1) / (utm_x2 - utm_x1)
-            sum_slope_sq = 1 + yx_slope * yx_slope + zx_slope * zx_slope
-        elif utm_y2 != utm_y1:
-            xy_slope = (utm_x2 - utm_x1) / (utm_y2 - utm_y1)
-            zy_slope = (altitude2 - altitude1) / (utm_y2 - utm_y1)
-            sum_slope_sq = xy_slope * xy_slope + 1 + zy_slope * zy_slope
-
-        # Compute the equation of the max_top_view_plane: ax + by + cz + d = 0
-        # At first we need a third point on this plane. The line between this point
-        # and site1 should be orthogonal with the los center line and be horizontal
-        third_point_z = altitude1
-        if yx_slope is not None:
-            third_point_x = utm_x1 - yx_slope
-            third_point_y = utm_y1 + 1
-        else:
-            third_point_x = utm_x1 + 1
-            third_point_y = utm_y1 - none_throws(xy_slope)
-        a = (utm_y2 - utm_y1) * (third_point_z - altitude1) - (
-            altitude2 - altitude1
-        ) * (third_point_y - utm_y1)
-        b = (altitude2 - altitude1) * (third_point_x - utm_x1) - (
-            utm_x2 - utm_x1
-        ) * (third_point_z - altitude1)
-        c = (utm_x2 - utm_x1) * (third_point_y - utm_y1) - (utm_y2 - utm_y1) * (
-            third_point_x - utm_x1
-        )
-        d = -(a * utm_x1 + b * utm_y1 + c * altitude1)
-        a_over_c = a / c
-        b_over_c = b / c
-        d_over_c = d / c
-
-        los_2d_line = LineString([(utm_x1, utm_y1), (utm_x2, utm_y2)])
-
         minimal_radius = self._fresnel_radius * self._los_confidence_threshold
         minimal_distance = self._fresnel_radius
 
@@ -149,87 +99,106 @@ class CylindricalLOSValidator(BaseLOSValidator):
         # loop earlier if there's a block.
         obstructions.sort(key=lambda loc: loc.z, reverse=True)
 
-        highest_site_altitude = max(altitude1, altitude2)
+        # Pre-compute some variables used in the distance computation
+        ax, ay, az = site1.utm_x, site1.utm_y, none_throws(site1.altitude)
+        bx = site2.utm_x - ax
+        by = site2.utm_y - ay
+        bz = none_throws(site2.altitude) - az
+        b_len_2d_sq = bx * bx + by * by
+        b_len_2d = math.sqrt(b_len_2d_sq)
+        b_len_3d_sq = b_len_2d_sq + bz * bz
+
+        highest_site_altitude = max(az, none_throws(site2.altitude))
         for grid in obstructions:
-            x, y, z = grid
             if (
                 self._los_confidence_threshold == 1.0
-                and z > highest_site_altitude
+                and grid.z > highest_site_altitude
             ):
                 return 0.0
-            z_on_max_top_view_plane = -(a_over_c * x + b_over_c * y + d_over_c)
-            if z > z_on_max_top_view_plane:
-                distance = los_2d_line.distance(Point(x, y))
-            else:
-                distance = self._distance_between_grid_top_and_center_line(
-                    grid,
-                    site1,
-                    site2,
-                    yx_slope,
-                    zx_slope,
-                    xy_slope,
-                    zy_slope,
-                    sum_slope_sq,
-                )
+
+            distance = self._distance_between_grid_and_center_line(
+                grid, ax, ay, az, bx, by, bz, b_len_2d_sq, b_len_2d, b_len_3d_sq
+            )
+            if distance is None:
+                continue
             if distance < minimal_radius:
                 return 0.0
             minimal_distance = min(minimal_distance, distance)
         return minimal_distance / self._fresnel_radius
 
-    def _distance_between_grid_top_and_center_line(
+    def _distance_between_grid_and_center_line(
         self,
         grid: Point3D,
-        site1: LOSSite,
-        site2: LOSSite,
-        yx_slope: Optional[float],
-        zx_slope: Optional[float],
-        xy_slope: Optional[float],
-        zy_slope: Optional[float],
-        sum_slope_sq: float,
-    ) -> float:
+        ax: float,
+        ay: float,
+        az: float,
+        bx: float,
+        by: float,
+        bz: float,
+        b_len_2d_sq: float,
+        b_len_2d: float,
+        b_len_3d_sq: float,
+    ) -> Optional[float]:
         """
-        Use grid center as representative point. Compute the distance from the grid
-        center to the 3d los center line to check if it's in the LOS zone.
+        Use grid center as representative point. Compute the distance from the vertical
+        line that goes through grid center to the 3d los center line to check if LOS
+        is blocked. If the grid is behind the either site, return None.
+
+        The LOS center line is represented as r = a + p⋅b, and the vertical line is
+        represented as r = c + q⋅d, where a, b, c, d are 3-D vectors, p is a number
+        between (0, 1) and q is non-negative number. Since d is vertical, we use
+        d = (0, 0, -1) here, then b x d = (-by, bx, 0)
+
+        The shortest distance is computed by d = (c - a)⋅(b x d) / |b x d|,
+        where x is cross product between vectors, ⋅ is dot product, and |b x d|
+        means the length of b x d.
+
+        However, we also need to check if the intersection point is on the line segment
+        by computing p and q in the simultaneous equation ((a + p⋅b) - (c + q⋅d))⋅b = 0,
+        ((a + p⋅b) - (c + q⋅d))⋅d = 0.
+
+        Based on q value, we have two different cases:
+        1. q > 0, which means the intersection point is not higher than the top of grid.
+           a. If p <= 0 pr p >= 1, this function assumes the obstruction is behind the site,
+              and returns None
+           b. otherwise returns the distance between two lines.
+
+        2. q <= 0, which means the intersection point is higher than the dsm value. In this
+           case, the function returns the distance from grid top to the LOS center line
+           by first determining where the closest point is and then computing the distance
+           between two points. If the closest point, which is the intersection of the
+           LOS line and its orthogonal line going through grid top, is not between two
+           sites, return None.
         """
-        x, y, z = grid
-        altitude1 = none_throws(site1.altitude)
-        # Gets x, y, z of the nearest point
-        if yx_slope is not None:
-            t = (
-                (x - site1.utm_x)
-                + yx_slope * (y - site1.utm_y)
-                + none_throws(zx_slope) * (z - altitude1)
-            ) / sum_slope_sq
-            # If the orthogonal point is not on the line, use the nearest end
-            if site2.utm_x > site1.utm_x:
-                t = min(max(t, 0), site2.utm_x - site1.utm_x)
+        cx, cy, cz = grid
+        delta_ca_x = cx - ax
+        delta_ca_y = cy - ay
+        delta_ca_z = cz - az
+        p = (delta_ca_x * bx + delta_ca_y * by) / b_len_2d_sq
+        q = delta_ca_z - p * bz
+        if q > 0:
+            # Compute distance beween line b and line d
+            if 0 <= p <= 1:
+                return abs(-delta_ca_x * by + delta_ca_y * bx) / b_len_2d
             else:
-                t = min(max(t, site2.utm_x - site1.utm_x), 0)
-            x_n = site1.utm_x + t
-            y_n = site1.utm_y + t * yx_slope
-            z_n = altitude1 + t * none_throws(zx_slope)
+                return None
         else:
+            # Compute distance between point c to line b
             t = (
-                none_throws(xy_slope) * (x - site1.utm_x)
-                + (y - site1.utm_y)
-                + none_throws(zy_slope) * (z - altitude1)
-            ) / sum_slope_sq
-            # If the orthogonal point is not on the line, use the nearest end
-            if site2.utm_y > site1.utm_y:
-                t = min(max(t, 0), site2.utm_y - site1.utm_y)
-            else:
-                t = min(max(t, site2.utm_y - site1.utm_y), 0)
-            x_n = site1.utm_x + t * none_throws(xy_slope)
-            y_n = site1.utm_y + t
-            z_n = altitude1 + t * none_throws(zy_slope)
+                delta_ca_x * bx + delta_ca_y * by + delta_ca_z * bz
+            ) / b_len_3d_sq
+            # The closest point is not between two sites
+            if t < 0 or t > 1:
+                return None
+            # The following is the vector represents the distance between
+            # grid top and the closest point
+            dist_x = t * bx - delta_ca_x
+            dist_y = t * by - delta_ca_y
+            dist_z = t * bz - delta_ca_z
 
-        dist_sq = (
-            (x - x_n) * (x - x_n)
-            + (y - y_n) * (y - y_n)
-            + (z - z_n) * (z - z_n)
-        )
-
-        return math.sqrt(dist_sq)
+            return math.sqrt(
+                dist_x * dist_x + dist_y * dist_y + dist_z * dist_z
+            )
 
     def _filter_points_outside_of_rectangle(
         self,
