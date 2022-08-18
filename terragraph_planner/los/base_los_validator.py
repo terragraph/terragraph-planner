@@ -38,7 +38,7 @@ class BaseLOSValidator(ABC):
             LOSException,
         )
         planner_assert(
-            0 < max_el_dev < 90,
+            0 <= max_el_dev <= 90,
             "Invalid max elevation deviation",
             LOSException,
         )
@@ -74,11 +74,15 @@ class BaseLOSValidator(ABC):
     def _passes_simple_checks(self, site1: LOSSite, site2: LOSSite) -> bool:
         """
         Performs these simple checks
-        Check 1: on the same building
-        Check 2: out of distance range
-        Check 3: exceeds max elevation deviation
-        Check 4: intersects with the exclusion zones
+        Check 1: same xy location
+        Check 2: on the same building
+        Check 3: out of distance range
+        Check 4: exceeds max elevation deviation
+        Check 5: intersects with the exclusion zones
         """
+        if self._same_geoloc(site1, site2):
+            return False
+
         if self._on_the_same_building(site1, site2):
             return False
 
@@ -95,6 +99,9 @@ class BaseLOSValidator(ABC):
             return False
 
         return True
+
+    def _same_geoloc(self, site1: LOSSite, site2: LOSSite) -> bool:
+        return site1.utm_x == site2.utm_x and site1.utm_y == site2.utm_y
 
     def _on_the_same_building(self, site1: LOSSite, site2: LOSSite) -> bool:
         return (

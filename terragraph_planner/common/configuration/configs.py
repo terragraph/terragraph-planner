@@ -424,6 +424,7 @@ class LOSParams(ConfigParser):
         link_availability_percentage: float = 99.9,
         maximum_los_distance: Optional[int] = 200,
         minimum_los_distance: int = 50,
+        maximum_elevation_scan_angle: float = 25,
         carrier_frequency: float = DEFAULT_CARRIER_FREQUENCY,
         thermal_noise_power: float = -81.0,
         noise_figure: float = 7.0,
@@ -465,6 +466,11 @@ class LOSParams(ConfigParser):
             ConfigException,
         )
         planner_assert(
+            0 <= maximum_elevation_scan_angle <= 90,
+            "Maximum elevation scan angle must be in [0, 90]",
+            ConfigException,
+        )
+        planner_assert(
             mounting_height_above_rooftop >= 0,
             "Mounting height above rooftop cannot be negative",
             ConfigException,
@@ -494,6 +500,7 @@ class LOSParams(ConfigParser):
         self.rain_rate = rain_rate
         self.maximum_los_distance = maximum_los_distance
         self.minimum_los_distance = minimum_los_distance
+        self.maximum_elevation_scan_angle = maximum_elevation_scan_angle
         self.carrier_frequency = carrier_frequency
         self.thermal_noise_power = thermal_noise_power
         self.noise_figure = noise_figure

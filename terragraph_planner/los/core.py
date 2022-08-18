@@ -150,6 +150,7 @@ def generate_candidate_topology(
         exclusion_zones,
         max_los_distance,
         los_params.minimum_los_distance,
+        los_params.maximum_elevation_scan_angle,
         los_params.los_confidence_threshold,
         los_params.use_ellipsoidal_los_model,
         los_params.fresnel_radius,
@@ -255,6 +256,7 @@ def compute_los(
     exclusion_zones: List[Polygon],
     max_los_distance: int,
     min_los_distance: int,
+    max_el_scan_angle: float,
     los_confidence_threshold: float,
     use_ellipsoidal_los_model: bool,
     fresnel_radius: float,
@@ -338,6 +340,7 @@ def compute_los(
                 else None,
                 max_los_distance=max_los_distance,
                 min_los_distance=min_los_distance,
+                max_el_scan_angle=max_el_scan_angle,
                 los_confidence_threshold=los_confidence_threshold,
                 use_ellipsoidal_los_model=use_ellipsoidal_los_model,
                 fresnel_radius=fresnel_radius,
@@ -415,6 +418,7 @@ def build_candidate_topology(
         los_params.device_list,
         device_pair_to_max_los_dist,
         los_params.minimum_los_distance,
+        los_params.maximum_elevation_scan_angle,
     )
     logger.info("Completed constructing the topology.")
     return topology

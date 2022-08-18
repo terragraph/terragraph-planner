@@ -284,6 +284,7 @@ class TestUtils(unittest.TestCase):
             link_availability_percentage=78.9,
             maximum_los_distance=500,
             minimum_los_distance=5,
+            maximum_elevation_scan_angle=30,
             carrier_frequency=50000.0,
             thermal_noise_power=-78.0,
             noise_figure=6.6,
