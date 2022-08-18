@@ -6,8 +6,11 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches:
-     - '*'
+    paths-ignore:
+      - 'docs/**'
+      - 'docusaurus/**'
+  schedule:
+    - cron: '0 7 * * *'
 
 jobs:
   Integration_test:
