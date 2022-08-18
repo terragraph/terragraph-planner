@@ -134,35 +134,35 @@ def raw_square_topology(demand: float = 0.025) -> Topology:
             site_id="DN1",
             site_type=SiteType.DN,
             location=GeoLocation(
-                utm_x=160, utm_y=510, utm_epsg=32631, altitude=0
+                utm_x=144, utm_y=459, utm_epsg=32631, altitude=0
             ),
         ),
         SampleSite(
             site_id="DN2",
             site_type=SiteType.DN,
             location=GeoLocation(
-                utm_x=155, utm_y=220, utm_epsg=32631, altitude=0
+                utm_x=140, utm_y=198, utm_epsg=32631, altitude=0
             ),
         ),
         SampleSite(
             site_id="DN3",
             site_type=SiteType.DN,
             location=GeoLocation(
-                utm_x=-190, utm_y=190, utm_epsg=32631, altitude=0
+                utm_x=-171, utm_y=171, utm_epsg=32631, altitude=0
             ),
         ),
         SampleSite(
             site_id="DN4",
             site_type=SiteType.DN,
             location=GeoLocation(
-                utm_x=-195, utm_y=490, utm_epsg=32631, altitude=0
+                utm_x=-175.5, utm_y=441, utm_epsg=32631, altitude=0
             ),
         ),
         SampleSite(
             site_id="POP5",
             site_type=SiteType.POP,
             location=GeoLocation(
-                utm_x=-10, utm_y=755, utm_epsg=32631, altitude=0
+                utm_x=-9, utm_y=680, utm_epsg=32631, altitude=0
             ),
         ),
         SampleSite(
@@ -173,10 +173,10 @@ def raw_square_topology(demand: float = 0.025) -> Topology:
     ]
 
     sectors = [
-        Sector(site=sites[0], node_id=0, position_in_node=0, ant_azimuth=181),
-        Sector(site=sites[0], node_id=1, position_in_node=0, ant_azimuth=296),
+        Sector(site=sites[0], node_id=0, position_in_node=0, ant_azimuth=180.8),
+        Sector(site=sites[0], node_id=1, position_in_node=0, ant_azimuth=296.1),
         Sector(site=sites[1], node_id=0, position_in_node=0, ant_azimuth=247),
-        Sector(site=sites[1], node_id=1, position_in_node=0, ant_azimuth=1),
+        Sector(site=sites[1], node_id=1, position_in_node=0, ant_azimuth=0.8),
         Sector(site=sites[2], node_id=0, position_in_node=0, ant_azimuth=102),
         Sector(site=sites[2], node_id=1, position_in_node=0, ant_azimuth=359),
         Sector(site=sites[3], node_id=0, position_in_node=0, ant_azimuth=68),
@@ -208,42 +208,60 @@ def raw_square_topology(demand: float = 0.025) -> Topology:
     demand_sites = [
         DemandSite(
             location=GeoLocation(
-                utm_x=160, utm_y=510, utm_epsg=32631, altitude=0
+                utm_x=sites[0].utm_x,
+                utm_y=sites[0].utm_y,
+                utm_epsg=32631,
+                altitude=0,
             ),
             connected_sites=sites[0:1],
             demand=demand,
         ),
         DemandSite(
             location=GeoLocation(
-                utm_x=-185, utm_y=490, utm_epsg=32631, altitude=0
+                utm_x=sites[3].utm_x,
+                utm_y=sites[3].utm_y,
+                utm_epsg=32631,
+                altitude=0,
             ),
             connected_sites=sites[3:4],
             demand=demand,
         ),
         DemandSite(
             location=GeoLocation(
-                utm_x=-187.5, utm_y=340, utm_epsg=32631, altitude=0
+                utm_x=sum(site.utm_x for site in sites[2:4]) / 2,
+                utm_y=sum(site.utm_y for site in sites[2:4]) / 2,
+                utm_epsg=32631,
+                altitude=0,
             ),
             connected_sites=sites[2:4],
             demand=demand,
         ),
         DemandSite(
             location=GeoLocation(
-                utm_x=-190, utm_y=190, utm_epsg=32631, altitude=0
+                utm_x=sites[2].utm_x,
+                utm_y=sites[2].utm_y,
+                utm_epsg=32631,
+                altitude=0,
             ),
             connected_sites=sites[2:3],
             demand=demand,
         ),
         DemandSite(
             location=GeoLocation(
-                utm_x=155, utm_y=220, utm_epsg=32631, altitude=0
+                utm_x=sites[1].utm_x,
+                utm_y=sites[1].utm_y,
+                utm_epsg=32631,
+                altitude=0,
             ),
             connected_sites=sites[1:2],
             demand=demand,
         ),
         DemandSite(
             location=GeoLocation(
-                utm_x=-15, utm_y=352.5, utm_epsg=32631, altitude=0
+                utm_x=sum(site.utm_x for site in sites[0:4]) / 4,
+                utm_y=sum(site.utm_y for site in sites[0:4]) / 4,
+                utm_epsg=32631,
+                altitude=0,
             ),
             connected_sites=sites[0:4],
             demand=demand,
@@ -277,14 +295,14 @@ def raw_square_topology_with_cns() -> Topology:
             site_id="CN7",
             site_type=SiteType.CN,
             location=GeoLocation(
-                utm_x=-230, utm_y=430, utm_epsg=32631, altitude=0
+                utm_x=-207, utm_y=387, utm_epsg=32631, altitude=0
             ),
         ),
         SampleSite(
             site_id="CN8",
             site_type=SiteType.CN,
             location=GeoLocation(
-                utm_x=-205, utm_y=400, utm_epsg=32631, altitude=0
+                utm_x=-185, utm_y=360, utm_epsg=32631, altitude=0
             ),
         ),
     ]

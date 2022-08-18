@@ -210,6 +210,9 @@ def compute_rain_loss(
     """
     if dist_km <= 0:
         return 0
+
+    frequency_ghz = mhz_to_ghz(carrier_frequency)
+
     p = 100 - link_availability_percentage
     k = 0.8515
     alpha = 0.7486
@@ -220,12 +223,13 @@ def compute_rain_loss(
         0.477
         * math.pow(dist_km, 0.633)
         * math.pow(rain_rate, 0.073 * alpha)
-        * math.pow(carrier_frequency, 0.123)
+        * math.pow(frequency_ghz, 0.123)
         - 10.579 * (1 - math.exp(-0.024 * dist_km))
     )
+    r = min(r, 2.5)  # r should not exceed 2.5
     a_001 = a * r
 
-    c0 = 0.12 + 0.4 * math.log10(math.pow(carrier_frequency / 10, 0.8))
+    c0 = 0.12 + 0.4 * math.log10(math.pow(frequency_ghz / 10, 0.8))
     c1 = math.pow(0.07, c0) * math.pow(0.12, 1 - c0)
     c2 = 0.855 * c0 + 0.546 * (1 - c0)
     c3 = 0.139 * c0 + 0.043 * (1 - c0)
