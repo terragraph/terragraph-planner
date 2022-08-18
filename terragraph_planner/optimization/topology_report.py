@@ -355,7 +355,9 @@ def get_topology_metrics(
             number_of_demands_with_disjoint_path / dems_nonzero_hops_away
         )
     total_demand = sum(
-        d.demand for d in topology.demand_sites.values() if d.demand is not None
+        d.demand * d.num_sites
+        for d in topology.demand_sites.values()
+        if d.demand is not None
     )
     demand_metrics = DemandMetrics(
         number_of_demands=number_of_demands,
