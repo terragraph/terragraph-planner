@@ -307,7 +307,7 @@ def compute_los(
         )
         for s in sites
     ]
-    exclusion_zones_wkts = [zone.to_wkt() for zone in exclusion_zones]
+    exclusion_zones_wkts = [zone.wkt for zone in exclusion_zones]
 
     with Pool(num_processors) as p:
         result = p.map(
