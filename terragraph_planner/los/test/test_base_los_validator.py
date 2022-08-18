@@ -46,7 +46,7 @@ class TestBaseLOSValidator(TestCase):
             self.elevation, 5, 1, 90, [], 1
         )
         self.assertEqual(
-            base_los_validator._same_geoloc(
+            base_los_validator._same_xy(
                 build_los_site_for_los_test(
                     2.5,
                     2.5,

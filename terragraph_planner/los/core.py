@@ -278,7 +278,8 @@ def compute_los(
     @params exlcusion_zones
     A list of Polygons where a LOS is prohibited.
 
-    @params max_los_distance, min_los_distance, los_confidence_threshold, fresnel_radius, carrier_frequency
+    @params max_los_distance, min_los_distance, max_el_scan_angle, los_confidence_threshold,
+    fresnel_radius, carrier_frequency
     A set of params to construct the LOS validator to validate the LOS
 
     @params use_ellipsoidal_los_model

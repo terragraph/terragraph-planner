@@ -80,7 +80,7 @@ class BaseLOSValidator(ABC):
         Check 4: exceeds max elevation deviation
         Check 5: intersects with the exclusion zones
         """
-        if self._same_geoloc(site1, site2):
+        if self._same_xy(site1, site2):
             return False
 
         if self._on_the_same_building(site1, site2):
@@ -100,7 +100,7 @@ class BaseLOSValidator(ABC):
 
         return True
 
-    def _same_geoloc(self, site1: LOSSite, site2: LOSSite) -> bool:
+    def _same_xy(self, site1: LOSSite, site2: LOSSite) -> bool:
         return site1.utm_x == site2.utm_x and site1.utm_y == site2.utm_y
 
     def _on_the_same_building(self, site1: LOSSite, site2: LOSSite) -> bool:
