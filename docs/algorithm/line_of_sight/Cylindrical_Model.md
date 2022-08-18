@@ -101,7 +101,7 @@ $$
 {\bf a} + p {\bf b} - {\bf c} - q {\bf d}
 $$
 
-For some value of $t$ and $r$, this vector will be perpendicular to both lines.
+For some value of $p$ and $q$, this vector will be perpendicular to both lines.
 
 $$
 ({\bf a} + p {\bf b} - {\bf c} - q {\bf d}) \cdot {\bf b} = 0
@@ -158,9 +158,9 @@ Once again, if $p \notin [0, 1]$, then LOS is not blocked.
 
 ## Algorithm
 
-1. Find the rectangular projection of the oblique cylinder on xy-plane. Only
-   consider DSM grid points that are inside this rectangular projection. Call
-   these candidate obstruction points.
+1. Find the rectangular projection of the oblique cylinder on the xy-plane.
+   Only consider DSM grid points that are inside this rectangular projection.
+   Call these candidate obstruction points.
 2. For each candidate obstruction point, compute the shortest distance to the
    LOS direct path between the sites using the formulae above. If the distance
    is less than the Fresnel radius, LOS is blocked. For all such obstructions,
