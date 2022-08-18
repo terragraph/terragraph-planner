@@ -43,10 +43,10 @@ class TestBaseLOSValidator(TestCase):
 
     def test_same_x_y_coordinate(self) -> None:
         base_los_validator = MockBaseLOSValidator(
-            self.elevation, 5, 1, 89, [], 1
+            self.elevation, 5, 1, 90, [], 1
         )
         self.assertEqual(
-            base_los_validator._passes_simple_checks(
+            base_los_validator._same_xy(
                 build_los_site_for_los_test(
                     2.5,
                     2.5,
@@ -62,7 +62,7 @@ class TestBaseLOSValidator(TestCase):
                     building_id=1,
                 ),
             ),
-            False,
+            True,
         )
 
     def test_on_the_same_building(self) -> None:

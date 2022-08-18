@@ -37,6 +37,36 @@ class TestEllipsoidalLOSValidator(TestCase):
             None,
         )
 
+    def test_same_x_y_coordinate(self) -> None:
+        los_validator = EllipsoidalLOSValidator(
+            self.elevation,
+            5,
+            1,
+            90,
+            DEFAULT_CARRIER_FREQUENCY,
+            [],
+            DEFAULT_LOS_CONFIDENCE_THRESHOLD,
+        )
+        self.assertEqual(
+            los_validator.compute_confidence(
+                build_los_site_for_los_test(
+                    2.5,
+                    2.5,
+                    10,
+                    location_type=LocationType.ROOFTOP,
+                    building_id=3,
+                ),
+                build_los_site_for_los_test(
+                    2.5,
+                    2.5,
+                    9,
+                    location_type=LocationType.ROOFTOP,
+                    building_id=1,
+                ),
+            ),
+            0.0,
+        )
+
     def test_on_the_same_building(self) -> None:
         los_validator = EllipsoidalLOSValidator(
             self.elevation,

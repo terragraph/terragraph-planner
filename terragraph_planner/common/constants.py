@@ -11,8 +11,6 @@ DEFAULT_POINTING_PRECISION = (
     3  # precision used in placement of equidistance sectors
 )
 EARTH_RADIUS: float = 6371000.0  # the radius of the earth, in meters
-# The upper bound for elevation deviation for valid los
-ELE_SCAN_ANGLE_LIMIT = 25
 FSPL_MARGIN = 92.45  # free-space path loss constant
 FULL_ROTATION_ANGLE = 360.0
 # WGS 84, aka EPSG 4326, latitude/longitude coordinate system based on the Earth's
