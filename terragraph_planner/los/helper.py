@@ -966,7 +966,7 @@ def add_links_to_topology(
                                 rx_site.device.device_sku,
                             )
                         ]
-                        and link.el_dev <= max_el_scan_angle
+                        and abs(link.el_dev) <= max_el_scan_angle
                     ):
                         topology.add_link(link)
     return topology

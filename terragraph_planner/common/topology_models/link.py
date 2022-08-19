@@ -260,7 +260,7 @@ class Link:
         return (
             math.degrees(
                 math.asin(
-                    abs(self.tx_site.altitude - self.rx_site.altitude)
+                    (self.rx_site.altitude - self.tx_site.altitude)
                     / self.distance
                 )
             )
