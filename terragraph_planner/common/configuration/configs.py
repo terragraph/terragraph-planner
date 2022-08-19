@@ -399,6 +399,13 @@ class GISDataParams(ConfigParser):
                 {"kml", "kmz"},
                 "BASE_TOPOLOGY_FILE_PATH",
             )
+        planner_assert(
+            building_outline_file_path is None
+            or base_topology_file_path is None,
+            "Building outline file and base topology file cannot be both "
+            "provided in a plan",
+            ConfigException,
+        )
 
         self.boundary_polygon_file_path = boundary_polygon_file_path
         self.building_outline_file_path = building_outline_file_path

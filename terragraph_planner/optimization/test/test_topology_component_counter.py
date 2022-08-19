@@ -136,7 +136,7 @@ class TestComponentCounter(TestCase):
     def test_sku_metrics(self) -> None:
         kml_file_path = DATA_PATH + "test_raw_square_topology.kml"
         topology = extract_topology_from_kml_file(
-            kml_file_path, [DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE]
+            kml_file_path, [DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE], None
         )
 
         # All sites are candidate, active_site_sku_counter should be empty

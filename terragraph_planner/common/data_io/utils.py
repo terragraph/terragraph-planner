@@ -8,7 +8,7 @@ import shutil
 import tempfile
 from collections import defaultdict
 from itertools import product
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 from zipfile import ZipFile
 
 from pyproj import Transformer
@@ -18,6 +18,7 @@ from scipy.spatial import KDTree
 from terragraph_planner.common.configuration.configs import DeviceData
 from terragraph_planner.common.configuration.enums import (
     LinkType,
+    LocationType,
     SiteType,
     StatusType,
 )
@@ -35,7 +36,7 @@ from terragraph_planner.common.data_io.kml_library import (
     extract_raw_data_from_kml_file,
 )
 from terragraph_planner.common.exceptions import DataException, planner_assert
-from terragraph_planner.common.geos import TransformerLib
+from terragraph_planner.common.geos import GeoLocation, TransformerLib
 from terragraph_planner.common.structs import RawLink
 from terragraph_planner.common.topology_models.link import Link
 from terragraph_planner.common.topology_models.site import Site
@@ -207,13 +208,20 @@ def map_input_sites_links_from_kml(
 
 
 def extract_topology_from_kml_file(
-    kml_file_path: str, device_list: List[DeviceData]
+    kml_file_path: str,
+    device_list: List[DeviceData],
+    infer_input_site_location: Optional[
+        Callable[
+            ...,
+            Tuple[GeoLocation, LocationType],
+        ]
+    ],
 ) -> Topology:
     raw_sites, raw_links, demand_sites = extract_raw_data_from_kml_file(
         kml_file_path
     )
     input_sites = InputSitesLoader(device_list).get_input_sites(
-        raw_sites, None, None
+        raw_sites, None, infer_input_site_location
     )
     topology = Topology(sites=input_sites, demand_sites=demand_sites)
     map_input_sites_links_from_kml(topology, input_sites, raw_links)
@@ -224,13 +232,19 @@ def extract_topology_from_csv_files(
     sites_csv_file_path: str,
     links_csv_file_path: str,
     device_list: List[DeviceData],
+    infer_input_site_location: Optional[
+        Callable[
+            ...,
+            Tuple[GeoLocation, LocationType],
+        ]
+    ],
 ) -> Topology:
     """
     Extract a urban topology from csv files (sites + links)
     """
     raw_sites = load_input_sites_from_csv_file(sites_csv_file_path, False)
     input_sites = InputSitesLoader(device_list).get_input_sites(
-        raw_sites, None, None
+        raw_sites, None, infer_input_site_location
     )
     topology = Topology(sites=input_sites)
     site_name_pairs = load_topology_link_csv(links_csv_file_path)
@@ -254,12 +268,21 @@ def extract_topology_from_csv_files(
 
 
 def extract_topology_from_file(
-    topology_file_path: str, device_list: List[DeviceData]
+    topology_file_path: str,
+    device_list: List[DeviceData],
+    infer_input_site_location: Optional[
+        Callable[
+            ...,
+            Tuple[GeoLocation, LocationType],
+        ]
+    ],
 ) -> Topology:
     if topology_file_path.endswith(".kml") or topology_file_path.endswith(
         ".kmz"
     ):
-        return extract_topology_from_kml_file(topology_file_path, device_list)
+        return extract_topology_from_kml_file(
+            topology_file_path, device_list, infer_input_site_location
+        )
     else:
         zip_ref = ZipFile(topology_file_path, "r")
         planner_assert(
@@ -276,6 +299,7 @@ def extract_topology_from_file(
                 os.path.join(tmp_dir, "sites.csv"),
                 os.path.join(tmp_dir, "links.csv"),
                 device_list,
+                infer_input_site_location,
             )
         except Exception as e:
             shutil.rmtree(tmp_dir)

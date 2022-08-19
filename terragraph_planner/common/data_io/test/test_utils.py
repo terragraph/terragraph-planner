@@ -36,7 +36,7 @@ class TestReadWriteTopology(unittest.TestCase):
         write_to_kml_file(ori_topology, kml_file_path)
 
         new_topology = extract_topology_from_kml_file(
-            kml_file_path, self.device_list
+            kml_file_path, self.device_list, None
         )
         self.assertEqual(len(ori_topology.sites), len(new_topology.sites))
         self.assertEqual(len(ori_topology.links), len(new_topology.links))
@@ -49,7 +49,7 @@ class TestReadWriteTopology(unittest.TestCase):
         sites_csv_file_path = DATA_PATH + "test_raw_square_topology_sites.csv"
         links_csv_file_path = DATA_PATH + "test_raw_square_topology_links.csv"
         new_topology = extract_topology_from_csv_files(
-            sites_csv_file_path, links_csv_file_path, self.device_list
+            sites_csv_file_path, links_csv_file_path, self.device_list, None
         )
         self.assertEqual(len(ori_topology.sites), len(new_topology.sites))
         self.assertEqual(len(ori_topology.links), len(new_topology.links))

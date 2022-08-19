@@ -37,8 +37,8 @@ from terragraph_planner.common.topology_models.test.helper import (
 from terragraph_planner.common.topology_models.topology import Topology
 from terragraph_planner.los.helper import (
     construct_topology_from_los_result,
-    get_all_sites_links_and_exclusion_zones,
     get_exclusion_zones,
+    get_los_topology,
     get_max_los_dist_for_device_pairs,
     get_site_connectable_status,
     infer_input_site_location,
@@ -150,9 +150,9 @@ class TestGetAllSitesLinksAndExclusionZones(TestCase):
         (
             sites,
             candidate_links,
-            existing_links,
             exclusion_zones,
-        ) = get_all_sites_links_and_exclusion_zones(
+            base_topology,
+        ) = get_los_topology(
             gis_data_params,
             los_params,
             self.ll_boundary,
@@ -176,7 +176,7 @@ class TestGetAllSitesLinksAndExclusionZones(TestCase):
                 (3, 4, False),
             ],
         )
-        self.assertEqual(len(existing_links), 0)
+        self.assertEqual(len(base_topology.links), 0)
         self.assertEqual(len(exclusion_zones), 1)
 
     @patch(f"{MOCK_PATH_PREFIX}.extract_topology_from_file")
@@ -216,9 +216,9 @@ class TestGetAllSitesLinksAndExclusionZones(TestCase):
         (
             sites,
             candidate_links,
-            existing_links,
             exclusion_zones,
-        ) = get_all_sites_links_and_exclusion_zones(
+            base_topology,
+        ) = get_los_topology(
             gis_data_params,
             los_params,
             self.ll_boundary,
@@ -255,14 +255,7 @@ class TestGetAllSitesLinksAndExclusionZones(TestCase):
                 (6, 4, False),
             ],
         )
-        self.assertEqual(
-            existing_links,
-            [
-                (5, 6, 1.0),
-                (6, 5, 1.0),
-                (6, 7, 1.0),
-            ],
-        )
+        self.assertEqual(len(base_topology.links), 3)
         self.assertEqual(len(exclusion_zones), 0)
 
     @patch(f"{MOCK_PATH_PREFIX}.extract_polygons")
@@ -771,7 +764,9 @@ class TestConstructTopologyFromLOSResult(TestCase):
         links = [(0, 1), (0, 2), (0, 4), (2, 4), (2, 5), (4, 5)]
         rx_neighbors, _ = build_rx_tx_neighbors(sites, links)  # pyre-ignore
         picked_sites = [0, 4, 5]
-        topology = construct_topology_from_los_result(
+        topology = Topology()
+        construct_topology_from_los_result(
+            topology=topology,
             sites=sites,  # pyre-ignore
             rx_neighbors=rx_neighbors,
             picked_sites=picked_sites,
@@ -811,7 +806,9 @@ class TestConstructTopologyFromLOSResult(TestCase):
         links = [(0, 1), (0, 2), (0, 4), (2, 4), (2, 5), (4, 5)]
         rx_neighbors, _ = build_rx_tx_neighbors(sites, links)
         picked_sites = [0, 4, 5]
-        topology = construct_topology_from_los_result(
+        topology = Topology()
+        construct_topology_from_los_result(
+            topology=topology,
             sites=sites,
             rx_neighbors=rx_neighbors,
             picked_sites=picked_sites,
@@ -841,7 +838,9 @@ class TestConstructTopologyFromLOSResult(TestCase):
         links = [(0, 1), (0, 2), (0, 4), (2, 4), (2, 5), (4, 5)]
         rx_neighbors, _ = build_rx_tx_neighbors(sites, links)
         picked_sites = [0, 4, 5]
-        topology = construct_topology_from_los_result(
+        topology = Topology()
+        construct_topology_from_los_result(
+            topology=topology,
             sites=sites,
             rx_neighbors=rx_neighbors,
             picked_sites=picked_sites,
@@ -882,7 +881,9 @@ class TestConstructTopologyFromLOSResult(TestCase):
         links = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
         rx_neighbors, _ = build_rx_tx_neighbors(sites, links)
         picked_sites = [0, 1, 2, 3]
-        topology = construct_topology_from_los_result(
+        topology = Topology()
+        construct_topology_from_los_result(
+            topology=topology,
             sites=sites,
             rx_neighbors=rx_neighbors,
             picked_sites=picked_sites,

@@ -241,6 +241,7 @@ class TestTopologyDemand(TestCase):
         topology = extract_topology_from_file(
             kml_file_path,
             [DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE],
+            None,
         )
         add_demand_to_topology(
             topology,

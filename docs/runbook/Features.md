@@ -11,13 +11,13 @@ can decide which type should be used to minimize cost and maximize coverage.
 To add a new device, create a new entry in the `DEVICE_LIST` section and
 populate the following fields.
 
-| Field name               | Type                                            | Meaning                                                                                                   |
-| ------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| DEVICE_SKU               | str                                             | The device SKU or Name that used to identify the hardware                                                 |
-| DEVICE_TYPE              | str                                             | The type of the device, which should be either DN or CN                                                   |
-| NODE_CAPEX               | float                                           | Hardware cost of DN or CN                                                                                 |
+| Field name               | Type                                            | Meaning                                                                           |
+| ------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| DEVICE_SKU               | str                                             | The device SKU or Name that used to identify the hardware                         |
+| DEVICE_TYPE              | str                                             | The type of the device, which should be either DN or CN                           |
+| NODE_CAPEX               | float                                           | Hardware cost of DN or CN                                                         |
 | NUMBER_OF_NODES_PER_SITE | int                                             | Maximum number of radio nodes allowed on each site; for CNs, this input must be 1 |
-| SECTOR_PARAMS            | a struct with the fields in the following table | The set of radio specification parameters                                                                 |
+| SECTOR_PARAMS            | a struct with the fields in the following table | The set of radio specification parameters                                         |
 
 The set of radio specification parameters are:
 
@@ -246,10 +246,13 @@ POPs to the network or reducing the requested demand is a better alternative.
 To use the Maximize Common Bandwidth feature, set `MAXIMIZE_COMMON_BANDWIDTH` under
 the `NETWORK_DESIGN` section to True.
 
-## Extend Existing Candidate Graph
+## Extend Base Topology
 
-This feature enables extending an already deployed "base network" with new
-sites. LOS will be computed between the base network sites and the new sites
+This feature enables extending a base topology with new sites, where a base
+topology is a topology with known sites and links. The sites and links can
+be assigned with any status.
+
+LOS will be computed between the base network sites and the new sites
 and between each of the new sites. This new candidate graph includes the base
 network as a subgraph. The candidate graph is then optimized to generate a
 network plan.
@@ -262,3 +265,6 @@ network plan.
 2. Specify the file path in `BASE_TOPOLOGY_FILE_PATH` under the `DATA` section.
 3. Generate a [User Input Site File](Input_Files.md#user-input-site-file) to
    specify the new sites.
+
+**NOTE**: This feature cannot be enabled together with [Automatic Site Detection](#automatic-site-detection)
+feature.

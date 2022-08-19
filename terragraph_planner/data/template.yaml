@@ -9,7 +9,8 @@
 #    default value is used. This does not apply to BOUNDARY_POLYGON_FILE_PATH
 #    and DEVICE_LIST.
 # 4. The default value of each file path is null rather than the string in this
-#    template.
+#    template. BASE_TOPOLOGY_FILE_PATH is null here because BASE_TOPOLOGY_FILE_PATH
+#    and BUILDING_OUTLINE_FILE_PATH cannot be provided simultaneously.
 # 5. The "[Optional]" tag for each field means it can be null and its default
 #    Python value is None. Fields without that tag cannot be assigned as null.
 # 6. Including a field and leaving its value blank is discouraged. It is better
@@ -80,7 +81,7 @@ DATA:
   # A new LOS candidate graph is extended from this base topology by adding the
   # sites from the site list file. LOS is not computed between the sites of the
   # base topology. File type: KML/KMZ or CSV.
-  BASE_TOPOLOGY_FILE_PATH: base_topology.kmz
+  BASE_TOPOLOGY_FILE_PATH: null
 
 LINE_OF_SIGHT:
   # [Float] The height, in meters, above a rooftop at which equipment will be

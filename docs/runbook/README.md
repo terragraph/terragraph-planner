@@ -34,4 +34,4 @@ connectivity, throughput and cost of construction.
    4. [Tiered Service](Features.md#tiered-service)
    5. [POP Placement](Features.md#pop-placement)
    6. [Maximum Common Bandwidth](Features.md#maximize-common-bandwidth)
-   7. [Extend Existing Candidate Graph](Features.md#extend-existing-candidate-graph)
+   7. [Extend Base Topology](Features.md#extend-base-topology)

@@ -228,7 +228,7 @@ class TestUtils(unittest.TestCase):
             dhm_file_path="dhm.tif",
             building_outline_file_path="buildings.zip",
             site_file_path="sites.kml",
-            base_topology_file_path="base_topology.kmz",
+            base_topology_file_path=None,
         )
         self.assertEqual(
             parsed_data_params.to_dict(), expected_data_params.to_dict()
@@ -408,7 +408,9 @@ class TestUtils(unittest.TestCase):
                 struct_objects_from_file(DATA, test_yaml)
                 called_data_args = data_constructor.call_args.kwargs.keys()
             self.assertEqual(
-                set(data_params_args.args) - {"self"}, set(called_data_args)
+                set(data_params_args.args)
+                - {"self", "base_topology_file_path"},
+                set(called_data_args),
             )
 
             with patch(
