@@ -51,7 +51,11 @@ def compute_link_interference(
             continue
 
         net_gain = _compute_link_interference_net_gain(
-            link, none_throws(link.tx_dev), none_throws(link.rx_dev)
+            interfering_path=link,
+            tx_dev=none_throws(link.tx_dev),
+            rx_dev=none_throws(link.rx_dev),
+            tx_el_dev=link.el_dev,
+            rx_el_dev=-link.el_dev,
         )
 
         # Use max Tx power without backoff to preserve worst-case interference
@@ -72,6 +76,8 @@ def _compute_link_interference_net_gain(
     interfering_path: Link,
     tx_dev: float,
     rx_dev: float,
+    tx_el_dev: float,
+    rx_el_dev: float,
 ) -> float:
     """
     Compute the net gain of a tx interfering link on a rx interfered link
@@ -97,7 +103,8 @@ def _compute_link_interference_net_gain(
         rx_radio_pattern_data=rx_sector_params.antenna_pattern_data,
         tx_deviation=tx_dev,
         rx_deviation=rx_dev,
-        el_deviation=interfering_path.el_dev,
+        tx_el_deviation=tx_el_dev,
+        rx_el_deviation=rx_el_dev,
     )
 
 
@@ -326,8 +333,18 @@ def _calculate_net_gain_on_rx_links(
                 none_throws(interfering_path.rx_dev),
                 none_throws(rx_interfered_link.rx_dev),
             )
+            tx_el_dev = angle_delta(
+                interfering_path.el_dev, tx_interfering_link.el_dev
+            )
+            rx_el_dev = -angle_delta(
+                interfering_path.el_dev, rx_interfered_link.el_dev
+            )
             net_gain = _compute_link_interference_net_gain(
-                interfering_path, tx_dev, rx_dev
+                interfering_path=interfering_path,
+                tx_dev=tx_dev,
+                rx_dev=rx_dev,
+                tx_el_dev=tx_el_dev,
+                rx_el_dev=rx_el_dev,
             )
 
             link_net_gain_map.setdefault(

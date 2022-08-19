@@ -278,7 +278,8 @@ def get_fspl_based_net_gain(
     rx_radio_pattern_data: Optional[Union[AntennaPatternData, ScanPatternData]],
     tx_deviation: float,
     rx_deviation: float,
-    el_deviation: float,
+    tx_el_deviation: float,
+    rx_el_deviation: float,
 ) -> float:
     """
     Compute received net gain (dBi) at the receiver assuming that:
@@ -294,7 +295,8 @@ def get_fspl_based_net_gain(
     @param rx_radio_pattern_data: The antenna/scan pattern data for the rx radio.
     @param tx_deviation: Horizontal deviation from boresight in tx direction (degrees)
     @param rx_deviation: Horizontal deviation from boresight in rx direction (degrees)
-    @param el_deviation: Vertical deviation from boresight in rx direction (degrees)
+    @param tx_el_deviation: Vertical deviation from horizontal plane in tx direction (degrees)
+    @param rx_el_deviation: Vertical deviation from horizontal plane rx rx direction (degrees)
     """
 
     # FSPL (dB) when link distance d (kms) and frequency (GHz) is given.
@@ -315,14 +317,14 @@ def get_fspl_based_net_gain(
         tx_sector_params.tx_diversity_gain,
         tx_radio_pattern_data,
         tx_deviation,
-        el_deviation,
+        tx_el_deviation,
     )
     rx_gain = extract_gain_from_radio_pattern(
         rx_sector_params.antenna_boresight_gain,
         rx_sector_params.rx_diversity_gain,
         rx_radio_pattern_data,
         rx_deviation,
-        el_deviation,
+        rx_el_deviation,
     )
     rain_loss = compute_rain_loss(
         dist_km=dist_km,
@@ -583,7 +585,8 @@ def fspl_based_estimation(
         rx_radio_pattern_data=rx_scan_pattern_data,
         tx_deviation=tx_deviation,
         rx_deviation=rx_deviation,
-        el_deviation=el_deviation,
+        tx_el_deviation=el_deviation,
+        rx_el_deviation=-el_deviation,
     )
     np_dbm = get_noise_power(rx_sector_params)
     link_budget = get_measurements_from_tx_power(
