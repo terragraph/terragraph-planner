@@ -262,9 +262,11 @@ class TestInterferenceOptimization(TestCase):
         for site_id in ["DN3", "DN4", "POP5", "POP6", "CN7", "CN8"]:
             topology.sites[site_id].status_type = StatusType.PROPOSED
 
-        angle_between = angle_delta(
-            topology.links["DN4-CN8"].rx_beam_azimuth,
-            topology.links["DN3-CN8"].rx_beam_azimuth,
+        angle_between = abs(
+            angle_delta(
+                topology.links["DN4-CN8"].rx_beam_azimuth,
+                topology.links["DN3-CN8"].rx_beam_azimuth,
+            )
         )
 
         # Set CN scan range to just large enough to include both links

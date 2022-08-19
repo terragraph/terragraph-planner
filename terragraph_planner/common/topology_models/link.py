@@ -22,6 +22,7 @@ from terragraph_planner.common.exceptions import (
     planner_assert,
 )
 from terragraph_planner.common.geos import (
+    angle_delta,
     bearing_in_degrees,
     haversine_distance,
 )
@@ -244,16 +245,14 @@ class Link:
         if self.link_type == LinkType.ETHERNET or self.tx_sector is None:
             return None
         tx_sector_az = none_throws(self.tx_sector).ant_azimuth
-        tx_dev = abs(self.tx_beam_azimuth - tx_sector_az)
-        return min(tx_dev, FULL_ROTATION_ANGLE - tx_dev)
+        return angle_delta(self.tx_beam_azimuth, tx_sector_az)
 
     @property
     def rx_dev(self) -> Optional[float]:
         if self.link_type == LinkType.ETHERNET or self.rx_sector is None:
             return None
         rx_sector_az = none_throws(self.rx_sector).ant_azimuth
-        rx_dev = abs(self.rx_beam_azimuth - rx_sector_az)
-        return min(rx_dev, FULL_ROTATION_ANGLE - rx_dev)
+        return angle_delta(self.rx_beam_azimuth, rx_sector_az)
 
     @property
     def el_dev(self) -> float:

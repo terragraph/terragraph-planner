@@ -728,10 +728,10 @@ class TestFindBestEquidistantSectors(TestCase):
         self.assertEqual(len(nodes), 4)
         for node in nodes:
             self.assertEqual(len(node), 1)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[1][0]), 90)
-        self.assertEqual(angle_delta(nodes[1][0], nodes[2][0]), 90)
-        self.assertEqual(angle_delta(nodes[2][0], nodes[3][0]), 90)
-        self.assertEqual(angle_delta(nodes[3][0], nodes[0][0]), 90)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[1][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[2][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[2][0], nodes[3][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[3][0], nodes[0][0])), 90)
 
     def test_find_equidistant_cardinal_sectors(self) -> None:
         """
@@ -782,10 +782,10 @@ class TestFindBestEquidistantSectors(TestCase):
         self.assertEqual(len(nodes), 4)
         for node in nodes:
             self.assertEqual(len(node), 1)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[1][0]), 90)
-        self.assertEqual(angle_delta(nodes[1][0], nodes[2][0]), 90)
-        self.assertEqual(angle_delta(nodes[2][0], nodes[3][0]), 90)
-        self.assertEqual(angle_delta(nodes[3][0], nodes[0][0]), 90)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[1][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[2][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[2][0], nodes[3][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[3][0], nodes[0][0])), 90)
 
         # Each sector should be approximately aligned with each link
         for i in range(4):
@@ -838,10 +838,10 @@ class TestFindBestEquidistantSectors(TestCase):
         self.assertEqual(len(nodes), 4)
         for node in nodes:
             self.assertEqual(len(node), 1)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[1][0]), 90)
-        self.assertEqual(angle_delta(nodes[1][0], nodes[2][0]), 90)
-        self.assertEqual(angle_delta(nodes[2][0], nodes[3][0]), 90)
-        self.assertEqual(angle_delta(nodes[3][0], nodes[0][0]), 90)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[1][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[2][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[2][0], nodes[3][0])), 90)
+        self.assertEqual(abs(angle_delta(nodes[3][0], nodes[0][0])), 90)
 
         # Test with 2 nodes each with 2 sectors
         nodes = find_best_equidistant_sectors(
@@ -855,13 +855,15 @@ class TestFindBestEquidistantSectors(TestCase):
         self.assertEqual(len(nodes), 2)
         for node in nodes:
             self.assertEqual(len(node), 2)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[0][1]), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[0][1])), scan_range)
         self.assertEqual(
-            angle_delta(nodes[0][1], nodes[1][0]), (360 - 2 * scan_range) / 2
+            abs(angle_delta(nodes[0][1], nodes[1][0])),
+            (360 - 2 * scan_range) / 2,
         )
-        self.assertEqual(angle_delta(nodes[1][0], nodes[1][1]), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[1][1])), scan_range)
         self.assertEqual(
-            angle_delta(nodes[1][1], nodes[0][0]), (360 - 2 * scan_range) / 2
+            abs(angle_delta(nodes[1][1], nodes[0][0])),
+            (360 - 2 * scan_range) / 2,
         )
 
         # Test with 1 node with 1 sector
@@ -890,9 +892,9 @@ class TestFindBestEquidistantSectors(TestCase):
         self.assertEqual(len(nodes), 3)
         for node in nodes:
             self.assertEqual(len(node), 1)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[1][0]), scan_range)
-        self.assertEqual(angle_delta(nodes[1][0], nodes[2][0]), scan_range)
-        self.assertEqual(angle_delta(nodes[2][0], nodes[0][0]), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[1][0])), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[2][0])), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[2][0], nodes[0][0])), scan_range)
 
         scan_range = 360
         nodes = find_best_equidistant_sectors(
@@ -987,7 +989,7 @@ class TestSimpleFindBestSectors(TestCase):
         for node in nodes:
             self.assertEqual(len(node), 1)
         self.assertGreaterEqual(
-            angle_delta(nodes[0][0], nodes[1][0]), scan_range
+            abs(angle_delta(nodes[0][0], nodes[1][0])), scan_range
         )
 
     def test_find_cardinal_sectors(self) -> None:
@@ -1047,16 +1049,16 @@ class TestSimpleFindBestSectors(TestCase):
         for node in nodes:
             self.assertEqual(len(node), 1)
         self.assertGreaterEqual(
-            angle_delta(nodes[0][0], nodes[1][0]), scan_range
+            abs(angle_delta(nodes[0][0], nodes[1][0])), scan_range
         )
         self.assertGreaterEqual(
-            angle_delta(nodes[1][0], nodes[2][0]), scan_range
+            abs(angle_delta(nodes[1][0], nodes[2][0])), scan_range
         )
         self.assertGreaterEqual(
-            angle_delta(nodes[2][0], nodes[3][0]), scan_range
+            abs(angle_delta(nodes[2][0], nodes[3][0])), scan_range
         )
         self.assertGreaterEqual(
-            angle_delta(nodes[3][0], nodes[0][0]), scan_range
+            abs(angle_delta(nodes[3][0], nodes[0][0])), scan_range
         )
 
         # Each sector should be approximately aligned with each link
@@ -1118,16 +1120,16 @@ class TestSimpleFindBestSectors(TestCase):
         for node in nodes:
             self.assertEqual(len(node), 1)
         self.assertGreaterEqual(
-            angle_delta(nodes[0][0], nodes[1][0]), scan_range
+            abs(angle_delta(nodes[0][0], nodes[1][0])), scan_range
         )
         self.assertGreaterEqual(
-            angle_delta(nodes[1][0], nodes[2][0]), scan_range
+            abs(angle_delta(nodes[1][0], nodes[2][0])), scan_range
         )
         self.assertGreaterEqual(
-            angle_delta(nodes[2][0], nodes[3][0]), scan_range
+            abs(angle_delta(nodes[2][0], nodes[3][0])), scan_range
         )
         self.assertGreaterEqual(
-            angle_delta(nodes[3][0], nodes[0][0]), scan_range
+            abs(angle_delta(nodes[3][0], nodes[0][0])), scan_range
         )
 
         # Test with 2 nodes each with 2 sectors
@@ -1149,13 +1151,13 @@ class TestSimpleFindBestSectors(TestCase):
         self.assertEqual(len(nodes), 2)
         for node in nodes:
             self.assertEqual(len(node), 2)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[0][1]), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[0][1])), scan_range)
         self.assertGreaterEqual(
-            angle_delta(nodes[0][1], nodes[1][0]), scan_range
+            abs(angle_delta(nodes[0][1], nodes[1][0])), scan_range
         )
-        self.assertEqual(angle_delta(nodes[1][0], nodes[1][1]), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[1][1])), scan_range)
         self.assertGreaterEqual(
-            angle_delta(nodes[1][1], nodes[0][0]), scan_range
+            abs(angle_delta(nodes[1][1], nodes[0][0])), scan_range
         )
 
         # Test with 1 node with 1 sector
@@ -1198,9 +1200,9 @@ class TestSimpleFindBestSectors(TestCase):
         self.assertEqual(len(nodes), 3)
         for node in nodes:
             self.assertEqual(len(node), 1)
-        self.assertEqual(angle_delta(nodes[0][0], nodes[1][0]), scan_range)
-        self.assertEqual(angle_delta(nodes[1][0], nodes[2][0]), scan_range)
-        self.assertEqual(angle_delta(nodes[2][0], nodes[0][0]), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[0][0], nodes[1][0])), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[1][0], nodes[2][0])), scan_range)
+        self.assertEqual(abs(angle_delta(nodes[2][0], nodes[0][0])), scan_range)
 
         scan_range = 360
         nodes = find_best_sectors(

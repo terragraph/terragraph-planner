@@ -712,7 +712,7 @@ class MinInterferenceNetwork(NetworkOptimization):
                     self.link_to_azimuth[(tx_site, rx_site)][1]
                 )
                 in_link_azimuth = none_throws(self.link_to_azimuth[in_link][1])
-                angle_between = angle_delta(in_link_azimuth, link_azimuth)
+                angle_between = abs(angle_delta(in_link_azimuth, link_azimuth))
                 if (
                     angle_between
                     >= self.horizontal_scan_range[rx_site] / 2
