@@ -61,8 +61,8 @@ Run the tests to check if the package is correctly installed.
 python3 -m unittest discover terragraph_planner -b
 ```
 
-> Using different versions of 3rd party dependencies than the ones specified
-in the requirements file can lead to test failure; this does **not** mean the
+> Using different versions of 3rd party dependencies from the ones specified
+in the requirements file can lead to test failure; this does **NOT** mean the
 optimized plan quality is degraded.
 
 ## Run a Plan
