@@ -684,6 +684,42 @@ class TestFSPLBasedEstimation(unittest.TestCase):
             )
 
 
+class TestAntennaPattern(unittest.TestCase):
+    def test_gain_with_antenna_pattern(self) -> None:
+        pattern_data = read_antenna_pattern_data(
+            DATA_PATH + "test_antenna_pattern.txt"
+        )
+
+        boresight_gain = 10.0
+        diversity_gain = 0.0
+        # Gain from the antenna pattern file
+        gain = extract_gain_from_radio_pattern(
+            boresight_gain, diversity_gain, pattern_data, 0, 0
+        )
+        self.assertAlmostEqual(gain, 10.0, 6)
+        # Negative azimuth is converted to [0, 360)
+        gain = extract_gain_from_radio_pattern(
+            boresight_gain, diversity_gain, pattern_data, -80, -10
+        )
+        self.assertAlmostEqual(
+            gain, 10.0 - 431.934641341173 - 232.689371582438, 6
+        )
+        gain = extract_gain_from_radio_pattern(
+            boresight_gain, diversity_gain, pattern_data, 75, 5
+        )
+        self.assertAlmostEqual(
+            gain, 10.0 - 255.646229749276 - 31.9743585270337, 6
+        )
+
+        # az_deviation and el_deviation round to the closest available value
+        gain = extract_gain_from_radio_pattern(
+            boresight_gain, diversity_gain, pattern_data, 75.26, 5.45
+        )
+        self.assertAlmostEqual(
+            gain, 10.0 - 255.646229749276 - 31.9743585270337, 6
+        )
+
+
 class TestScanPattern(unittest.TestCase):
     def test_gain_with_scan_pattern(self) -> None:
         pattern_data = read_scan_pattern_data(

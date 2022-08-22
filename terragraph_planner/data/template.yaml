@@ -103,8 +103,8 @@ LINE_OF_SIGHT:
   # viable communication between two sites
   MINIMUM_LOS_DISTANCE: 50
 
-  # [Float] Maximum elevation scan angle with respect to the xy-plane for
-  # viable communication between two sites.
+  # [Float] Maximum elevation scan angle (absolute value) with respect to the
+  # xy-plane for viable communication between two sites.
   MAXIMUM_ELEVATION_SCAN_ANGLE: 25
 
   # [Optional][Int] Minimum MCS used to determine the maximum line-of-sight
