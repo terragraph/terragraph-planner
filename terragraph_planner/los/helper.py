@@ -471,7 +471,8 @@ def search_max_los_dist_based_on_capacity(
             mcs_snr_mbps_map=mcs_snr_mbps_map,
             tx_deviation=0.0,
             rx_deviation=0.0,
-            el_deviation=0.0,
+            tx_el_deviation=0.0,
+            rx_el_deviation=0.0,
             tx_scan_pattern_data=None,
             rx_scan_pattern_data=None,
         )
@@ -490,7 +491,8 @@ def search_max_los_dist_based_on_capacity(
         mcs_snr_mbps_map=mcs_snr_mbps_map,
         tx_deviation=0.0,
         rx_deviation=0.0,
-        el_deviation=0.0,
+        tx_el_deviation=0.0,
+        rx_el_deviation=0.0,
         tx_scan_pattern_data=None,
         rx_scan_pattern_data=None,
     )

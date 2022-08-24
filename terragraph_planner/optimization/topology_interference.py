@@ -50,6 +50,16 @@ def compute_link_interference(
             ] = -math.inf
             continue
 
+        # The deviations should be the angle between the interfering path and
+        # the interference causing links (tx_el_dev) and the interfered on
+        # links (rx_el_dev). However, for a candidate topology prior to
+        # optimization, this can be very expensive to compute (all candidate
+        # links are considered, not just active ones). Instead, to accelerate
+        # computation, we assume that the interference causing and interered on
+        # links have the same horizontal/vertical azimuth as their sectors.
+        # Based on experimentation, this approximation has only a minor impact
+        # on the final plan quality and thus is justified due to improved run
+        # time.
         net_gain = _compute_link_interference_net_gain(
             interfering_path=link,
             tx_dev=none_throws(link.tx_dev),
@@ -83,16 +93,10 @@ def _compute_link_interference_net_gain(
     Compute the net gain of a tx interfering link on a rx interfered link
     using the actual deviations between those links and the interfering path.
 
-    The tx_dev is the horizontal deviation in tx direction (degrees) and the
-    rx_dev is the horizontal deviation in rx direction (degrees). Note: the
-    deviations could be the angle of the link to the boresight or the angle
-    between links depending on what is required in the computation; ideally
-    this should always be the angle between links, but this can be very
-    expensive to compute during pre-optimization (all candidate links are
-    considered, not just active ones) and, based on experimentaiton, does not
-    impact planning quality enough to justify.
+    The tx_dev/tx_el_dev is the horizontal/vertical deviation in the tx
+    direction (degrees) and the rx_dev/rx_el_dev is the horizontal/vertical
+    deviation in the rx direction (degrees).
     """
-
     tx_sector_params = interfering_path.tx_site.device.sector_params
     rx_sector_params = interfering_path.rx_site.device.sector_params
     return get_fspl_based_net_gain(

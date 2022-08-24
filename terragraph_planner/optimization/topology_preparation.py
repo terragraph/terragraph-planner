@@ -102,7 +102,8 @@ def add_link_capacities_without_deviation(
             mcs_snr_mbps_map=mcs_snr_mbps_map,
             tx_deviation=0.0,
             rx_deviation=0.0,
-            el_deviation=0.0,
+            tx_el_deviation=0.0,
+            rx_el_deviation=0.0,
             tx_scan_pattern_data=None,
             rx_scan_pattern_data=None,
         )
@@ -148,7 +149,12 @@ def add_link_capacities_with_deviation(
             mcs_snr_mbps_map=mcs_snr_mbps_map,
             tx_deviation=none_throws(link.tx_dev),
             rx_deviation=none_throws(link.rx_dev),
-            el_deviation=link.el_dev,
+            tx_el_deviation=link.el_dev,
+            # CNs have mechanical tilt, so deviation is 0 (not quite right for
+            # inactive wireless access links, but this is ignored)
+            rx_el_deviation=-link.el_dev
+            if link.link_type != LinkType.WIRELESS_ACCESS
+            else 0,
             tx_scan_pattern_data=tx_sector_params.scan_pattern_data,
             rx_scan_pattern_data=rx_sector_params.scan_pattern_data,
         )
