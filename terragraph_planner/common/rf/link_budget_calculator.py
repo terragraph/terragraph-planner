@@ -14,6 +14,7 @@ from terragraph_planner.common.configuration.configs import SectorParams
 from terragraph_planner.common.constants import (
     FREQUENCY_DEPENDENT_OXYGEN_LOSS_MAP,
     FSPL_MARGIN,
+    FULL_ROTATION_ANGLE,
 )
 from terragraph_planner.common.exceptions import DataException, planner_assert
 from terragraph_planner.common.structs import (
@@ -184,11 +185,22 @@ def extract_gain_from_radio_pattern(
         DataException,
     )
 
+    # Convert deviation from (-180, 180] to [0, 360)
+    el_dev_360 = (
+        el_deviation
+        if el_deviation >= 0
+        else el_deviation + FULL_ROTATION_ANGLE
+    )
+    az_dev_360 = (
+        az_deviation
+        if az_deviation >= 0
+        else az_deviation + FULL_ROTATION_ANGLE
+    )
     el_gain = radio_pattern_data[none_throws(antenna_type)][EL_INDEX][
-        int(el_deviation)
+        round(el_dev_360)
     ]
     az_gain = radio_pattern_data[none_throws(antenna_type)][AZ_INDEX][
-        int(az_deviation)
+        round(az_dev_360)
     ]
     return boresight_gain + diversity_gain + el_gain + az_gain
 

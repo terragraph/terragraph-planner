@@ -335,3 +335,23 @@ class TestDeviationAngles(TestCase):
         self.assertLess(links[1].rx_beam_azimuth, 360)
         self.assertGreater(links[1].rx_dev, 0)
         self.assertLess(links[1].rx_dev, 10)
+
+    def test_elevation_deviation(self) -> None:
+        site1 = SampleSite(
+            site_type=SiteType.POP,
+            location=GeoLocation(utm_x=0, utm_y=0, utm_epsg=32631, altitude=0),
+        )
+        site2 = SampleSite(
+            site_type=SiteType.DN,
+            location=GeoLocation(
+                utm_x=0, utm_y=100, utm_epsg=32631, altitude=100
+            ),
+        )
+
+        link1 = Link(tx_site=site1, rx_site=site2)
+        link2 = Link(tx_site=site2, rx_site=site1)
+
+        # Angle should be close to 45 degrees and the sign should be correct
+        self.assertAlmostEqual(link1.el_dev, 45.0, delta=0.1)
+        self.assertAlmostEqual(link2.el_dev, -45.0, delta=0.1)
+        self.assertEqual(link1.el_dev, -link2.el_dev)
