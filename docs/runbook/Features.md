@@ -248,14 +248,13 @@ the `NETWORK_DESIGN` section to True.
 
 ## Extend Base Topology
 
-This feature enables extending a base topology with new sites, where a base
-topology is a topology with known sites and links. The sites and links can
-be assigned with any status.
+This feature enables the addition of new sites to a base topology with known
+sites and links. The sites and links can be assigned with any status.
 
-LOS will be computed between the base network sites and the new sites
-and between each of the new sites. This new candidate graph includes the base
-network as a subgraph. The candidate graph is then optimized to generate a
-network plan.
+LOS will be computed between the sites in the base topology and the new sites
+and between each of the new sites. The new candidate topology includes the base
+topology as a subgraph. The candidate topology is then optimized to generate
+a network plan.
 
 **How to use it**
 

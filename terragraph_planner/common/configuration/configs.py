@@ -402,8 +402,7 @@ class GISDataParams(ConfigParser):
         planner_assert(
             building_outline_file_path is None
             or base_topology_file_path is None,
-            "Building outline file and base topology file cannot be both "
-            "provided in a plan",
+            "Site detection cannot be enabled when a base topology is provided",
             ConfigException,
         )
 
