@@ -91,7 +91,6 @@ def add_link_capacities_without_deviation(
 
         max_tx_power = get_max_tx_power(
             tx_sector_params=tx_sector_params,
-            tx_radio_pattern_data=None,
             max_eirp_dbm=params.maximum_eirp,
         )
         link.link_budget = fspl_based_estimation(
@@ -138,7 +137,6 @@ def add_link_capacities_with_deviation(
 
         max_tx_power = get_max_tx_power(
             tx_sector_params=tx_sector_params,
-            tx_radio_pattern_data=tx_sector_params.scan_pattern_data,
             max_eirp_dbm=params.maximum_eirp,
         )
         link.link_budget = fspl_based_estimation(

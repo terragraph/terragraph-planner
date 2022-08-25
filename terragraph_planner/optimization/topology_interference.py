@@ -73,7 +73,6 @@ def compute_link_interference(
         tx_sector_params = link.tx_site.device.sector_params
         max_tx_power = get_max_tx_power(
             tx_sector_params=tx_sector_params,
-            tx_radio_pattern_data=tx_sector_params.antenna_pattern_data,
             max_eirp_dbm=maximum_eirp,
         )
         rsl_interference[
