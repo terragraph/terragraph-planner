@@ -15,6 +15,7 @@ from terragraph_planner.common.constants import (
     FULL_ROTATION_ANGLE,
     LAT_LON_EPSG,
     LAT_LON_TO_GEO_HASH_PRECISION,
+    STRAIGHT_ANGLE,
 )
 from terragraph_planner.common.exceptions import (
     GeoSystemException,
@@ -184,10 +185,16 @@ def _longitude_to_utm_zone(longitude: float) -> int:
 
 def angle_delta(angle1: float, angle2: float) -> float:
     """
-    Difference between two angles (accounting for 360 degree periodicity)
+    Computes angle1 - angle2 with result in (-180, 180].
     """
-    dev = abs(angle1 - angle2)
-    return min(dev, FULL_ROTATION_ANGLE - dev)
+    dev = angle1 - angle2
+    return (
+        dev - FULL_ROTATION_ANGLE
+        if dev > STRAIGHT_ANGLE
+        else dev + FULL_ROTATION_ANGLE
+        if dev <= -STRAIGHT_ANGLE
+        else dev
+    )
 
 
 def lat_lon_to_utm_epsg(latitutde: float, longitude: float) -> int:

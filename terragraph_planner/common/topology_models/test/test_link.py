@@ -247,7 +247,7 @@ class TestDeviationAngles(TestCase):
 
         self.assertAlmostEqual(
             self.topology.links["DN1-DN4"].tx_dev,
-            abs(
+            (
                 self.topology.links["DN1-DN4"].tx_beam_azimuth
                 - self.topology.links["DN1-POP5"].tx_beam_azimuth
             )
@@ -273,10 +273,10 @@ class TestDeviationAngles(TestCase):
         angle, _ = law_of_cosines_spherical(lat0, lon0, lat1, lon1, lat2, lon2)
 
         self.assertAlmostEqual(
-            self.topology.links["DN1-DN4"].tx_dev, angle / 2, delta=0.1
+            self.topology.links["DN1-DN4"].tx_dev, -angle / 2, delta=0.1
         )
         self.assertAlmostEqual(
-            self.topology.links["DN4-DN1"].rx_dev, angle / 2, delta=0.1
+            self.topology.links["DN4-DN1"].rx_dev, -angle / 2, delta=0.1
         )
         self.assertAlmostEqual(
             self.topology.links["DN1-POP5"].tx_dev, angle / 2, delta=0.1
@@ -328,13 +328,13 @@ class TestDeviationAngles(TestCase):
         # be between (0, 10) and not (350, 355).
         self.assertGreater(links[0].tx_beam_azimuth, 355)
         self.assertLess(links[0].tx_beam_azimuth, 360)
-        self.assertGreater(links[0].tx_dev, 0)
-        self.assertLess(links[0].tx_dev, 10)
+        self.assertLess(links[0].tx_dev, 0)
+        self.assertGreater(links[0].tx_dev, -10)
 
         self.assertGreater(links[1].rx_beam_azimuth, 355)
         self.assertLess(links[1].rx_beam_azimuth, 360)
-        self.assertGreater(links[1].rx_dev, 0)
-        self.assertLess(links[1].rx_dev, 10)
+        self.assertLess(links[1].rx_dev, 0)
+        self.assertGreater(links[1].rx_dev, -10)
 
     def test_elevation_deviation(self) -> None:
         site1 = SampleSite(

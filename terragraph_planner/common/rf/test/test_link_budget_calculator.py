@@ -231,6 +231,7 @@ class TestFSPLBasedRSLValue(unittest.TestCase):
             0,
             0,
             0,
+            0,
         )
         self.assertAlmostEqual(expected_net_gain, computed_net_gain)
 
@@ -305,6 +306,7 @@ class TestFSPLBasedRSLValue(unittest.TestCase):
             0,
             0,
             0,
+            0,
         )
         self.assertAlmostEqual(expected_net_gain, computed_net_gain)
 
@@ -360,6 +362,7 @@ class TestLinkMCS(unittest.TestCase):
                 antenna_pattern_data,
                 None,
                 None,
+                0,
                 0,
                 0,
                 0,
@@ -480,6 +483,7 @@ class TestLinkTxPower(unittest.TestCase):
                 antenna_pattern_data,
                 None,
                 None,
+                0,
                 0,
                 0,
                 0,

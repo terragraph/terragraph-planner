@@ -331,7 +331,9 @@ def add_sectors_to_links(
         best_sector_from = None
         for sector_from_id in sectors_for_sites.get(site_from.site_id, []):
             sector_from = topology.sectors[sector_from_id]
-            delta_from = angle_delta(sector_from.ant_azimuth, bearing_from_to)
+            delta_from = abs(
+                angle_delta(sector_from.ant_azimuth, bearing_from_to)
+            )
             if delta_from < min_delta_from:
                 min_delta_from = delta_from
                 best_sector_from = sector_from
@@ -339,7 +341,7 @@ def add_sectors_to_links(
         best_sector_to = None
         for sector_to_id in sectors_for_sites.get(site_to.site_id, []):
             sector_to = topology.sectors[sector_to_id]
-            delta_to = angle_delta(sector_to.ant_azimuth, bearing_to_from)
+            delta_to = abs(angle_delta(sector_to.ant_azimuth, bearing_to_from))
             if delta_to < min_delta_to:
                 min_delta_to = delta_to
                 best_sector_to = sector_to
@@ -443,8 +445,8 @@ def validate_site_sectors(sectors: List[Sector]) -> None:
     if number_of_sectors_per_node > 1:
         for azimuths in sector_azimuths.values():
             for i in range(len(azimuths) - 1):
-                angle_diff = angle_delta(
-                    azimuths[i], azimuths[(i + 1) % len(azimuths)]
+                angle_diff = abs(
+                    angle_delta(azimuths[i], azimuths[(i + 1) % len(azimuths)])
                 )
                 planner_assert(
                     abs(angle_diff - horizontal_scan_range)
@@ -470,10 +472,10 @@ def validate_site_sectors(sectors: List[Sector]) -> None:
         for other_node_id, other_azimuths in sector_azimuths.items():
             if node_id == other_node_id:
                 continue
-            angle_diff1 = angle_delta(azimuths[0], other_azimuths[0])
-            angle_diff2 = angle_delta(azimuths[-1], other_azimuths[0])
-            angle_diff3 = angle_delta(azimuths[0], other_azimuths[-1])
-            angle_diff4 = angle_delta(azimuths[-1], other_azimuths[-1])
+            angle_diff1 = abs(angle_delta(azimuths[0], other_azimuths[0]))
+            angle_diff2 = abs(angle_delta(azimuths[-1], other_azimuths[0]))
+            angle_diff3 = abs(angle_delta(azimuths[0], other_azimuths[-1]))
+            angle_diff4 = abs(angle_delta(azimuths[-1], other_azimuths[-1]))
             min_angle_diff = min(
                 angle_diff1, angle_diff2, angle_diff3, angle_diff4
             )
@@ -510,7 +512,7 @@ def validate_link_sectors(
         link.tx_site.device.sector_params.horizontal_scan_range
     )
     planner_assert(
-        none_throws(link.tx_dev)
+        abs(none_throws(link.tx_dev))
         < tx_horizontal_scan_range / 2 + SECTOR_LINK_ANGLE_TOLERANCE,
         "Link is not within the horizontal scan range of the connected tx sector",
         OptimizerException,
@@ -524,7 +526,7 @@ def validate_link_sectors(
         link.rx_site.device.sector_params.horizontal_scan_range
     )
     planner_assert(
-        none_throws(link.rx_dev)
+        abs(none_throws(link.rx_dev))
         < rx_horizontal_scan_range / 2 + SECTOR_LINK_ANGLE_TOLERANCE,
         "Link is not within the horizontal scan range of the connected rx sector",
         OptimizerException,

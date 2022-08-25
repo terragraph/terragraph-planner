@@ -205,16 +205,22 @@ class TestInterferenceComputation(TestCase):
                     tx_interfering_link = topology.links[tx_interfering_link_id]
 
                     tx_dev = angle_delta(
-                        none_throws(tx_interfering_link.tx_dev),
                         none_throws(interfering_path.tx_dev),
+                        none_throws(tx_interfering_link.tx_dev),
                     )
                     rx_dev = angle_delta(
-                        none_throws(rx_interfered_link.rx_dev),
                         none_throws(interfering_path.rx_dev),
+                        none_throws(rx_interfered_link.rx_dev),
+                    )
+                    tx_el_dev = angle_delta(
+                        interfering_path.el_dev, tx_interfering_link.el_dev
+                    )
+                    rx_el_dev = -angle_delta(
+                        interfering_path.el_dev, rx_interfered_link.el_dev
                     )
 
                     net_gain = _compute_link_interference_net_gain(
-                        interfering_path, tx_dev, rx_dev
+                        interfering_path, tx_dev, rx_dev, tx_el_dev, rx_el_dev
                     )
                     interference = log_to_linear(
                         get_fspl_based_rsl(
