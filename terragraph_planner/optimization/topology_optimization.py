@@ -109,6 +109,7 @@ def optimize_and_report_topology_with_config_file(
         topology = extract_topology_from_file(
             opt_params.candidate_topology_file_path,
             opt_params.device_list,
+            None,
         )
     else:
         topology = generate_candidate_topology_with_config_file(

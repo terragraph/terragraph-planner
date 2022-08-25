@@ -213,14 +213,14 @@ def get_exclusion_zones(
     return []
 
 
-def get_all_sites_links_and_exclusion_zones(
+def get_los_topology(
     gis_data_params: GISDataParams,
     los_params: LOSParams,
     ll_boundary: Polygon,
     detected_sites: List[Site],
     surface_elevation: Optional[Elevation],
     terrain_elevation: Optional[Elevation],
-) -> Tuple[List[Site], List[CandidateLOS], List[ValidLOS], List[Polygon]]:
+) -> Tuple[List[Site], List[CandidateLOS], List[Polygon], Topology]:
     """
     - Extract delta sites and exclusion zones from user input csv/kml, and filter them with
     boundary polygon.
@@ -231,8 +231,6 @@ def get_all_sites_links_and_exclusion_zones(
     link comes from the input delta sites or detected sites, and the other could be any site from
     all sites. Note that the "candidate" here does not mean the final status of the link, but
     it's candidate link to be validated by the LOSValidator.
-    - Extract existing links of the base topology. Note that the "existing" here does not mean
-    the final status of the link, but it exists in the base topology.
     @param gis_data_params
     The params containing file paths of all the needed data.
     @param los_params
@@ -251,20 +249,21 @@ def get_all_sites_links_and_exclusion_zones(
     2-D terrain elevation data. Used to determine whether a input site is on the street level
     or the building rooftops when available.
     """
+    partial_infer_input_site_location = partial(
+        infer_input_site_location,
+        surface_elevation=surface_elevation,
+        terrain_elevation=terrain_elevation,
+        mounting_height_above_rooftop=los_params.mounting_height_above_rooftop,
+        default_pop_height_on_pole=los_params.default_pop_height_on_pole,
+        default_dn_height_on_pole=los_params.default_dn_height_on_pole,
+        default_cn_height_on_pole=los_params.default_cn_height_on_pole,
+    )
     input_delta_sites = InputSitesLoader(
         los_params.device_list
     ).read_user_input(
         gis_data_params.site_file_path,
         ll_boundary,
-        partial(
-            infer_input_site_location,
-            surface_elevation=surface_elevation,
-            terrain_elevation=terrain_elevation,
-            mounting_height_above_rooftop=los_params.mounting_height_above_rooftop,
-            default_pop_height_on_pole=los_params.default_pop_height_on_pole,
-            default_dn_height_on_pole=los_params.default_dn_height_on_pole,
-            default_cn_height_on_pole=los_params.default_cn_height_on_pole,
-        ),
+        partial_infer_input_site_location,
     )
 
     if (
@@ -272,7 +271,9 @@ def get_all_sites_links_and_exclusion_zones(
         and len(gis_data_params.base_topology_file_path) > 0
     ):
         base_topology = extract_topology_from_file(
-            gis_data_params.base_topology_file_path, los_params.device_list
+            gis_data_params.base_topology_file_path,
+            los_params.device_list,
+            partial_infer_input_site_location,
         )
     else:
         base_topology = Topology()
@@ -295,20 +296,6 @@ def get_all_sites_links_and_exclusion_zones(
             elif (site2.site_type, site1.site_type) in DIRECTED_LINKS:
                 candidate_links.append(CandidateLOS(j, i, False))
 
-    existing_links: List[ValidLOS] = []
-    site_id_to_idx: Dict[str, int] = {}
-    base_idx = len(input_delta_sites) + len(detected_sites)
-    for oft, site in enumerate(base_sites):
-        site_id_to_idx[site.site_id] = base_idx + oft
-    for link in base_topology.links.values():
-        existing_links.append(
-            ValidLOS(
-                site_id_to_idx[link.tx_site.site_id],
-                site_id_to_idx[link.rx_site.site_id],
-                1.0,
-            )
-        )
-
     exclusion_zones = get_exclusion_zones(
         gis_data_params.site_file_path, ll_boundary
     )
@@ -317,7 +304,7 @@ def get_all_sites_links_and_exclusion_zones(
         f"{len(candidate_links)} links are prepared for computing line-of-sight."
     )
 
-    return all_sites, candidate_links, existing_links, exclusion_zones
+    return all_sites, candidate_links, exclusion_zones, base_topology
 
 
 def get_max_los_dist_for_device_pairs(
@@ -824,6 +811,7 @@ def select_additional_dns(
 
 
 def construct_topology_from_los_result(
+    topology: Topology,
     sites: List[Site],
     rx_neighbors: List[List[int]],
     picked_sites: List[int],
@@ -832,9 +820,11 @@ def construct_topology_from_los_result(
     device_pair_to_max_los_dist: Dict[Tuple[str, str], int],
     min_los_dist: int,
     max_el_scan_angle: float,
-) -> Topology:
+) -> None:
     """
     Construct a Topology instance for candidate graph from LOS result.
+    @param topology
+    The base topology to add los result to.
     @param sites
     A list of Site for each input sites.
     @param rx_neighbors
@@ -857,13 +847,14 @@ def construct_topology_from_los_result(
     """
     picked_sites_set = set(picked_sites)
 
-    topology, site_map = add_sites_to_topology(
+    site_map = add_sites_to_topology(
+        topology,
         sites,
         picked_sites_set,
         device_list,
     )
 
-    return add_links_to_topology(
+    add_links_to_topology(
         topology,
         rx_neighbors,
         picked_sites_set,
@@ -876,18 +867,17 @@ def construct_topology_from_los_result(
 
 
 def add_sites_to_topology(
+    topology: Topology,
     sites: List[Site],
     picked_sites_set: Set[int],
     device_list: List[DeviceData],
-) -> Tuple[Topology, Dict[int, List[Site]]]:
+) -> Dict[int, List[Site]]:
     """
     Called by construct_topology_from_los_result, this function is to add sites to
     the candidate topology. Return a Topology, a dict site_idx_to_device mapping
     site index to device options, and a dict site_id_map mapping (site_idx, device_sku)
     to a site id.
     """
-    topology = Topology()
-
     # Get the SKUs of candidate devices to be mounted on the detected sites for each device type
     devices_on_detected_sites: Dict[DeviceType, List[DeviceData]] = defaultdict(
         list
@@ -904,8 +894,9 @@ def add_sites_to_topology(
             continue
         # If the site is inputed by users
         if not isinstance(site, DetectedSite):
-            topology.add_site(site)
-            site_map[site_idx] = [site]
+            if site.site_id not in topology.sites:
+                topology.add_site(site)
+                site_map[site_idx] = [site]
         else:
             detected_site = site
             # If the site is detected at the building rooftop by the planner
@@ -921,7 +912,7 @@ def add_sites_to_topology(
                     topology.add_site(site_with_device)
                     site_map[site_idx].append(site_with_device)
 
-    return topology, site_map
+    return site_map
 
 
 def add_links_to_topology(
@@ -933,7 +924,7 @@ def add_links_to_topology(
     device_pair_to_max_los_dist: Dict[Tuple[str, str], int],
     min_los_dist: int,
     max_el_scan_angle: float,
-) -> Topology:
+) -> None:
     """
     Called by construct_topology_from_los_result, this function is to add links to
     the candidate topology.
@@ -969,7 +960,6 @@ def add_links_to_topology(
                         and abs(link.el_dev) <= max_el_scan_angle
                     ):
                         topology.add_link(link)
-    return topology
 
 
 def upsample_to_same_resolution(

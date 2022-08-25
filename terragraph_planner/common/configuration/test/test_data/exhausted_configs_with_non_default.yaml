@@ -14,7 +14,8 @@ DATA:
   DHM_FILE_PATH: dhm.tif
   BUILDING_OUTLINE_FILE_PATH: buildings.zip
   SITE_FILE_PATH: sites.kml
-  BASE_TOPOLOGY_FILE_PATH: base_topology.kmz
+  # Base topology file path is not provided to avoid the exception
+  BASE_TOPOLOGY_FILE_PATH: null
 
 LINE_OF_SIGHT:
   MOUNTING_HEIGHT_ABOVE_ROOFTOP: 1.2

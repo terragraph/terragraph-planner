@@ -145,7 +145,7 @@ class TestConfigs(unittest.TestCase):
             dtm_file_path="dtm.tif",
             dhm_file_path="dhm.tif",
             site_file_path="sites.csv",
-            base_topology_file_path="base.kmz",
+            base_topology_file_path=None,
         )
         self.data_params_dict = {
             "boundary_polygon_file_path": "boundary.kml",
@@ -154,7 +154,7 @@ class TestConfigs(unittest.TestCase):
             "dtm_file_path": "dtm.tif",
             "dhm_file_path": "dhm.tif",
             "site_file_path": "sites.csv",
-            "base_topology_file_path": "base.kmz",
+            "base_topology_file_path": None,
         }
 
     def tearDown(self) -> None:

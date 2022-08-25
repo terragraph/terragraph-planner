@@ -54,7 +54,7 @@ from terragraph_planner.los.elevation import Elevation
 from terragraph_planner.los.helper import (
     compute_los_batch,
     construct_topology_from_los_result,
-    get_all_sites_links_and_exclusion_zones,
+    get_los_topology,
     get_max_los_dist_for_device_pairs,
     pick_best_sites_per_building,
     pre_los_check,
@@ -121,12 +121,7 @@ def generate_candidate_topology(
     else:
         detected_sites = []
 
-    (
-        sites,
-        candidate_links,
-        existing_links,
-        exclusion_zones,
-    ) = get_all_sites_links_and_exclusion_zones(
+    sites, candidate_links, exclusion_zones, base_topology = get_los_topology(
         gis_data_params,
         los_params,
         ll_boundary,
@@ -160,9 +155,11 @@ def generate_candidate_topology(
 
     topology = build_candidate_topology(
         los_params,
+        base_topology,
         sites,
-        existing_links + valid_links,
+        valid_links,
         device_pair_to_max_los_dist,
+        gis_data_params.building_outline_file_path is not None,
     )
     dump_topology_to_kml(topology, OutputFile.CANDIDATE_TOPOLOGY)
     return topology
@@ -369,9 +366,11 @@ def compute_los(
 
 def build_candidate_topology(
     los_params: LOSParams,
+    topology: Topology,
     sites: List[Site],
     links: List[ValidLOS],
     device_pair_to_max_los_dist: Dict[Tuple[str, str], int],
+    site_detection_enabled: bool,
 ) -> Topology:
     """
     Build a Topology instance based on all the sites (detected + existing) and
@@ -380,11 +379,17 @@ def build_candidate_topology(
     @param los_params
     Input config for building candidate graph.
 
+    @param topology
+    The base topology to add sites and links to.
+
     @param sites
     All the candidate sites information, including detected sites and existing/input sites.
 
     @param link
-    A list of tuples in the format of (tx_site_idx, rx_site_idx, confidence),
+    A list of tuples in the format of (tx_site_idx, rx_site_idx, confidence).
+
+    @param site_detection_enabled
+    Whether or not the site detection feature is enabled.
 
     @return
     A candidate network in Topology type.
@@ -400,18 +405,25 @@ def build_candidate_topology(
         tx_neighbors[rx_site].append(tx_site)
         confidence_dict[(tx_site, rx_site)] = confidence
 
-    picked_sites = pick_best_sites_per_building(
-        sites,
-        rx_neighbors,
-        tx_neighbors,
-        los_params.site_detection.dn_deployment,
-        confidence_dict,
-    )
-    additional_dns = select_additional_dns(
-        sites, rx_neighbors, tx_neighbors, picked_sites
-    )
+    if site_detection_enabled:
+        picked_sites = pick_best_sites_per_building(
+            sites,
+            rx_neighbors,
+            tx_neighbors,
+            los_params.site_detection.dn_deployment,
+            confidence_dict,
+        )
+        additional_dns = select_additional_dns(
+            sites, rx_neighbors, tx_neighbors, picked_sites
+        )
+    else:
+        # If site detection is disabled, all sites are picked, and there
+        # are no additional DNs.
+        picked_sites = list(range(len(sites)))
+        additional_dns = []
 
-    topology = construct_topology_from_los_result(
+    construct_topology_from_los_result(
+        topology,
         sites,
         rx_neighbors,
         picked_sites + additional_dns,
