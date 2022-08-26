@@ -367,9 +367,12 @@ def get_max_tx_power(
     """
     max_tx_power = tx_sector_params.maximum_tx_power
     if max_eirp_dbm is not None:
-        max_tx_gain = (
-            tx_sector_params.antenna_boresight_gain
-            + tx_sector_params.tx_diversity_gain
+        max_tx_gain = extract_gain_from_radio_pattern(
+            boresight_gain=tx_sector_params.antenna_boresight_gain,
+            diversity_gain=tx_sector_params.tx_diversity_gain,
+            radio_pattern_data=None,
+            az_deviation=0,
+            el_deviation=0,
         )
         max_tx_power = float(
             min(
