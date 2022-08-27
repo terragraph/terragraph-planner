@@ -558,7 +558,8 @@ def fspl_based_estimation(
     mcs_snr_mbps_map: List[MCSMap],
     tx_deviation: float,
     rx_deviation: float,
-    el_deviation: float,
+    tx_el_deviation: float,
+    rx_el_deviation: float,
     tx_scan_pattern_data: Optional[ScanPatternData],
     rx_scan_pattern_data: Optional[ScanPatternData],
 ) -> LinkBudgetMeasurements:
@@ -567,7 +568,8 @@ def fspl_based_estimation(
     @param distance: The distance between two sites, i.e. the length of the link.
     @param tx_deviation: The horizontal deviation between tx sector and the link.
     @param rx_deviation: The horizontal deviation between rx sector and the link.
-    @param el_deviation: The elevation deviation of the link.
+    @param tx_el_deviation: The elevation deviation of the link in the tx direction.
+    @param rx_el_deviation: The elevation deviation of the link in the rx direction.
     @param max_tx_power: The maximum power of the transmitter site.
     @param tx_sector_params: The list of parameters that has tx radio related specifications
     @param rx_sector_params: The list of parameters that has rx radio related specifications
@@ -585,8 +587,8 @@ def fspl_based_estimation(
         rx_radio_pattern_data=rx_scan_pattern_data,
         tx_deviation=tx_deviation,
         rx_deviation=rx_deviation,
-        tx_el_deviation=el_deviation,
-        rx_el_deviation=-el_deviation,
+        tx_el_deviation=tx_el_deviation,
+        rx_el_deviation=rx_el_deviation,
     )
     np_dbm = get_noise_power(rx_sector_params)
     link_budget = get_measurements_from_tx_power(

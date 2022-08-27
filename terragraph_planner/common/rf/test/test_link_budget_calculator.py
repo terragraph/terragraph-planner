@@ -672,6 +672,7 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                 0,
                 0,
                 0,
+                0,
                 None,
                 None,
             )

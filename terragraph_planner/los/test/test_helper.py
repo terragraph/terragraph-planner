@@ -67,7 +67,8 @@ def mock_fspl_based_estimation(
     mcs_snr_mbps_map: List[MCSMap],
     tx_deviation: float,
     rx_deviation: float,
-    el_deviation: float,
+    tx_el_deviation: float,
+    rx_el_deviation: float,
     tx_scan_pattern_data: Optional[ScanPatternData],
     rx_scan_pattern_data: Optional[ScanPatternData],
 ) -> LinkBudgetMeasurements:
