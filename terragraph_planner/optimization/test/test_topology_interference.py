@@ -140,7 +140,6 @@ class TestInterferenceComputation(TestCase):
             tx_sector_params = link.tx_site.device.sector_params
             link.tx_power = get_max_tx_power(
                 tx_sector_params=tx_sector_params,
-                tx_radio_pattern_data=tx_sector_params.antenna_pattern_data,
                 max_eirp_dbm=params.maximum_eirp,
             )
 
@@ -363,7 +362,6 @@ class TestInterferenceComputation(TestCase):
             tx_sector_params = link.tx_site.device.sector_params
             link.tx_power = get_max_tx_power(
                 tx_sector_params=tx_sector_params,
-                tx_radio_pattern_data=tx_sector_params.antenna_pattern_data,
                 max_eirp_dbm=params.maximum_eirp,
             )
 

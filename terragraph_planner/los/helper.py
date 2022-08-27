@@ -330,9 +330,7 @@ def get_max_los_dist_for_device_pairs(
     A dict mapping a pair of device SKUs to the max los distance.
     """
     device_to_max_tx_power: Dict[str, float] = {
-        device.device_sku: get_max_tx_power(
-            device.sector_params, None, max_eirp_dbm
-        )
+        device.device_sku: get_max_tx_power(device.sector_params, max_eirp_dbm)
         for device in device_list
     }
     device_pair_to_max_los_dist: Dict[Tuple[str, str], int] = {}

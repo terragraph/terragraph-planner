@@ -524,7 +524,6 @@ def _get_max_tx_power_of_all_links(
         tx_data = topology.sites[link.tx_site.site_id].device
         max_tx_power[link_id] = get_max_tx_power(
             tx_sector_params=tx_data.sector_params,
-            tx_radio_pattern_data=tx_data.sector_params.antenna_pattern_data,
             max_eirp_dbm=max_eirp_dbm,
         )
     return max_tx_power

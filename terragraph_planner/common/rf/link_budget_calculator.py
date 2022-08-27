@@ -360,7 +360,6 @@ def get_max_boresight_gain_from_pattern_file(
 
 def get_max_tx_power(
     tx_sector_params: SectorParams,
-    tx_radio_pattern_data: Optional[Union[AntennaPatternData, ScanPatternData]],
     max_eirp_dbm: Optional[float],
 ) -> float:
     """
@@ -368,24 +367,17 @@ def get_max_tx_power(
     """
     max_tx_power = tx_sector_params.maximum_tx_power
     if max_eirp_dbm is not None:
-        if tx_radio_pattern_data is not None and is_scan_pattern_data(
-            tx_radio_pattern_data
-        ):
-            tx_gain = get_max_boresight_gain_from_pattern_file(
-                cast(ScanPatternData, tx_radio_pattern_data)
-            )
-        else:
-            tx_gain = extract_gain_from_radio_pattern(
-                boresight_gain=tx_sector_params.antenna_boresight_gain,
-                diversity_gain=tx_sector_params.tx_diversity_gain,
-                radio_pattern_data=tx_radio_pattern_data,
-                az_deviation=0,
-                el_deviation=0,
-            )
+        max_tx_gain = extract_gain_from_radio_pattern(
+            boresight_gain=tx_sector_params.antenna_boresight_gain,
+            diversity_gain=tx_sector_params.tx_diversity_gain,
+            radio_pattern_data=None,
+            az_deviation=0,
+            el_deviation=0,
+        )
         max_tx_power = float(
             min(
                 max_tx_power,
-                max_eirp_dbm - tx_gain,
+                max_eirp_dbm - max_tx_gain,
             ),
         )
     if tx_sector_params.minimum_tx_power is not None:
