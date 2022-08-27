@@ -214,7 +214,7 @@ def get_routing_flow_solution(
     """
     Calculate maximum flow solution and active link utilization.
     """
-    update_link_caps_with_sinr(topology, params.maximum_eirp)
+    update_link_caps_with_sinr(topology, params)
     flow_solution = MaxFlowNetwork(topology, params).solve()
     if flow_solution is None:
         return None

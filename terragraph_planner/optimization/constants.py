@@ -9,10 +9,7 @@ BACKHAUL_LINK_TYPE_WEIGHT = 8  # Access link weight is 1
 COVERAGE_STEP_SIZE = 0.1  # coverage increment during min cost optimization
 COVERAGE_THRESHOLD = 0.5  # lower bound of coverage for min cost optimization
 EPSILON = 1e-5
-# interference converge threshold for link budget post-optimization, dBm
-LINK_BUDGET_CONVERGE_THRESHOLD = 3
-# maximum number of iterations in link budget post-optimization
-MAX_LINK_BUDGET_ITERATIONS = 10
+MAX_LINK_BUDGET_ITERATIONS = 10  # Max iterations for tx power iteration
 UNASSIGNED_CHANNEL = -1
 
 DEMAND = "DEMAND"

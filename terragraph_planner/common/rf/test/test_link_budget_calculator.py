@@ -3,7 +3,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import math
 import unittest
 
 from terragraph_planner.common.configuration.configs import SectorParams
@@ -21,7 +20,7 @@ from terragraph_planner.common.rf.link_budget_calculator import (
     fspl_based_estimation,
     get_fspl_based_net_gain,
     get_fspl_based_rsl,
-    get_link_capacity_from_snr,
+    get_link_capacity_from_mcs,
     get_max_boresight_gain_from_pattern_file,
     get_mcs_from_snr,
     get_net_gain,
@@ -450,10 +449,9 @@ class TestLinkTxPower(unittest.TestCase):
         ]
         for mcs, expected_capacity in test_data:
             snr_dbm = get_snr_from_mcs(mcs, DEFAULT_MCS_SNR_MBPS_MAP)
+            mcs_level = get_mcs_from_snr(snr_dbm, DEFAULT_MCS_SNR_MBPS_MAP)
             self.assertEqual(
-                get_link_capacity_from_snr(snr_dbm, DEFAULT_MCS_SNR_MBPS_MAP)[
-                    1
-                ],
+                get_link_capacity_from_mcs(mcs_level, DEFAULT_MCS_SNR_MBPS_MAP),
                 mhz_to_ghz(expected_capacity),
             )
 
@@ -555,110 +553,110 @@ class TestFSPLBasedEstimation(unittest.TestCase):
                 40,
                 LinkBudgetMeasurements(
                     mcs_level=10,
-                    rsl_dbm=-60,
-                    snr_dbm=14,
+                    rsl_dbm=-57.1,
+                    snr_dbm=16.9,
                     capacity=1.030,
-                    tx_power=11.1,
+                    tx_power=14.0,
                 ),
             ),
             (
                 50,
                 LinkBudgetMeasurements(
                     mcs_level=10,
-                    rsl_dbm=-60,
-                    snr_dbm=14,
+                    rsl_dbm=-59.3,
+                    snr_dbm=14.7,
                     capacity=1.030,
-                    tx_power=13.3,
+                    tx_power=14.0,
                 ),
             ),
             (
                 60,
                 LinkBudgetMeasurements(
                     mcs_level=9,
-                    rsl_dbm=-62,
-                    snr_dbm=12,
+                    rsl_dbm=-59.1,
+                    snr_dbm=14.9,
                     capacity=0.74125,
-                    tx_power=13.1,
+                    tx_power=16.0,
                 ),
             ),
             (
                 70,
                 LinkBudgetMeasurements(
                     mcs_level=9,
-                    rsl_dbm=-62,
-                    snr_dbm=12,
+                    rsl_dbm=-60.7,
+                    snr_dbm=13.3,
                     capacity=0.74125,
-                    tx_power=14.7,
+                    tx_power=16.0,
                 ),
             ),
             (
                 80,
                 LinkBudgetMeasurements(
                     mcs_level=8,
-                    rsl_dbm=-65,
-                    snr_dbm=9,
+                    rsl_dbm=-62.1,
+                    snr_dbm=11.9,
                     capacity=0.645,
-                    tx_power=13.1,
+                    tx_power=16.0,
                 ),
             ),
             (
                 90,
                 LinkBudgetMeasurements(
                     mcs_level=8,
-                    rsl_dbm=-65,
-                    snr_dbm=9,
+                    rsl_dbm=-63.4,
+                    snr_dbm=10.6,
                     capacity=0.645,
-                    tx_power=14.4,
+                    tx_power=16.0,
                 ),
             ),
             (
                 100,
                 LinkBudgetMeasurements(
                     mcs_level=8,
-                    rsl_dbm=-65,
-                    snr_dbm=9,
+                    rsl_dbm=-64.5,
+                    snr_dbm=9.5,
                     capacity=0.645,
-                    tx_power=15.5,
+                    tx_power=16.0,
                 ),
             ),
             (
                 125,
                 LinkBudgetMeasurements(
                     mcs_level=6,
-                    rsl_dbm=-68.5,
-                    snr_dbm=5.5,
+                    rsl_dbm=-67.1,
+                    snr_dbm=6.9,
                     capacity=0.260,
-                    tx_power=14.6,
+                    tx_power=16.0,
                 ),
             ),
             (
                 150,
                 LinkBudgetMeasurements(
                     mcs_level=4,
-                    rsl_dbm=-69.5,
-                    snr_dbm=4.5,
+                    rsl_dbm=-69.3,
+                    snr_dbm=4.7,
                     capacity=0.0675,
-                    tx_power=15.8,
+                    tx_power=16.0,
                 ),
             ),
             (
                 175,
                 LinkBudgetMeasurements(
                     mcs_level=0,
-                    rsl_dbm=-math.inf,
-                    snr_dbm=-math.inf,
+                    rsl_dbm=-71.3,
+                    snr_dbm=2.7,
                     capacity=0,
-                    tx_power=-math.inf,
+                    tx_power=16.0,
                 ),
             ),
             (
                 200,
                 LinkBudgetMeasurements(
                     mcs_level=0,
-                    rsl_dbm=-math.inf,
-                    snr_dbm=-math.inf,
+                    rsl_dbm=-73.1,
+                    snr_dbm=0.9,
                     capacity=0,
-                    tx_power=-math.inf,
+                    tx_power=16.0,
                 ),
             ),
         ]
@@ -679,8 +677,12 @@ class TestFSPLBasedEstimation(unittest.TestCase):
             self.assertEqual(
                 link_budget.mcs_level, expected_link_budget.mcs_level
             )
-            self.assertEqual(link_budget.rsl_dbm, expected_link_budget.rsl_dbm)
-            self.assertEqual(link_budget.snr_dbm, expected_link_budget.snr_dbm)
+            self.assertAlmostEqual(
+                link_budget.rsl_dbm, expected_link_budget.rsl_dbm, places=1
+            )
+            self.assertAlmostEqual(
+                link_budget.snr_dbm, expected_link_budget.snr_dbm, places=1
+            )
             self.assertEqual(
                 link_budget.capacity, expected_link_budget.capacity
             )

@@ -22,10 +22,10 @@ from terragraph_planner.common.exceptions import (
 )
 from terragraph_planner.common.rf.link_budget_calculator import (
     adjust_tx_power_with_backoff,
-    get_backoff_from_mcs,
     get_fspl_based_rsl,
-    get_link_capacity_from_snr,
+    get_link_capacity_from_mcs,
     get_max_tx_power,
+    get_mcs_from_snr,
     get_noise_power,
     get_snr,
 )
@@ -34,7 +34,7 @@ from terragraph_planner.common.topology_models.site import Site
 from terragraph_planner.common.topology_models.topology import Topology
 from terragraph_planner.optimization.constants import (
     BACKHAUL_LINK_TYPE_WEIGHT,
-    LINK_BUDGET_CONVERGE_THRESHOLD,
+    EPSILON,
     MAX_LINK_BUDGET_ITERATIONS,
 )
 from terragraph_planner.optimization.structs import Capex
@@ -47,7 +47,7 @@ from terragraph_planner.optimization.topology_networkx import (
     find_most_disruptive_links,
 )
 from terragraph_planner.optimization.topology_preparation import (
-    add_link_capacities_with_deviation,
+    add_link_capacities,
     add_sectors_to_links,
     find_best_sectors,
 )
@@ -449,7 +449,6 @@ def readjust_sectors_post_opt(
         link_channel_map=link_channel_map,
     )
     _set_sector_status_in_same_node(topology)
-    add_link_capacities_with_deviation(topology, params)
 
 
 def _set_sector_status_in_same_node(topology: Topology) -> None:
@@ -504,33 +503,10 @@ def compute_capex(topology: Topology, params: OptimizerParams) -> Capex:
     )
 
 
-def _get_max_tx_power_of_all_links(
-    topology: Topology,
-    max_eirp_dbm: Optional[float],
-) -> Dict[str, float]:
-    """
-    Get max tx power for links in the topology.
-    """
-    max_tx_power = {}
-    for link_id, link in topology.links.items():
-        if (
-            link.link_type == LinkType.ETHERNET
-            or link.tx_sector is None
-            or link.rx_sector is None
-        ):
-            max_tx_power[link_id] = -math.inf
-            continue
-
-        tx_data = topology.sites[link.tx_site.site_id].device
-        max_tx_power[link_id] = get_max_tx_power(
-            tx_sector_params=tx_data.sector_params,
-            max_eirp_dbm=max_eirp_dbm,
-        )
-    return max_tx_power
-
-
 def update_link_caps_with_sinr(
-    topology: Topology, maximum_eirp: Optional[float]
+    topology: Topology,
+    params: OptimizerParams,
+    max_iterations: int = MAX_LINK_BUDGET_ITERATIONS,
 ) -> None:
     """
     Prior to selecting a subset of active links, we compute link capacities
@@ -538,48 +514,47 @@ def update_link_caps_with_sinr(
     the SINR values are directly affected by the subset of active links.
 
     Once the set of active links are selected, we iteratively adjust link
-    budgets to converge. We first compute SINR values for each link using
-    the `analyze_interference` function. Then update the link capacities and
-    MCS values using this newly computed SINR values of each link; next
-    adjust the Tx power based on the new MCS, interference, and Max available
-    Tx power; the link budgets would be re-calculated at last.
-
-    @param topology: A Topology object.
-    @param maximum_eirp: Maximum ERIP.
+    budgets to convergence. In each iteration, we first compute SINR values
+    for each link, update the link capacities and MCS class based on the SINR,
+    adjust the tx power based on the new MCS class and then recompute RSL/SNR
+    based on the updated tx power.
     """
+    planner_assert(
+        max_iterations >= 1,
+        "Number of TPC iterations must be at least 1",
+        OptimizerException,
+    )
 
+    add_link_capacities(topology, params, with_deviation=True)
     net_gain = {
         link.link_id: link.rsl_dbm - link.tx_power
         for link in topology.links.values()
     }
+
     active_links = [
         link
         for link in topology.links.values()
         if link.status_type in StatusType.active_status()
         and link.link_type != LinkType.ETHERNET
     ]
-    max_tx_power = _get_max_tx_power_of_all_links(topology, maximum_eirp)
 
-    # Set active link tx power to its max after backoff in the initial loop, and
-    # update RSL accordingly (both are used in analyze_interference);
-    for link in active_links:
-        rx_data = topology.sites[link.rx_site.site_id].device
-        mcs_snr_mbps_map = rx_data.sector_params.mcs_map
-        link.tx_power = max_tx_power[link.link_id] - get_backoff_from_mcs(
-            link.mcs_level, mcs_snr_mbps_map
+    max_tx_power = {}
+    for device in params.device_list:
+        max_tx_power[device.device_sku] = get_max_tx_power(
+            tx_sector_params=device.sector_params,
+            max_eirp_dbm=params.maximum_eirp,
         )
-        link.rsl_dbm = get_fspl_based_rsl(link.tx_power, net_gain[link.link_id])
 
     # Precompute net gain because it does not change during tx power modulation
     # Precomputation can save significant time for large networks
     link_net_gain_map = compute_link_net_gain_map(topology)
 
-    interference_ok_count_old = 0
     if len(active_links) > 0:
-        for _ in range(MAX_LINK_BUDGET_ITERATIONS):
-            # compute interference and SINR
+        for _ in range(max_iterations):
+            # Compute interference and SINR
             analyze_interference(topology, link_net_gain_map)
-            # adjust tx power and link measured for ALL wireless links
+            # Adjust tx power and link measurements
+            tx_power_stable_count = 0
             for link in active_links:
                 tx_data = topology.sites[link.tx_site.site_id].device
                 min_tx_power = tx_data.sector_params.minimum_tx_power
@@ -587,42 +562,45 @@ def update_link_caps_with_sinr(
                 np_dbm = get_noise_power(rx_data.sector_params)
                 mcs_snr_mbps_map = rx_data.sector_params.mcs_map
 
-                # adjust MCS & capacity based on SINR
-                link.mcs_level, link.capacity = get_link_capacity_from_snr(
+                # Adjust MCS and capacity based on SINR
+                link.mcs_level = get_mcs_from_snr(
                     link.sinr_dbm, mcs_snr_mbps_map
                 )
+                link.capacity = get_link_capacity_from_mcs(
+                    link.mcs_level, mcs_snr_mbps_map
+                )
                 n_and_i_dbm = link.rsl_dbm - link.sinr_dbm
-                # compute the lower Tx power which results the same MCS
+                # Compute the lowest tx power that maintains the same MCS
+                tx_power_prev = link.tx_power
                 link.mcs_level, link.tx_power = adjust_tx_power_with_backoff(
                     mcs_level=link.mcs_level,
                     mcs_snr_mbps_map=mcs_snr_mbps_map,
                     min_tx_power=min_tx_power,
-                    max_tx_power=max_tx_power[link.link_id],
+                    max_tx_power=max_tx_power[link.tx_site.device.device_sku],
                     net_gain_dbi=net_gain[link.link_id],
                     np_dbm=n_and_i_dbm,
                 )
-                # re-compute link budgets based on the new Tx power
+                # Re-compute link measurements from the udpated tx power
                 link.rsl_dbm = get_fspl_based_rsl(
                     link.tx_power, net_gain[link.link_id]
                 )
                 link.snr_dbm = get_snr(link.rsl_dbm, np_dbm)
 
-            # stop iteration if all link interferences converged
-            interference_ok_count = sum(
-                (link.snr_dbm - link.sinr_dbm) < LINK_BUDGET_CONVERGE_THRESHOLD
-                for link in active_links
-            )
+                # Tx power does not change if the MCS with SINR stayed the same
+                tx_power_stable_count += (
+                    1
+                    if math.isclose(
+                        link.tx_power, tx_power_prev, abs_tol=EPSILON
+                    )
+                    else 0
+                )
+
+            # Stop iteration if tx powers are no longer changing
             logger.info(
-                f"Ratio of converged link interferences: {interference_ok_count}/{len(active_links)}"
+                f"Ratio of converged link tx powers: {tx_power_stable_count}/{len(active_links)}"
             )
-            if interference_ok_count == len(active_links):
+            if tx_power_stable_count == len(active_links):
                 break
-            # assumption: if the number of converged links is not increasing,
-            # the iterations has stalled and should terminate
-            if interference_ok_count == interference_ok_count_old:
-                break
-            else:
-                interference_ok_count_old = interference_ok_count
 
     # update sinr_dbm, MCS & capacity
     analyze_interference(topology, link_net_gain_map)
@@ -631,6 +609,7 @@ def update_link_caps_with_sinr(
             continue
         rx_data = topology.sites[link.rx_site.site_id].device
         mcs_snr_mbps_map = rx_data.sector_params.mcs_map
-        link.mcs_level, link.capacity = get_link_capacity_from_snr(
-            link.sinr_dbm, mcs_snr_mbps_map
+        link.mcs_level = get_mcs_from_snr(link.sinr_dbm, mcs_snr_mbps_map)
+        link.capacity = get_link_capacity_from_mcs(
+            link.mcs_level, mcs_snr_mbps_map
         )
