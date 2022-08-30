@@ -12,7 +12,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="terragraph_planner",
-    version="1.1.0",
+    version="1.2.0",
     description="""
 The Terragraph Planner is developed for operators to plan and optimize
  a mesh network using Terragraph's 60 GHz mmWave technology
