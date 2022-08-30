@@ -35,7 +35,6 @@ from terragraph_planner.common.topology_models.topology import Topology
 from terragraph_planner.optimization.constants import (
     BACKHAUL_LINK_TYPE_WEIGHT,
     EPSILON,
-    MAX_LINK_BUDGET_ITERATIONS,
 )
 from terragraph_planner.optimization.structs import Capex
 from terragraph_planner.optimization.topology_interference import (
@@ -506,7 +505,7 @@ def compute_capex(topology: Topology, params: OptimizerParams) -> Capex:
 def update_link_caps_with_sinr(
     topology: Topology,
     params: OptimizerParams,
-    max_iterations: int = MAX_LINK_BUDGET_ITERATIONS,
+    max_iterations: int,
 ) -> None:
     """
     Prior to selecting a subset of active links, we compute link capacities

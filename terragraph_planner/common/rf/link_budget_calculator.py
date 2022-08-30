@@ -295,7 +295,7 @@ def get_fspl_based_net_gain(
     @param tx_deviation: Horizontal deviation from boresight in tx direction (degrees)
     @param rx_deviation: Horizontal deviation from boresight in rx direction (degrees)
     @param tx_el_deviation: Vertical deviation from horizontal plane in tx direction (degrees)
-    @param rx_el_deviation: Vertical deviation from horizontal plane rx rx direction (degrees)
+    @param rx_el_deviation: Vertical deviation from horizontal plane in rx direction (degrees)
     """
 
     # FSPL (dB) when link distance d (kms) and frequency (GHz) is given.
