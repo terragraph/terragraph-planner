@@ -186,21 +186,20 @@ def extract_gain_from_radio_pattern(
     )
 
     # Convert deviation from (-180, 180] to [0, 360)
+    # Round value first so small negative number goes to 0 not 360
+    el_dev_360 = round(el_deviation)
     el_dev_360 = (
-        el_deviation
-        if el_deviation >= 0
-        else el_deviation + FULL_ROTATION_ANGLE
+        el_dev_360 if el_dev_360 >= 0 else el_dev_360 + int(FULL_ROTATION_ANGLE)
     )
+    az_dev_360 = round(az_deviation)
     az_dev_360 = (
-        az_deviation
-        if az_deviation >= 0
-        else az_deviation + FULL_ROTATION_ANGLE
+        az_dev_360 if az_dev_360 >= 0 else az_dev_360 + int(FULL_ROTATION_ANGLE)
     )
     el_gain = radio_pattern_data[none_throws(antenna_type)][EL_INDEX][
-        round(el_dev_360)
+        el_dev_360
     ]
     az_gain = radio_pattern_data[none_throws(antenna_type)][AZ_INDEX][
-        round(az_dev_360)
+        az_dev_360
     ]
     return boresight_gain + diversity_gain + el_gain + az_gain
 

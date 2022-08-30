@@ -723,6 +723,11 @@ class TestAntennaPattern(unittest.TestCase):
         self.assertAlmostEqual(
             gain, 10.0 - 255.646229749276 - 31.9743585270337, 6
         )
+        # Verify small negative value gets rounded to 0 not 360
+        gain = extract_gain_from_radio_pattern(
+            boresight_gain, diversity_gain, pattern_data, -0.02, 0
+        )
+        self.assertAlmostEqual(gain, 10.0, 6)
 
 
 class TestScanPattern(unittest.TestCase):
