@@ -295,7 +295,7 @@ def get_fspl_based_net_gain(
     @param tx_deviation: Horizontal deviation from boresight in tx direction (degrees)
     @param rx_deviation: Horizontal deviation from boresight in rx direction (degrees)
     @param tx_el_deviation: Vertical deviation from horizontal plane in tx direction (degrees)
-    @param rx_el_deviation: Vertical deviation from horizontal plane rx rx direction (degrees)
+    @param rx_el_deviation: Vertical deviation from horizontal plane in rx direction (degrees)
     """
 
     # FSPL (dB) when link distance d (kms) and frequency (GHz) is given.
@@ -501,44 +501,16 @@ def get_tx_power_from_rsl(rsl_dbm: float, net_gain_dbi: float) -> float:
     return rsl_dbm - net_gain_dbi
 
 
-def get_link_capacity_from_snr(
-    snr_dbm: float, mcs_snr_mbps_map: List[MCSMap]
-) -> Tuple[int, float]:
+def get_link_capacity_from_mcs(
+    mcs_level: int, mcs_snr_mbps_map: List[MCSMap]
+) -> float:
     """
-    Returns MCS and Mbps values given the signal-to-noise
-    (OR signal to interference + noise) ratio in dBm.
-
-    @param snr_dbm: the SNR or SINR value in dBm
-    @param mcs_snr_mbps_map: table of SNR thresholds and Mbps
-
-    returns MCS and the Mbps values
+    Returns Mbps values given the MCS level
     """
-    mcs_level = get_mcs_from_snr(snr_dbm, mcs_snr_mbps_map)
     mbps_value = [row.mbps for row in mcs_snr_mbps_map if row.mcs == mcs_level]
     if len(mbps_value) == 0:
-        return 0, 0.0
-    return mcs_level, mbps_to_gbps(mbps_value[0])
-
-
-def get_measurements_from_tx_power(
-    tx_power: float,
-    net_gain_dbi: float,
-    np_dbm: float,
-    mcs_snr_mbps_map: List[MCSMap],
-) -> LinkBudgetMeasurements:
-    """
-    Return MCS level and capacity given Tx power, gain and noise
-    """
-    rsl_dbm = get_fspl_based_rsl(tx_power, net_gain_dbi)
-    snr_dbm = get_snr(rsl_dbm, np_dbm)
-    mcs_level, capacity = get_link_capacity_from_snr(snr_dbm, mcs_snr_mbps_map)
-    return LinkBudgetMeasurements(
-        mcs_level=mcs_level,
-        rsl_dbm=rsl_dbm,
-        snr_dbm=snr_dbm,
-        capacity=capacity,
-        tx_power=tx_power,
-    )
+        return 0.0
+    return mbps_to_gbps(mbps_value[0])
 
 
 def fspl_based_estimation(
@@ -568,8 +540,21 @@ def fspl_based_estimation(
     @param tx_antenna_pattern: The antenna pattern for the tx radio.
     @param rx_antenna_pattern: The antenna pattern for the rx radio.
 
+    Note: the output tx power is the maximum allowed for the MCS class of the link.
+    Due to tx power backoff, this could result in a SNR/RSL that would place the link
+    into a higher MCS class. However, this function is primarily used to
+    - Compute capacity of a link for determining the max LOS distance (so tx power, SNR,
+      RSL do not matter)
+    - During pre-optimization setup for usage during interference modeling in the
+      optimization phase. There, the RSL values matter and we want these to be as high as
+      possible so as to not artifically lower the MCS class of a link when encountering
+      interference
+    - Prior to TPC where we do not want to artificially lower the MCS class of a link when
+      encountering interference. In that case, the TPC iteration will ensure that the final
+      tx power output is the minimal necessary to achieve the MCS class (i.e., this is simply
+      used to initialize the TPC iteration)
     """
-    # First compute link budget using maximum possible Tx power
+    # First compute link budget using maximum possible tx power
     net_gain_dbi = get_fspl_based_net_gain(
         dist_m=distance,
         tx_sector_params=tx_sector_params,
@@ -582,25 +567,36 @@ def fspl_based_estimation(
         rx_el_deviation=rx_el_deviation,
     )
     np_dbm = get_noise_power(rx_sector_params)
-    link_budget = get_measurements_from_tx_power(
-        tx_power=max_tx_power,
-        net_gain_dbi=net_gain_dbi,
-        np_dbm=np_dbm,
-        mcs_snr_mbps_map=mcs_snr_mbps_map,
-    )
-    # Adjust Tx power considering Tx power backoff
-    _, tx_power = adjust_tx_power_with_backoff(
-        mcs_level=link_budget.mcs_level,
+
+    rsl_dbm = get_fspl_based_rsl(max_tx_power, net_gain_dbi)
+    snr_dbm = get_snr(rsl_dbm, np_dbm)
+    mcs_level = get_mcs_from_snr(snr_dbm, mcs_snr_mbps_map)
+
+    # Adjust tx power considering tx power backoff, i.e., tx power for computed
+    # MCS level might exceed allowed tx power
+    mcs_level, _ = adjust_tx_power_with_backoff(
+        mcs_level=mcs_level,
         mcs_snr_mbps_map=mcs_snr_mbps_map,
         min_tx_power=tx_sector_params.minimum_tx_power,
         max_tx_power=max_tx_power,
         net_gain_dbi=net_gain_dbi,
         np_dbm=np_dbm,
     )
-    # Recalculate measurements with adjusted Tx power
-    return get_measurements_from_tx_power(
+    capacity = get_link_capacity_from_mcs(mcs_level, mcs_snr_mbps_map)
+
+    # Set tx power to maximum tx power allowed for that MCS level
+    tx_backoff = get_backoff_from_mcs(mcs_level, mcs_snr_mbps_map)
+    tx_power = max_tx_power - tx_backoff
+    # Due to tx power backoff, SNR could be high enough to merit higher MCS
+    # class. But doing so would violate the max allowed tx power, so the MCS
+    # class (and hence capacity) is artifically lowered
+    rsl_dbm = get_fspl_based_rsl(tx_power, net_gain_dbi)
+    snr_dbm = get_snr(rsl_dbm, np_dbm)
+
+    return LinkBudgetMeasurements(
+        mcs_level=mcs_level,
+        rsl_dbm=rsl_dbm,
+        snr_dbm=snr_dbm,
+        capacity=capacity,
         tx_power=tx_power,
-        net_gain_dbi=net_gain_dbi,
-        np_dbm=np_dbm,
-        mcs_snr_mbps_map=mcs_snr_mbps_map,
     )

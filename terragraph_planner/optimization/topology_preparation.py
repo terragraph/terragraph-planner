@@ -55,16 +55,17 @@ def prepare_topology_for_optimization(
     Prepare candidate graph for optimization by adding link capacities, creating
     sectors on the sites and adding demand sites.
     """
-    add_link_capacities_without_deviation(topology, params)
-
     setup_node_structure(topology)
+
+    add_link_capacities(topology, params, with_deviation=False)
 
     add_demand_to_topology(topology, params)
 
 
-def add_link_capacities_without_deviation(
+def add_link_capacities(
     topology: Topology,
     params: OptimizerParams,
+    with_deviation: bool,
 ) -> None:
     """
     Add link capacities prior to optimization. Because sector orientations can
@@ -72,6 +73,13 @@ def add_link_capacities_without_deviation(
     considering any deviation from boresight. This will be corrected
     post-optimization.
     """
+    max_tx_power = {}
+    for device in params.device_list:
+        max_tx_power[device.device_sku] = get_max_tx_power(
+            tx_sector_params=device.sector_params,
+            max_eirp_dbm=params.maximum_eirp,
+        )
+
     for link in topology.links.values():
         if link.link_type == LinkType.ETHERNET:
             link.link_budget = LinkBudgetMeasurements(
@@ -83,48 +91,12 @@ def add_link_capacities_without_deviation(
             )
             continue
 
-        tx_device = topology.sites[link.tx_site.site_id].device
-        tx_sector_params = tx_device.sector_params
-        rx_device = topology.sites[link.rx_site.site_id].device
-        rx_sector_params = rx_device.sector_params
-        mcs_snr_mbps_map = rx_device.sector_params.mcs_map
-
-        max_tx_power = get_max_tx_power(
-            tx_sector_params=tx_sector_params,
-            max_eirp_dbm=params.maximum_eirp,
-        )
-        link.link_budget = fspl_based_estimation(
-            distance=link.distance,
-            max_tx_power=max_tx_power,
-            tx_sector_params=tx_sector_params,
-            rx_sector_params=rx_sector_params,
-            mcs_snr_mbps_map=mcs_snr_mbps_map,
-            tx_deviation=0.0,
-            rx_deviation=0.0,
-            tx_el_deviation=0.0,
-            rx_el_deviation=0.0,
-            tx_scan_pattern_data=None,
-            rx_scan_pattern_data=None,
-        )
-
-
-def add_link_capacities_with_deviation(
-    topology: Topology,
-    params: OptimizerParams,
-) -> None:
-    """
-    Add link capacities after optimizer and deviation is considered.
-    """
-    for link in topology.links.values():
-        if link.link_type == LinkType.ETHERNET:
-            link.capacity = params.pop_capacity
-            continue
         if link.is_out_of_sector():
             link.link_budget = LinkBudgetMeasurements(
                 mcs_level=0,
                 rsl_dbm=-math.inf,
                 snr_dbm=-math.inf,
-                capacity=params.pop_capacity,
+                capacity=0,
                 tx_power=-math.inf,
             )
             continue
@@ -135,26 +107,35 @@ def add_link_capacities_with_deviation(
         rx_sector_params = rx_device.sector_params
         mcs_snr_mbps_map = rx_device.sector_params.mcs_map
 
-        max_tx_power = get_max_tx_power(
-            tx_sector_params=tx_sector_params,
-            max_eirp_dbm=params.maximum_eirp,
+        tx_deviation = none_throws(link.tx_dev) if with_deviation else 0.0
+        rx_deviation = none_throws(link.rx_dev) if with_deviation else 0.0
+        tx_el_deviation = link.el_dev if with_deviation else 0.0
+        # CNs have mechanical tilt, so deviation is 0 (not quite right for
+        # inactive wireless access links, but this is ignored)
+        rx_el_deviation = (
+            -link.el_dev
+            if with_deviation and link.link_type != LinkType.WIRELESS_ACCESS
+            else 0.0
         )
+        tx_scan_pattern = (
+            tx_sector_params.scan_pattern_data if with_deviation else None
+        )
+        rx_scan_pattern = (
+            rx_sector_params.scan_pattern_data if with_deviation else None
+        )
+
         link.link_budget = fspl_based_estimation(
             distance=link.distance,
-            max_tx_power=max_tx_power,
+            max_tx_power=max_tx_power[link.tx_site.device.device_sku],
             tx_sector_params=tx_sector_params,
             rx_sector_params=rx_sector_params,
             mcs_snr_mbps_map=mcs_snr_mbps_map,
-            tx_deviation=none_throws(link.tx_dev),
-            rx_deviation=none_throws(link.rx_dev),
-            tx_el_deviation=link.el_dev,
-            # CNs have mechanical tilt, so deviation is 0 (not quite right for
-            # inactive wireless access links, but this is ignored)
-            rx_el_deviation=-link.el_dev
-            if link.link_type != LinkType.WIRELESS_ACCESS
-            else 0,
-            tx_scan_pattern_data=tx_sector_params.scan_pattern_data,
-            rx_scan_pattern_data=rx_sector_params.scan_pattern_data,
+            tx_deviation=tx_deviation,
+            rx_deviation=rx_deviation,
+            tx_el_deviation=tx_el_deviation,
+            rx_el_deviation=rx_el_deviation,
+            tx_scan_pattern_data=tx_scan_pattern,
+            rx_scan_pattern_data=rx_scan_pattern,
         )
 
 

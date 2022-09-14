@@ -35,6 +35,7 @@ from terragraph_planner.common.topology_models.topology import Topology
 from terragraph_planner.common.utils import current_system_params
 from terragraph_planner.optimization.constants import (
     EPSILON,
+    MAX_LINK_BUDGET_ITERATIONS,
     SUPERSOURCE,
     UNASSIGNED_CHANNEL,
 )
@@ -214,7 +215,7 @@ def get_routing_flow_solution(
     """
     Calculate maximum flow solution and active link utilization.
     """
-    update_link_caps_with_sinr(topology, params.maximum_eirp)
+    update_link_caps_with_sinr(topology, params, MAX_LINK_BUDGET_ITERATIONS)
     flow_solution = MaxFlowNetwork(topology, params).solve()
     if flow_solution is None:
         return None

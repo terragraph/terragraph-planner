@@ -15,6 +15,7 @@ from terragraph_planner.common.configuration.configs import (
 )
 from terragraph_planner.common.configuration.enums import (
     DeviceType,
+    PolarityType,
     SiteType,
     StatusType,
 )
@@ -26,10 +27,14 @@ from terragraph_planner.common.topology_models.test.helper import (
     DEFAULT_CN_DEVICE,
     DEFAULT_DN_DEVICE,
     SampleSite,
+    intersecting_links_topology,
+    set_topology_proposed,
     square_topology,
-    square_topology_with_cns,
 )
 from terragraph_planner.common.topology_models.topology import Topology
+from terragraph_planner.optimization.topology_interference import (
+    analyze_interference,
+)
 from terragraph_planner.optimization.topology_operations import (
     compute_max_pop_capacity_of_topology,
     get_adversarial_links,
@@ -37,11 +42,8 @@ from terragraph_planner.optimization.topology_operations import (
     readjust_sectors_post_opt,
     update_link_caps_with_sinr,
 )
-from terragraph_planner.optimization.topology_optimization import (
-    optimize_topology,
-)
 from terragraph_planner.optimization.topology_preparation import (
-    prepare_topology_for_optimization,
+    add_link_capacities,
 )
 
 TEST_PREFIX = "terragraph_planner.optimization.topology_operations"
@@ -629,10 +631,6 @@ class TestReadjustSectorsPostOpt(TestCase):
         f"{TEST_PREFIX}.find_best_sectors",
         MagicMock(side_effect=[[[90]], [[270]], [[80]], [[170]], [[20]]]),
     )
-    @patch(
-        f"{TEST_PREFIX}.add_link_capacities_with_deviation",
-        MagicMock(side_effect=lambda t, p: None),  # return input topology
-    )
     def test_readjust_sectors(self) -> None:
         """
         Test case where find_best_sectors return a valid
@@ -667,28 +665,58 @@ class TestReadjustSectorsPostOpt(TestCase):
 
 
 class TestLinkInterferenceUpdate(TestCase):
-    def test_interference_converge(self) -> None:
-        topology = square_topology_with_cns()
+    @patch(
+        f"{TEST_PREFIX}.analyze_interference",
+    )
+    def test_interference_converge(
+        self, mock_analyze_interference: MagicMock
+    ) -> None:
+        # Use mock to count number of times it is called, but do not change
+        # what it actually does
+        mock_analyze_interference.side_effect = analyze_interference
+
+        topology = intersecting_links_topology()
         params = OptimizerParams(
             device_list=[DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE]
         )
-        prepare_topology_for_optimization(topology, params)
-        for link in topology.links.values():
-            link.sinr_dbm /= 2
-        optimize_topology(topology, params)
-        active_links = [
-            link
+        set_topology_proposed(topology)
+        even_sites = {"POP0", "DN2", "DN4"}
+        for site_id, site in topology.sites.items():
+            if site.site_type != SiteType.CN:
+                site.polarity = (
+                    PolarityType.EVEN
+                    if site_id in even_sites
+                    else PolarityType.ODD
+                )
+        for sector in topology.sectors.values():
+            sector.channel = 0
+        topology.links["DN1-DN4"]._status_type = StatusType.UNAVAILABLE
+        topology.links["DN4-DN1"]._status_type = StatusType.UNAVAILABLE
+        topology.links["DN2-DN3"]._status_type = StatusType.UNAVAILABLE
+        topology.links["DN3-DN2"]._status_type = StatusType.UNAVAILABLE
+
+        add_link_capacities(topology, params, with_deviation=True)
+        analyze_interference(topology)
+
+        # Total interference in network should decrease
+        max_iterations = 100
+
+        interference_pre = sum(
+            link.snr_dbm - link.sinr_dbm
             for link in topology.links.values()
             if link.status_type in StatusType.active_status()
-        ]
-        if len(active_links) > 0:
-            interference_pre = sum(
-                link.snr_dbm - link.sinr_dbm for link in active_links
-            ) / len(active_links)
-            update_link_caps_with_sinr(topology, params.maximum_eirp)
-            interference_post = sum(
-                link.snr_dbm - link.sinr_dbm
-                for link in topology.links.values()
-                if link.status_type in StatusType.active_status()
-            ) / len(active_links)
-            self.assertLessEqual(interference_post, interference_pre)
+        )
+        update_link_caps_with_sinr(
+            topology, params, max_iterations=max_iterations
+        )
+        interference_post = sum(
+            link.snr_dbm - link.sinr_dbm
+            for link in topology.links.values()
+            if link.status_type in StatusType.active_status()
+        )
+        self.assertLess(interference_post, interference_pre)
+
+        # Iteration should terminate early
+        self.assertLess(
+            mock_analyze_interference.call_count, max_iterations + 1
+        )

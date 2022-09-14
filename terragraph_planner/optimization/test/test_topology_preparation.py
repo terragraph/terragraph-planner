@@ -91,14 +91,7 @@ class TestTopologyPreparation(TestCase):
         prepare_topology_for_optimization(
             topology,
             OptimizerParams(
-                device_list=[
-                    DeviceData(
-                        device_sku="Device_DN90",
-                        sector_params=SectorParams(horizontal_scan_range=90),
-                        number_of_nodes_per_site=4,
-                        device_type=DeviceType.DN,
-                    )
-                ]
+                device_list=[DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE],
             ),
         )
 

@@ -160,6 +160,7 @@ class TestInterferenceOptimization(TestCase):
         """
         params = OptimizerParams(
             device_list=[DEFAULT_DN_DEVICE, DEFAULT_CN_DEVICE],
+            demand=1.8,  # Max demand that can be satisfied with 0 interference
         )
         topology = intersecting_links_topology(params)
 
