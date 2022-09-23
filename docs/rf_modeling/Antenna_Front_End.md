@@ -45,11 +45,29 @@ being the Boresight gain (dBi). Another input, Horizontal Scan Range (in
 degrees) should also be provided, representing the horizontal scan range limit
 of the antenna system.
 
+### Common Pattern
+
 Of course, the pattern changes for every steering direction. However, these
 changes do not cause significant changes in the overall system performance
 and hence ignored in the tool’s modeling. In other words, the tool takes a
 common single-beam pattern steered at 0 degrees and rotates (equivalent of
 steering) to any desired direction.
+
+### Antenna Deviation
+
+Generally, DNs are expected to be mounted at relatively higher altitudes than
+the CNs. Therefore, the DN antennas’ boresight is deviated upwards when
+looking towards a CN(negative elevation deviation). Consequently, the CN
+antennas’ boresight is deviated downwards when looking towards a DN (positive
+elevation deviation). Therefore, the appropriate antenna gains are considered
+for RSL and SINR calculations, not the full boresight gains.
+
+The result antenna gain with positive or negative elevation deviation should
+also consider the azimuthal deviation adjustments. In the azimuthal axis,
+when the two antennas (DN-DN or DN-CN) are not pointing towards each other,
+the loss in boresight gain is considered. If the antenna pattern in asymetric,
+we consider the positive deviation for a clockwise deviation (in top view) and
+negative deviation for an anticlockwise deviation.
 
 ## Multi-beam Effects
 
