@@ -25,11 +25,13 @@ $$
 \min\sum_{i \in \mathcal{S}_{DEM}} \phi_i
 $$
 
-or
+if `MAXIMIZE_COMMON_BANDWIDTH` is `False`, or
 
 $$
 \max\min_{i \in \mathcal{S}_{DEM}} \left (d_i - \phi_i \right)
 $$
+
+if `MAXIMIZE_COMMON_BANDWIDTH` is `True`.
 
 The first version ensures that the total shortage is minimized. The second
 version ensures that the minimum flow to each of the demand sites is maximized.

@@ -34,11 +34,13 @@ $$
 \sum_{i \in \mathcal{S}_{DEM}} \phi_i \leq (1-\gamma)\sum_{i \in \mathcal{S}_{DEM}} d_i
 $$
 
-or
+if `MAXIMIZE_COMMON_BANDWIDTH` is `False`, or
 
 $$
 d_i - \phi_i \geq \gamma \min_{j \in \mathcal{S}_{DEM}} d_j\; \; \; \; \; \forall i \in \mathcal{S}_{DEM}
 $$
+
+if `MAXIMIZE_COMMON_BANDWIDTH` is `True`.
 
 The first version ensures that the total shortage is less than some fraction of
 the total demand in the network. The second version ensures that the flow into
