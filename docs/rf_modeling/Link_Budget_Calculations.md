@@ -44,14 +44,14 @@ where,
 The $SINR_{n}$ (in dBm) at $Rx_{n}$ is calculated using the following formula:
 
 $$
-SINR_{n} = 10\log_{10}{\frac{RSL_{n}}{\sum{I^{o}_{i,n} + N_{p}}}} + NF
+SINR_{n} = 10\log_{10}{\frac{RSL_{n}}{\sum{I^{o}_{i,n} + N_{p}}}} - NF
 $$
 
 where,
 - $RSL_{n}$ = the $RSL$ calculated from the intended transmitter $Tx_{n}$ in mW
 - $N_{p}$ = the thermal noise power calculated using the following equation in mW
 - $I^{o}_{i,n}$ = the interference power in mW
-- $NF$ = [Noise Figure](Radio_Models#rf-front-end)
+- $NF$ = [Noise Figure](Radio_Models#rf-front-end) in dB
 
 $$
 N_{p} = KTB
@@ -68,6 +68,12 @@ In that case, the SNR (in dB) can be directly calculated using the equation belo
 $$
 SNR_{n} = RSL_{n} - N_{p} - NF
 $$
+
+where the unit of each variable is
+- $SNR_{n}$: dB
+- $RSL_{n}$: dBm
+- $N_{p}$: dBm
+- $NF$: dB
 
 ## MCS Table Lookup
 
