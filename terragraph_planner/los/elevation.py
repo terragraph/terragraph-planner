@@ -272,7 +272,6 @@ class Elevation(GISData):
     def __sub__(self, other_geogrids: "Elevation") -> "Elevation":
         if self._has_same_metadata(other_geogrids):
             result = Elevation(
-                # pyre-fixme[6]: In call `Elevation.__init__`, for 1st positional only parameter expected `ndarray[typing.Any, typing.Any]` but got `NoReturn`.
                 self.data_matrix - other_geogrids.data_matrix,
                 self.utm_bounding_box,
                 self.x_resolution,
