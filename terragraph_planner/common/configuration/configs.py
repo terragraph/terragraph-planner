@@ -381,7 +381,7 @@ class GISDataParams(ConfigParser):
             for dsm_file_path in dsm_file_paths:
                 if dsm_file_path is not None:
                     assert_file_extension(
-                        dsm_file_path, {"tif"}, "DSM_FILE_PATH"
+                        dsm_file_path, {"tif", "tiff"}, "DSM_FILE_PATH"
                     )
         if dtm_file_path is not None:
             assert_file_extension(dtm_file_path, {"tif"}, "DTM_FILE_PATH")
