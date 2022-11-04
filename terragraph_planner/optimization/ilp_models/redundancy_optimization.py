@@ -151,7 +151,7 @@ class RedundantNetwork(SiteOptimization):
         Decision variables for backhaul site selection.
         """
         self.site_vars = {
-            loc: xp.var(name=f"site_{loc}", vartype=xp.binary)  # pyre-ignore
+            loc: xp.var(name=f"site_{loc}", vartype=xp.binary)
             for loc in self.locations
             if loc in self.restricted_sites
             and self.location_to_type[loc] not in IMAGINARY_SITE_TYPES
@@ -167,7 +167,7 @@ class RedundantNetwork(SiteOptimization):
 
         # A proposed site is either odd or even
         self.odd = {
-            loc: xp.var(name=f"odd_{loc}", vartype=xp.binary)  # pyre-ignore
+            loc: xp.var(name=f"odd_{loc}", vartype=xp.binary)
             for loc in self.locations
             if loc in self.restricted_sites
             and self.location_to_type[loc] in SiteType.dist_site_types()
@@ -184,9 +184,9 @@ class RedundantNetwork(SiteOptimization):
         simultaneously.
         """
         self.flow = {
-            (i, j, f): xp.var(  # pyre-ignore
+            (i, j, f): xp.var(
                 name=f"flow_{i}_{j}_{f}",
-                vartype=xp.continuous,  # pyre-ignore
+                vartype=xp.continuous,
                 lb=0,
                 ub=self.pop_node_capacity
                 if i == SUPERSOURCE or j == SUPERSOURCE
@@ -205,9 +205,9 @@ class RedundantNetwork(SiteOptimization):
         actually delivered.
         """
         self.shortage = {
-            dn: xp.var(  # pyre-ignore
+            dn: xp.var(
                 name=f"dn_{dn}",
-                vartype=xp.continuous,  # pyre-ignore
+                vartype=xp.continuous,
                 lb=0,
                 ub=self.sink_node_capacity,
             )
@@ -262,10 +262,7 @@ class RedundantNetwork(SiteOptimization):
             ]
             if len(dn_locs) > 0:
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
-                        self.site_vars[loc] for loc in dn_locs
-                    )
-                    <= 1
+                    xp.Sum(self.site_vars[loc] for loc in dn_locs) <= 1
                 )
 
     # pyre-fixme
@@ -284,11 +281,7 @@ class RedundantNetwork(SiteOptimization):
             self.flow[(i, j, dn)] for (i, j) in incoming_dist_links
         ]
 
-        return (
-            xp.Sum(incoming_flow)  # pyre-ignore
-            if len(incoming_flow) > 0
-            else None
-        )
+        return xp.Sum(incoming_flow) if len(incoming_flow) > 0 else None
 
     # pyre-fixme
     def _get_outgoing_flow(self, loc: str, dn: str) -> Optional[Any]:
@@ -306,11 +299,7 @@ class RedundantNetwork(SiteOptimization):
             self.flow[(i, j, dn)] for (i, j) in outgoing_dist_links
         ]
 
-        return (
-            xp.Sum(outgoing_flow)  # pyre-ignore
-            if len(outgoing_flow) > 0
-            else None
-        )
+        return xp.Sum(outgoing_flow) if len(outgoing_flow) > 0 else None
 
     def create_flow_site_relationship(self) -> None:
         """
@@ -425,15 +414,13 @@ class RedundantNetwork(SiteOptimization):
                         self.cost_sector[loc][sec] * self.site_vars[loc]
                     )
 
-        self.problem.setObjective(total_cost, sense=xp.minimize)  # pyre-ignore
+        self.problem.setObjective(total_cost, sense=xp.minimize)
 
     def create_shortage_objective(self) -> None:
         """
         Total shortage in the network.
         """
-        self.problem.setObjective(
-            xp.Sum(self.shortage), sense=xp.minimize  # pyre-ignore
-        )
+        self.problem.setObjective(xp.Sum(self.shortage), sense=xp.minimize)
 
     def shortage_solve(self) -> None:
         """

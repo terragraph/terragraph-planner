@@ -11,7 +11,7 @@ on:
     - cron: '0 7 * * *'
 
 jobs:
-  Linters:
+  Pyre:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,7 +35,6 @@ jobs:
           export C_INCLUDE_PATH=/usr/include/gdal
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
-          pip install pyre-check-nightly
 
       - name: Run Pyre
         run: pyre

@@ -293,7 +293,7 @@ class TestInterferenceOptimization(TestCase):
         risl = {}
         for link_id in ["DN4-CN7", "DN4-CN8", "DN3-CN8"]:
             link = topology.links[link_id]
-            risl[link_id] = xp.evaluate(  # pyre-ignore
+            risl[link_id] = xp.evaluate(
                 min_int_network.get_interfering_rsl_expr(
                     link.tx_site.site_id,
                     link.rx_site.site_id,
@@ -330,7 +330,7 @@ class TestInterferenceOptimization(TestCase):
 
         for link_id in ["DN4-CN7", "DN4-CN8", "DN3-CN8"]:
             link = topology.links[link_id]
-            risl = xp.evaluate(  # pyre-ignore
+            risl = xp.evaluate(
                 min_int_network.get_interfering_rsl_expr(
                     link.tx_site.site_id,
                     link.rx_site.site_id,
