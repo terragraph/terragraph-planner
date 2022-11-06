@@ -236,7 +236,7 @@ class POPProposalNetwork(SiteOptimization):
             return None
 
         self.problem.addConstraint(
-            xp.Sum(  # pyre-ignore
+            xp.Sum(
                 self.site_vars[loc]
                 for loc in self.locations
                 if loc in self.type_sets[SiteType.POP]

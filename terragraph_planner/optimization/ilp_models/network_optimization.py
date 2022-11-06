@@ -192,7 +192,7 @@ class NetworkOptimization(OptimizationSetup):
         rel_stop: float,
         max_time: float,
     ) -> None:
-        self.problem = xp.problem()  # pyre-ignore
+        self.problem = xp.problem()
         self.problem.setprobname(self.__class__.__name__)
 
         if rel_stop > 0:
@@ -241,7 +241,7 @@ class NetworkOptimization(OptimizationSetup):
         # Binary variable -- 1 if site i is selected, 0 otherwise
         # Called UseLocation in Mosel
         self.site_vars = {
-            loc: xp.var(name=f"site_{loc}", vartype=xp.binary)  # pyre-ignore
+            loc: xp.var(name=f"site_{loc}", vartype=xp.binary)
             for loc in self.locations
             if self.location_to_type[loc] not in IMAGINARY_SITE_TYPES
         }
@@ -250,9 +250,7 @@ class NetworkOptimization(OptimizationSetup):
     def create_flow_decisions(self) -> None:
         # Flow on link (i,j)
         self.flow = {
-            (i, j): xp.var(  # pyre-ignore
-                name=f"flow_{i}_{j}", vartype=xp.continuous  # pyre-ignore
-            )
+            (i, j): xp.var(name=f"flow_{i}_{j}", vartype=xp.continuous)
             for (i, j) in self.links
         }
         self.problem.addVariable(self.flow)
@@ -271,9 +269,9 @@ class NetworkOptimization(OptimizationSetup):
         # interference where identifying if two sectors/links are on the same
         # channel is critical.
         self.tdm = {
-            (i, j, c): xp.var(  # pyre-ignore
+            (i, j, c): xp.var(
                 name=f"tdm_{i}_{j}_{c}",
-                vartype=xp.continuous,  # pyre-ignore
+                vartype=xp.continuous,
                 lb=0,
                 ub=1,
             )
@@ -291,7 +289,7 @@ class NetworkOptimization(OptimizationSetup):
 
         # A proposed site is either odd or even
         self.odd = {
-            loc: xp.var(name=f"odd_{loc}", vartype=xp.binary)  # pyre-ignore
+            loc: xp.var(name=f"odd_{loc}", vartype=xp.binary)
             for loc in self.locations
             if self.location_to_type[loc] in SiteType.dist_site_types()
         }
@@ -302,9 +300,9 @@ class NetworkOptimization(OptimizationSetup):
         # Nonnegative variable that represents shortage of demand at a
         # demand site
         self.shortage = {
-            loc: xp.var(  # pyre-ignore
+            loc: xp.var(
                 name=f"shortage_{loc}",
-                vartype=xp.continuous,  # pyre-ignore
+                vartype=xp.continuous,
                 lb=0,
                 ub=self.demand_at_location[loc],
             )
@@ -328,9 +326,7 @@ class NetworkOptimization(OptimizationSetup):
         # interference where identifying if two sectors/links are on the same
         # channel is critical.
         self.sector_vars = {
-            (i, a, c): xp.var(  # pyre-ignore
-                name=f"s_{i}_{a}_{c}", vartype=xp.binary  # pyre-ignore
-            )
+            (i, a, c): xp.var(name=f"s_{i}_{a}_{c}", vartype=xp.binary)
             for i in self.location_sectors
             for a in self.location_sectors[i]
             if self.sector_to_type[a] not in IMAGINARY_SECTOR_TYPES
@@ -365,9 +361,7 @@ class NetworkOptimization(OptimizationSetup):
                     for channel in range(self.number_of_channels)
                 ]
                 if len(sectors) > 1:
-                    self.problem.addConstraint(
-                        xp.Sum(sectors) <= 1  # pyre-ignore
-                    )
+                    self.problem.addConstraint(xp.Sum(sectors) <= 1)
 
     def create_always_active_sector_constraints(self) -> None:
         for loc in self.locations:
@@ -378,7 +372,7 @@ class NetworkOptimization(OptimizationSetup):
                     # Implicit assumption: Only sectors with already-set values
                     # exist in active_sectors dictionary
                     self.problem.addConstraint(
-                        xp.Sum(  # pyre-ignore
+                        xp.Sum(
                             self.sector_vars[(loc, sec, channel)]
                             for channel in range(self.number_of_channels)
                             if (loc, sec, channel) in self.sector_vars
@@ -395,7 +389,7 @@ class NetworkOptimization(OptimizationSetup):
                 if self.sector_to_type[sec] in IMAGINARY_SECTOR_TYPES:
                     continue
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.sector_vars[(loc, sec, channel)]
                         for channel in range(self.number_of_channels)
                         if (loc, sec, channel) in self.sector_vars
@@ -418,12 +412,12 @@ class NetworkOptimization(OptimizationSetup):
                 loc1, sec1 = s1
                 loc2, sec2 = s2
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.sector_vars[loc1, sec1, channel]
                         for channel in range(self.number_of_channels)
                         if (loc1, sec1, channel) in self.sector_vars
                     )
-                    == xp.Sum(  # pyre-ignore
+                    == xp.Sum(
                         self.sector_vars[loc2, sec2, channel]
                         for channel in range(self.number_of_channels)
                         if (loc1, sec1, channel) in self.sector_vars
@@ -472,9 +466,7 @@ class NetworkOptimization(OptimizationSetup):
         for loc in self.locations:
             if loc in self.type_sets[SiteType.POP]:
                 outgoing_flow = (
-                    xp.Sum(  # pyre-ignore
-                        self.flow[link] for link in self.outgoing_links[loc]
-                    )
+                    xp.Sum(self.flow[link] for link in self.outgoing_links[loc])
                     if len(self.outgoing_links[loc]) > 0
                     else None
                 )
@@ -491,7 +483,7 @@ class NetworkOptimization(OptimizationSetup):
                 self.problem.addConstraint(
                     self.flow[(i, j)]
                     <= link_capacity
-                    * xp.Sum(  # pyre-ignore
+                    * xp.Sum(
                         self.tdm[(i, j, channel)]
                         for channel in range(self.number_of_channels)
                     )
@@ -525,14 +517,14 @@ class NetworkOptimization(OptimizationSetup):
                 # If both are odd, then tdm <= 2 - odd_i - odd_j = 0
                 # The second constraint is equivalent to tdm <= even_i + even_j
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.tdm[(i, j, channel)]
                         for channel in range(self.number_of_channels)
                     )
                     <= self.odd[i] + self.odd[j]
                 )
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.tdm[(i, j, channel)]
                         for channel in range(self.number_of_channels)
                     )
@@ -546,9 +538,7 @@ class NetworkOptimization(OptimizationSetup):
         incoming links. Otherwise, returns None.
         """
         incoming_flow = (
-            xp.Sum(  # pyre-ignore
-                self.flow[link] for link in self.incoming_links[loc]
-            )
+            xp.Sum(self.flow[link] for link in self.incoming_links[loc])
             if len(self.incoming_links[loc]) > 0
             else None
         )
@@ -561,9 +551,7 @@ class NetworkOptimization(OptimizationSetup):
         incoming links. Otherwise, returns None.
         """
         outgoing_flow = (
-            xp.Sum(  # pyre-ignore
-                self.flow[link] for link in self.outgoing_links[loc]
-            )
+            xp.Sum(self.flow[link] for link in self.outgoing_links[loc])
             if len(self.outgoing_links[loc]) > 0
             else None
         )
@@ -590,7 +578,7 @@ class NetworkOptimization(OptimizationSetup):
             return self.demand_at_location[loc] - self.shortage[loc]
         elif self.location_to_type[loc] == SUPERSOURCE:
             total_shortage = (
-                xp.Sum(  # pyre-ignore
+                xp.Sum(
                     self.shortage[loc]
                     for loc in self.locations
                     if loc in self.type_sets[DEMAND]
@@ -682,8 +670,7 @@ class NetworkOptimization(OptimizationSetup):
                 # If none of the co-located sites are active, then only one can
                 # be picked
                 self.problem.addConstraint(
-                    xp.Sum(self.site_vars[loc] for loc in locs)  # pyre-ignore
-                    <= 1
+                    xp.Sum(self.site_vars[loc] for loc in locs) <= 1
                 )
             else:
                 # If there are active co-located sites, then a CN can be
@@ -698,8 +685,7 @@ class NetworkOptimization(OptimizationSetup):
                 # At least one of the active co-located sites or upgraded sites
                 # must be picked
                 self.problem.addConstraint(
-                    xp.Sum(self.site_vars[loc] for loc in locs)  # pyre-ignore
-                    == 1
+                    xp.Sum(self.site_vars[loc] for loc in locs) == 1
                 )
                 # CN site can be upgraded to a DN but one CN cannot be exchanged
                 # for another (i.e., if devices are different).
@@ -715,15 +701,13 @@ class NetworkOptimization(OptimizationSetup):
                     )
                 ]
                 if len(invalid_sites) > 0:
-                    self.problem.addConstraint(
-                        xp.Sum(invalid_sites) == 0  # pyre-ignore
-                    )
+                    self.problem.addConstraint(xp.Sum(invalid_sites) == 0)
 
     def create_cost_constraint(self) -> None:
         sector_vars = {}
         for loc in self.location_sectors:
             for sec in self.location_sectors[loc]:
-                sector_vars[(loc, sec)] = xp.Sum(  # pyre-ignore
+                sector_vars[(loc, sec)] = xp.Sum(
                     self.sector_vars[(loc, sec, channel)]
                     for channel in range(self.number_of_channels)
                     if (loc, sec, channel) in self.sector_vars
@@ -739,7 +723,7 @@ class NetworkOptimization(OptimizationSetup):
         sector_vars = {}
         for loc in self.location_sectors:
             for sec in self.location_sectors[loc]:
-                sector_vars[(loc, sec)] = xp.Sum(  # pyre-ignore
+                sector_vars[(loc, sec)] = xp.Sum(
                     self.sector_vars[(loc, sec, channel)]
                     for channel in range(self.number_of_channels)
                     if (loc, sec, channel) in self.sector_vars
@@ -803,7 +787,7 @@ class NetworkOptimization(OptimizationSetup):
                 if dem in self.type_sets[DEMAND]
             )
             self.coverage_constraint = (
-                xp.Sum(  # pyre-ignore
+                xp.Sum(
                     self.shortage[loc]
                     for loc in self.locations
                     if loc in self.type_sets[DEMAND]
@@ -813,9 +797,9 @@ class NetworkOptimization(OptimizationSetup):
         self.problem.addConstraint(self.coverage_constraint)
 
     def create_common_bandwidth_variable_and_constraint(self) -> None:
-        self.common_bandwidth = xp.var(  # pyre-ignore
+        self.common_bandwidth = xp.var(
             name="common_bandwidth",
-            vartype=xp.continuous,  # pyre-ignore
+            vartype=xp.continuous,
             lb=0,
             ub=min(
                 [
@@ -843,15 +827,13 @@ class NetworkOptimization(OptimizationSetup):
                 obj = -self.common_bandwidth
         else:
             if len(self.type_sets[DEMAND]) > 0:
-                obj = xp.Sum(self.shortage)  # pyre-ignore
+                obj = xp.Sum(self.shortage)
 
         return obj
 
     def create_coverage_objective(self) -> None:
         self.coverage_obj = self._create_coverage_objective_expr()
-        self.problem.setObjective(
-            self.coverage_obj, sense=xp.minimize  # pyre-ignore
-        )
+        self.problem.setObjective(self.coverage_obj, sense=xp.minimize)
 
     def create_fixed_input_constraints_without_sectors(self) -> None:
         self.create_decided_site_constraints()
@@ -1069,7 +1051,7 @@ class NetworkOptimization(OptimizationSetup):
 
     # Demand Site Optimization Functions
     def create_connected_demand_model(self, max_time: float) -> None:
-        self.problem = xp.problem()  # pyre-ignore
+        self.problem = xp.problem()
         self.problem.setprobname(self.__class__.__name__)
 
         # Set the optimizer time limit. It is made negative to force solver to
@@ -1092,9 +1074,9 @@ class NetworkOptimization(OptimizationSetup):
         Create "unit" flow decision variables.
         """
         self.flow = {
-            (i, j): xp.var(  # pyre-ignore
+            (i, j): xp.var(
                 name=f"flow_{i}_{j}",
-                vartype=xp.continuous,  # pyre-ignore
+                vartype=xp.continuous,
                 lb=0,
                 ub=1,
             )
@@ -1107,7 +1089,7 @@ class NetworkOptimization(OptimizationSetup):
         Create demand site decision variables.
         """
         self.demand_vars = {
-            loc: xp.var(name=f"site_{loc}", vartype=xp.binary)  # pyre-ignore
+            loc: xp.var(name=f"site_{loc}", vartype=xp.binary)
             for loc in self.locations
             if loc in self.type_sets[DEMAND]
         }
@@ -1187,8 +1169,8 @@ class NetworkOptimization(OptimizationSetup):
         """
         Maximize the number of connected demand sites
         """
-        obj = xp.Sum(self.demand_vars)  # pyre-ignore
-        self.problem.setObjective(obj, sense=xp.maximize)  # pyre-ignore
+        obj = xp.Sum(self.demand_vars)
+        self.problem.setObjective(obj, sense=xp.maximize)
 
     def build_connected_demand_model(self) -> None:
         # This function will be overridden in derived classes

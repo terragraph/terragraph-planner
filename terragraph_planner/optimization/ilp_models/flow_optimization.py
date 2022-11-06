@@ -191,18 +191,14 @@ class MaxFlowNetwork(NetworkOptimization):
         }
 
     def create_maximum_buffer_objective(self) -> None:
-        self.problem.setObjective(
-            self.buffer_var, sense=xp.maximize  # pyre-ignore
-        )
+        self.problem.setObjective(self.buffer_var, sense=xp.maximize)
 
     def create_buffer_var(self) -> None:
         """
         Create buffer variable indicating the identical amount of data
         throughput at all demand sites.
         """
-        self.buffer_var = xp.var(  # pyre-ignore
-            name="buffer", vartype=xp.continuous, lb=0  # pyre-ignore
-        )
+        self.buffer_var = xp.var(name="buffer", vartype=xp.continuous, lb=0)
 
         self.problem.addVariable(self.buffer_var)
 
