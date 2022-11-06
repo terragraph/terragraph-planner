@@ -311,9 +311,7 @@ class MinInterferenceNetwork(NetworkOptimization):
     def create_active_link_decisions(self) -> None:
         # Wireless link decisions
         self.active_link = {
-            (i, j): xp.var(  # pyre-ignore
-                name=f"active_link_{i}_{j}", vartype=xp.binary  # pyre-ignore
-            )
+            (i, j): xp.var(name=f"active_link_{i}_{j}", vartype=xp.binary)
             for (i, j) in self.links
             if self.link_capacities[(i, j)] > 0
             and all(self.link_to_sectors.get((i, j), (None, None)))
@@ -337,9 +335,9 @@ class MinInterferenceNetwork(NetworkOptimization):
                 deployment_links.append((i, k))
 
         self.deployment_link = {
-            (i, j, c): xp.var(  # pyre-ignore
+            (i, j, c): xp.var(
                 name=f"deployment_link_{i}_{j}_{c}",
-                vartype=xp.binary,  # pyre-ignore
+                vartype=xp.binary,
             )
             for (i, j) in deployment_links
             for c in range(self.number_of_channels)
@@ -378,7 +376,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             )
             if sector1:
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.sector_vars[(i, sector1, channel)]
                         for channel in range(self.number_of_channels)
                         if (i, sector1, channel) in self.sector_vars
@@ -387,7 +385,7 @@ class MinInterferenceNetwork(NetworkOptimization):
                 )
             if sector2:
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.sector_vars[(j, sector2, channel)]
                         for channel in range(self.number_of_channels)
                         if (j, sector2, channel) in self.sector_vars
@@ -446,7 +444,7 @@ class MinInterferenceNetwork(NetworkOptimization):
                     self.problem.addConstraint(
                         var_dn_dn_sector_links
                         <= self.params.dn_dn_sector_limit
-                        * xp.Sum(  # pyre-ignore
+                        * xp.Sum(
                             self.sector_vars[(i, sec, channel)]
                             for channel in range(self.number_of_channels)
                         )
@@ -458,7 +456,7 @@ class MinInterferenceNetwork(NetworkOptimization):
                     self.problem.addConstraint(
                         var_dn_cn_sector_links
                         <= self.params.dn_total_sector_limit
-                        * xp.Sum(  # pyre-ignore
+                        * xp.Sum(
                             self.sector_vars[(i, sec, channel)]
                             for channel in range(self.number_of_channels)
                         )
@@ -490,9 +488,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             ]
             if len(incoming_cn_links) > 0:
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
-                        self.active_link[link] for link in incoming_cn_links
-                    )
+                    xp.Sum(self.active_link[link] for link in incoming_cn_links)
                     <= 1
                 )
 
@@ -512,7 +508,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             if (i, sec1, 0) in self.sector_vars:
                 self.problem.addConstraint(
                     self.active_link[(i, j)]
-                    <= xp.Sum(  # pyre-ignore
+                    <= xp.Sum(
                         self.sector_vars[(i, sec1, channel)]
                         for channel in range(self.number_of_channels)
                         if (i, sec1, channel) in self.sector_vars
@@ -521,7 +517,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             if (j, sec2, 0) in self.sector_vars:
                 self.problem.addConstraint(
                     self.active_link[(i, j)]
-                    <= xp.Sum(  # pyre-ignore
+                    <= xp.Sum(
                         self.sector_vars[(j, sec2, channel)]
                         for channel in range(self.number_of_channels)
                         if (j, sec2, channel) in self.sector_vars
@@ -557,7 +553,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             if (i, j, 0) in self.tdm:
                 if (i, j) in self.active_link:
                     self.problem.addConstraint(
-                        xp.Sum(  # pyre-ignore
+                        xp.Sum(
                             self.tdm[(i, j, c)]
                             for c in range(self.number_of_channels)
                         )
@@ -786,9 +782,9 @@ class MinInterferenceNetwork(NetworkOptimization):
                     ) in self.tdm_compatible_polarity:
                         continue
 
-                    tdm_compatible_polarity = xp.var(  # pyre-ignore
+                    tdm_compatible_polarity = xp.var(
                         name=f"tdm_compatible_polarity_{tx_site}_{tx_interferer}_{rx_interferer}_{channel}",
-                        vartype=xp.continuous,  # pyre-ignore
+                        vartype=xp.continuous,
                         lb=0,
                         ub=1,
                     )
@@ -877,7 +873,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             max_neighboring_rsl += rsl_linear
 
         return (
-            xp.Sum(neighboring_rsl_expression),  # pyre-ignore
+            xp.Sum(neighboring_rsl_expression),
             max_neighboring_rsl,
         )
 
@@ -914,9 +910,9 @@ class MinInterferenceNetwork(NetworkOptimization):
 
             for channel in range(self.number_of_channels):
                 self.link_capacity_vars[(tx_site, rx_site, channel)] = {
-                    i: xp.var(  # pyre-ignore
+                    i: xp.var(
                         name=f"link_cap_var_{link}_{channel}_{i}",
-                        vartype=xp.binary,  # pyre-ignore
+                        vartype=xp.binary,
                     )
                     for i in range(len_classes)
                 }
@@ -991,7 +987,7 @@ class MinInterferenceNetwork(NetworkOptimization):
 
                 self.problem.addConstraint(
                     current_link_sinr_inverse
-                    <= xp.Sum(  # pyre-ignore
+                    <= xp.Sum(
                         snr_linear_inverse[rx_sku][i]
                         * self.link_capacity_vars[(tx_site, rx_site, channel)][
                             i
@@ -1004,7 +1000,7 @@ class MinInterferenceNetwork(NetworkOptimization):
                 # If all class variables are zero, then its flow would
                 # be pushed to zero as well.
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.link_capacity_vars[(tx_site, rx_site, channel)][i]
                         for i in range(len_classes)
                     )
@@ -1038,7 +1034,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             # one channel this constraint is trivially satisfied.
             if self.number_of_channels > 1:
                 self.problem.addConstraint(
-                    xp.Sum(  # pyre-ignore
+                    xp.Sum(
                         self.link_capacity_vars[(tx_site, rx_site, channel)][
                             zero_row[rx_sku]
                         ]
@@ -1057,7 +1053,7 @@ class MinInterferenceNetwork(NetworkOptimization):
             # expense of a much larger ILP. This is ignored for now.
             self.problem.addConstraint(
                 self.flow[current_link]
-                <= xp.Sum(  # pyre-ignore
+                <= xp.Sum(
                     cap_gbps[rx_sku][i]
                     * self.link_capacity_vars[(tx_site, rx_site, channel)][i]
                     for i in range(len_classes)
@@ -1075,14 +1071,14 @@ class MinInterferenceNetwork(NetworkOptimization):
 
         # Shorter links have larger weight making them more desirable.
         # This should incentivize CNs to connect to the closer-by POPs.
-        weighted_number_of_links = xp.Sum(  # pyre-ignore
+        weighted_number_of_links = xp.Sum(
             self.link_weights[link] * self.active_link[link]
             for link in self.active_link
         )
 
         self.problem.setObjective(
             self.max_throughput * self.coverage_obj - weighted_number_of_links,
-            sense=xp.minimize,  # pyre-ignore
+            sense=xp.minimize,
         )
 
     def get_link_decisions(

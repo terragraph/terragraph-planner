@@ -287,7 +287,7 @@ class TestInterferenceComputation(TestCase):
                     ("DN4", "POP0", "DN3", 0)
                 ] = 0
 
-            risl = xp.evaluate(  # pyre-ignore
+            risl = xp.evaluate(
                 min_int_network.get_interfering_rsl_expr(
                     tx_site=link.tx_site.site_id,
                     rx_site=link.rx_site.site_id,
@@ -406,7 +406,7 @@ class TestInterferenceComputation(TestCase):
         min_int_network.tdm_compatible_polarity[("DN1", "DN3", "DN4", 0)] = 1.0
         min_int_network.tdm_compatible_polarity[("DN3", "DN1", "DN2", 0)] = 1.0
         for link_id, link in topology.links.items():
-            risl = xp.evaluate(  # pyre-ignore
+            risl = xp.evaluate(
                 min_int_network.get_interfering_rsl_expr(
                     tx_site=link.tx_site.site_id,
                     rx_site=link.rx_site.site_id,
@@ -463,7 +463,7 @@ class TestInterferenceComputation(TestCase):
         self.assertEqual(len(link_rsl_map), 0)
 
         for link in topology.links.values():
-            risl = xp.evaluate(  # pyre-ignore
+            risl = xp.evaluate(
                 min_int_network.get_interfering_rsl_expr(
                     tx_site=link.tx_site.site_id,
                     rx_site=link.rx_site.site_id,

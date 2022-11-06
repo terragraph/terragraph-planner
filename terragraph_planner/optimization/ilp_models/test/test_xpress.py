@@ -16,29 +16,23 @@ class TestXpress(TestCase):
         num_vars = 500
         num_constraints = 50
 
-        problem = xp.problem()  # pyre-ignore
+        problem = xp.problem()
 
         problem.controls.maxtime = -60  # stop after one minute
         problem.controls.miprelstop = 0.05  # stop after converged within 5%
 
-        binvars = [
-            xp.var(vartype=xp.binary) for _i in range(num_vars)  # pyre-ignore
-        ]
+        binvars = [xp.var(vartype=xp.binary) for _i in range(num_vars)]
         problem.addVariable(binvars)
 
         for _ in range(num_constraints):
             problem.addConstraint(
-                xp.Sum(  # pyre-ignore
-                    (2 * rng.random() - 1) * binvar for binvar in binvars
-                )
+                xp.Sum((2 * rng.random() - 1) * binvar for binvar in binvars)
                 <= 2 * rng.random() - 1
             )
 
         problem.setObjective(
-            xp.Sum(  # pyre-ignore
-                xp.Sum(  # pyre-ignore
-                    (2 * rng.random() - 1) * binvar for binvar in binvars
-                )
+            xp.Sum(
+                xp.Sum((2 * rng.random() - 1) * binvar for binvar in binvars)
             )
         )
         problem.solve()
