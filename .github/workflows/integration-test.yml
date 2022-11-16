@@ -23,7 +23,6 @@ jobs:
       - name: Install Packages
         run: |
           sudo apt update
-          sudo apt install -y python3-pip
           sudo apt install -y gdal-bin
           sudo apt install -y libgdal-dev
           export CPLUS_INCLUDE_PATH=/usr/include/gdal
