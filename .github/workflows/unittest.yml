@@ -18,6 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+
       - name: Install Packages
         run: |
           sudo apt update
@@ -27,6 +32,9 @@ jobs:
           export C_INCLUDE_PATH=/usr/include/gdal
           pip install .
           pip install coverage
+          pip uninstall --yes gdal
+          pip install numpy
+          pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
 
       - name: Run All Unittest
         run: coverage run -m unittest
