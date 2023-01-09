@@ -294,7 +294,9 @@ def get_adversarial_links(
 
     # Remove zero capacity links from candidate graph
     for link in topology.links.values():
-        if link.capacity <= 0:
+        if link.capacity <= 0 and candidate_graph.has_edge(
+            link.tx_site.site_id, link.rx_site.site_id
+        ):
             candidate_graph.remove_edge(
                 link.tx_site.site_id, link.rx_site.site_id
             )
