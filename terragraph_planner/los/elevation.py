@@ -3,6 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import logging
 import math
 from itertools import product
 from typing import Callable, List, Optional, Tuple
@@ -10,6 +11,8 @@ from typing import Callable, List, Optional, Tuple
 import numpy as np
 import numpy.typing as npt
 from osgeo import osr
+from pyre_extensions import none_throws
+from scipy.spatial import cKDTree
 
 from terragraph_planner.common.data_io.constants import (
     DEFAULT_ELEVATION_SEARCH_RADIUS,
@@ -19,6 +22,8 @@ from terragraph_planner.common.data_io.constants import (
 from terragraph_planner.common.data_io.patterns import GISData
 from terragraph_planner.common.exceptions import DataException
 from terragraph_planner.common.structs import Point3D, UTMBoundingBox
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class Elevation(GISData):
@@ -47,6 +52,7 @@ class Elevation(GISData):
         self.left_top_y = left_top_y
         self.spatial_reference = spatial_reference
         self.elevation_search_radius: int = DEFAULT_ELEVATION_SEARCH_RADIUS
+        self.elevation_kd_tree: Optional[ElevationKDTree] = None
         self.collection_time = collection_time
 
     @property
@@ -124,8 +130,28 @@ class Elevation(GISData):
     def get_value(self, x: float, y: float) -> float:
         idx_x, idx_y = self.utm_to_idx(x, y)
         if 0 <= idx_x < self.x_size and 0 <= idx_y < self.y_size:
+            # If there's no data in that grid, use find_closest_valid_elevation to get
+            # the closest valid elevation
+            if self.data_matrix[idx_y, idx_x] == NO_DATA_VALUE:
+                self.data_matrix[
+                    idx_y, idx_x
+                ] = self.find_closest_valid_elevation([(x, y)])[0]
             return self.data_matrix[idx_y, idx_x]
         raise DataException("get_value() error: out of index")
+
+    def find_closest_valid_elevation(
+        self, points: List[Tuple[float, float]]
+    ) -> List[float]:
+        """
+        Given an list of (x,y) coordinate point, find the closest valid elevation
+        within a given max distance. If valid elevation can't be found, then we
+        return the average elevation of the entire tree.
+        """
+        if self.elevation_kd_tree is None:
+            self.elevation_kd_tree = ElevationKDTree(self.get_data_as_list())
+        return none_throws(self.elevation_kd_tree).find_closest_valid_elevation(
+            points, self.elevation_search_radius
+        )
 
     def set_resolution(self, x_resolution: float, y_resolution: float) -> None:
         """
@@ -177,6 +203,10 @@ class Elevation(GISData):
                     result_list.append(
                         (utm_x, utm_y, self.data_matrix[idx_y, idx_x])
                     )
+        if len(result_list) == 0:
+            raise DataException(
+                "There is no non-void point in the surface elevation"
+            )
         return result_list
 
     def get_value_list_within_bound(
@@ -286,3 +316,63 @@ class Elevation(GISData):
             raise DataException(
                 "Subtraction operation is only supported on GeoGrids with same metadata"
             )
+
+
+class ElevationKDTree:
+    """
+    A wrapper around a KDTree containing elevation data (x, y, altitude) derived
+    from surface elevation data, using a dict of dicts as the storage mechanism.
+    The default resolution of the points is 1m.
+    """
+
+    def __init__(
+        self, elevation_data: List[Tuple[float, float, float]]
+    ) -> None:
+        assert len(elevation_data) > 0
+        coordinates = []
+        elevations = []
+        for x, y, z in elevation_data:
+            coordinates.append((x, y))
+            elevations.append(z)
+
+        self.elevation_data = elevation_data
+        self.kdtree: cKDTree = cKDTree(coordinates)
+        self.average_elevation: float = sum(elevations) / len(elevations)
+
+    def find_closest_valid_elevation(
+        self,
+        points: List[Tuple[float, float]],
+        elevation_search_radius: int,
+    ) -> List[float]:
+        """
+        Given an (x,y) coordinate point, find the closest valid elevation within a
+        given max distance. If valid elevation can't be found, then we return
+        the average elevation of the entire tree.
+        """
+        radius = elevation_search_radius
+        # Query KDTree for nearest point within radius of provided points
+        _, nearest_point_indices = self.kdtree.query(
+            points, distance_upper_bound=radius  # pyre-ignore[6]
+        )
+
+        closest_elevations = []
+        for nearest_point_idx, point in zip(nearest_point_indices, points):
+            # Nearest neighbor search failed to find valid neighbor --
+            # returned index will be 1 + last index of coordinate list =
+            # len(self.elevation_data) (ex. length of coordinates in KDTree is 5, if
+            # nearest neighbor cannot be found for given search point and radius, returned
+            # nearest_point_idx will be 5, since array of orignal coordinates is indexed 0-4)
+            if nearest_point_idx == len(self.elevation_data):
+                logger.info(
+                    f"Could not find a valid neighbor for point ({point[0]}, {point[1]})"
+                    + f" - using average elevation of {self.average_elevation} meters instead"
+                )
+                closest_elevations.append(self.average_elevation)
+
+            # Nearest neighbor search successfully found neighbor
+            else:
+                closest_elevations.append(
+                    self.elevation_data[nearest_point_idx][2]
+                )
+
+        return closest_elevations

@@ -8,9 +8,10 @@ import unittest
 import numpy as np
 from osgeo import osr
 
+from terragraph_planner.common.data_io.constants import NO_DATA_VALUE
 from terragraph_planner.common.exceptions import DataException
 from terragraph_planner.common.structs import UTMBoundingBox
-from terragraph_planner.los.elevation import Elevation
+from terragraph_planner.los.elevation import Elevation, ElevationKDTree
 
 
 class TestElevation(unittest.TestCase):
@@ -247,3 +248,58 @@ class TestElevation(unittest.TestCase):
         self.assertEqual(geogrids5.get_value(0, 1), 4)
         self.assertEqual(geogrids5.get_value(1, 2), 4)
         self.assertEqual(geogrids5.get_value(1, 1), 4)
+
+    def test_get_value_at_no_data_point(self) -> None:
+        """
+        Test Geogrids.get_value(utm_x, utm_y) when (utm_x, utm_y) locate at a no data
+        grid. It should return the closest valid value.
+        Grids:
+         0  1  2  3  4
+         5  N  N  N  9
+        10  N  N  N 14
+        15  N  N  N 19
+        20 21 22 23 24
+        """
+        data_matrix = np.arange(25).reshape(5, 5)
+        data_matrix[1:4, 1:4] = NO_DATA_VALUE
+        geogrids = Elevation(
+            data_matrix=data_matrix,
+            utm_bounding_box=UTMBoundingBox(5, 15, 0, 10),
+            x_resolution=1.0,
+            y_resolution=1.0,
+            left_top_x=0.5,
+            left_top_y=14.5,
+            spatial_reference=self.spatial_reference,
+            collection_time=None,
+        )
+        self.assertIn(geogrids.get_value(1.5, 13.5), (1, 5))
+        self.assertIn(geogrids.get_value(2.5, 12.5), (2, 10, 14, 22))
+        self.assertEqual(geogrids.get_value(2.5, 11.5), 22)
+
+    def test_elevation_kd_tree(self) -> None:
+        elevation_kd_tree = ElevationKDTree(
+            [
+                (0.0, 0.0, 1),
+                (3.0, 3.0, 2),
+                (8.0, 8.0, 3),
+                (12.0, 12.0, 3),
+                (15.0, 15.0, 4),
+                (25.0, 25.0, 5),
+            ]
+        )
+        # Test exact match
+        elevation = elevation_kd_tree.find_closest_valid_elevation(
+            [(8.0, 8.0)], 5
+        )
+        self.assertEqual(elevation[0], 3)
+        # Test within radius
+        elevation = elevation_kd_tree.find_closest_valid_elevation(
+            [(10.0, 10.0)], 5
+        )
+        self.assertEqual(elevation[0], 3)
+        # The valid elevation is not found within the search radius.
+        # Elevation will be equal to average elevation
+        elevation = elevation_kd_tree.find_closest_valid_elevation(
+            [(30.0, 30.0)], 5
+        )
+        self.assertEqual(elevation[0], elevation_kd_tree.average_elevation)
