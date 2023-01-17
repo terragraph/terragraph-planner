@@ -203,6 +203,10 @@ class Elevation(GISData):
                     result_list.append(
                         (utm_x, utm_y, self.data_matrix[idx_y, idx_x])
                     )
+        if len(result_list) == 0:
+            raise DataException(
+                "There is no non-void point in the surface elevation"
+            )
         return result_list
 
     def get_value_list_within_bound(
@@ -324,10 +328,7 @@ class ElevationKDTree:
     def __init__(
         self, elevation_data: List[Tuple[float, float, float]]
     ) -> None:
-        # Ensure elevation_data is not empty
-        if len(elevation_data) == 0:
-            elevation_data = [(0, 0, 0)]
-
+        assert len(elevation_data) > 0
         coordinates = []
         elevations = []
         for x, y, z in elevation_data:
